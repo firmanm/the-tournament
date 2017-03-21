@@ -11,7 +11,7 @@
     = fa_icon("picture-o")
     フォトアルバム
 
-  - if @tournament.facebook_album_id
+  - if @tournament.facebook_album_id.present?
     .album-container
     %small
       = link_to "https://www.facebook.com/media/set/?set=a.#{@tournament.facebook_album_id}", target: '_blank' do

@@ -71,7 +71,7 @@ $ ->
 
   # tournament#photos
   if ($('body').data('controller')=='tournaments' && $('body').data('action')=='photos')
-    if gon.album_id != null
+    if gon.album_id != null && gon.album_id != ''
       window.fbAsyncInit = ->
         FB.init({
           appId      : '1468816573143230',
