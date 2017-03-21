@@ -9,7 +9,7 @@
                 - @rss.items.take(3).each do |item|
                   %tr
                     %td
-                      =link_to item.link.gsub('http:','https:'), target:'_blank' do
+                      =link_to item.link, target:'_blank' do
                         = item.title.force_encoding("utf-8")
                         %small.visible-xs= item.published.strftime("%Y-%m-%d")
                     %td.text-right.hidden-xs
