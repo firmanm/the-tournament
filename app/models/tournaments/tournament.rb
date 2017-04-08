@@ -99,7 +99,7 @@ class Tournament < ActiveRecord::Base
           res[win_record.record_num-1] += 0.1
         # Unfinished Game
         elsif !game.finished?
-          res[0] = res[1] = '--'
+          res[0] = res[1] = nil
         end
         round_res << res
       end
