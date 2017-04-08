@@ -14,18 +14,12 @@ class TournamentsController < ApplicationController
     redirect_to pretty_tournament_path(@tournament, @tournament.encoded_title), status: 301 if params[:title] != @tournament.encoded_title
 
     if Rails.env.production?
-      json = JSON.parse(open("https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/json/#{@tournament.id.to_s}.json?t=#{Time.now.to_i}").read)
+      file_path = "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/json/#{@tournament.id.to_s}.json?t=#{Time.now.to_i}"
     else
-      json = {
-        tournament_data: @tournament.tournament_data,
-        skip_secondary_final: (@tournament.de?) ? !@tournament.secondary_final : false,
-        skip_consolation_round: !@tournament.consolation_round,
-        countries: @tournament.players.map{|p| p.country.try(:downcase)},
-        match_data: @tournament.match_data,
-        scoreless: @tournament.scoreless?
-      }
+      file_path = File.join(Rails.root, "/tmp/#{@tournament.id}.json")
     end
-    gon.push(json)
+
+    gon.push( JSON.parse(open(file_path).read) )
   end
 
 

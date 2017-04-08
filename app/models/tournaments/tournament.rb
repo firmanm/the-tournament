@@ -190,26 +190,28 @@ class Tournament < ActiveRecord::Base
 
   def upload_json
     File.write("tmp/#{self.id}.json", self.to_json)
+    return if Rails.env.development?
+
     src = File.join(Rails.root, "/tmp/#{self.id}.json")
     src_file = File.new(src)
-
     TournamentUploader.new.store!(src_file)
   end
 
   def upload_img
-    if self.user.id == 835 || self.user.admin?
-      File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
-        open("http://phantomjscloud.com/api/browser/v2/ak-b1hw7-66a8k-1wdyw-xhqh1-f2s4p/?request={url:%22https://the-tournament.jp/ja/tournaments/#{self.id}/raw%22,renderType:%22png%22}") do |f|
-          f.each_line {|line| tmp.puts line}
-        end
-      end
+    return if Rails.env.development?
+    return if self.user.id != 835 && self.user.admin?
 
-      # Upload Image
-      uploader = TournamentUploader.new
-      src = File.join(Rails.root, "/tmp/#{self.id}.png")
-      src_file = File.new(src)
-      uploader.store!(src_file)
+    File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
+      open("http://phantomjscloud.com/api/browser/v2/ak-b1hw7-66a8k-1wdyw-xhqh1-f2s4p/?request={url:%22https://the-tournament.jp/ja/tournaments/#{self.id}/raw%22,renderType:%22png%22}") do |f|
+        f.each_line {|line| tmp.puts line}
+      end
     end
+
+    # Upload Image
+    uploader = TournamentUploader.new
+    src = File.join(Rails.root, "/tmp/#{self.id}.png")
+    src_file = File.new(src)
+    uploader.store!(src_file)
   end
 
   def players_list
