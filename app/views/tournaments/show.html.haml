@@ -45,6 +45,10 @@
             画像埋め込みタグ　
           %div
             %input(type="text" style="width:100%;" value="#{embed_img_content}" onfocus="this.select();" readonly)
+          %br
+          %a#download_btn.btn.btn-default(href="#" target="_blank")
+            = fa_icon("download")
+            画像ダウンロード
 
   .row
     %script(async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js")

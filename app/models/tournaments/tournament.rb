@@ -197,13 +197,9 @@ class Tournament < ActiveRecord::Base
   end
 
   def upload_img
-    if self.user.id == 835 || self.user.admin? || self.user_id == 2652
+    if self.user.id == 835 || self.user.admin?
       File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
         url = "https://the-tournament.jp/ja/tournaments/#{self.id}/raw"
-        if self.user_id==2652 || self.user.admin?
-          url += "?width=250%26score_width=52"
-        end
-
         open("http://phantomjscloud.com/api/browser/v2/ak-b1hw7-66a8k-1wdyw-xhqh1-f2s4p/?request={url:%22#{url}%22,renderType:%22png%22}") do |f|
           f.each_line {|line| tmp.puts line}
         end
