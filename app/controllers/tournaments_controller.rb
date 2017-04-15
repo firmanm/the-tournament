@@ -1,6 +1,6 @@
 class TournamentsController < ApplicationController
   skip_before_action :authenticate_user!, only: [:index, :show, :embed, :raw, :photos]
-  before_action :set_tournament, only: [:show, :edit, :update, :destroy, :embed, :upload]
+  before_action :set_tournament, only: [:show, :edit, :update, :destroy, :embed, :upload, :players]
   load_and_authorize_resource
 
 
@@ -15,11 +15,12 @@ class TournamentsController < ApplicationController
 
     if Rails.env.production?
       file_path = "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/json/#{@tournament.id.to_s}.json?t=#{Time.now.to_i}"
+      json = JSON.parse(open(file_path).read)
     else
-      file_path = File.join(Rails.root, "/tmp/#{@tournament.id}.json")
+      json = JSON.parse(@tournament.to_json)
     end
 
-    gon.push( JSON.parse(open(file_path).read) )
+    gon.push(json)
   end
 
 
@@ -76,7 +77,7 @@ class TournamentsController < ApplicationController
         flash[:log] = "<script>ga('send', 'event', 'tournament', 'create');</script>".html_safe
 
         flash[:notice] = I18n.t('flash.tournament.create.success')
-        format.html { redirect_to tournament_edit_players_path(@tournament) }
+        format.html { redirect_to tournament_path(@tournament) }
         format.json { render action: 'show', status: :created, location: @tournament }
       else
         flash.now[:alert] = I18n.t('flash.tournament.create.failure')
@@ -136,6 +137,16 @@ class TournamentsController < ApplicationController
   def photos
     gon.album_id = @tournament.facebook_album_id
     gon.fb_token = ENV['FACEBOOK_APP_TOKEN'].sub('%7C', '|')
+  end
+
+
+  def players
+    @players = @tournament.teams.flatten
+  end
+
+
+  def edit_players
+    @players = @tournament.teams.flatten
   end
 
 

@@ -21,14 +21,7 @@ class Tournament < ActiveRecord::Base
   acts_as_taggable
 
   belongs_to :user
-  has_many :games, -> { order(bracket: :asc, round: :asc, match: :asc) }, dependent: :destroy
-  has_many :players, -> { order(seed: :asc) }, dependent: :destroy
 
-  accepts_nested_attributes_for :players
-  accepts_nested_attributes_for :games
-
-  validates_associated :games, on: :create
-  validates_associated :players
   validates :user_id, presence: true
   validates :size, presence: true
   validate :tnmt_size_must_be_smaller_than_limit, on: :create
@@ -48,9 +41,8 @@ class Tournament < ActiveRecord::Base
   default_scope {order(created_at: :desc)}
   scope :finished, -> { where(finished: true) }
 
-  before_create :build_players, :build_winner_games, :build_third_place_game
-  after_create :create_first_round_records
-  after_save :upload_json, :upload_img
+  before_create :create_teams_and_results
+  # after_save :upload_json, :upload_img
 
   def self.search_tournaments(params)
     if params[:q]
@@ -71,46 +63,34 @@ class Tournament < ActiveRecord::Base
     tournaments
   end
 
-  def tournament_data
-    teams = Array.new
-    results = Array.new
-    for i in 1..self.round_num
-      round_res = Array.new  # create result array for each round
-      results << round_res
-      self.games.where(bracket: 1, round: i).each do |game|
-        # Set team info
-        teams << game.game_records.map{|r| (r.player.name.present?) ? r.player.name : '(BYE)'}.to_a  if i == 1
-
-        # Set match Info
-        res =  game.game_records.map{|r| r.score}.to_a
-        # Bye Game
-        if game.bye == true
-          win_record = game.game_records.find_by(winner: true)
-          if win_record.record_num == 1
-            res[0] = 0.3
-            res[1] = 0.2
-          else
-            res[0] = 0.2
-            res[1] = 0.3
-          end
-        # Same Score Game
-        elsif game.finished? && (game.game_records.first.score == game.game_records.last.score)
-          win_record = game.game_records.find_by(winner: true)
-          res[win_record.record_num-1] += 0.1
-        # Unfinished Game
-        elsif !game.finished?
-          res[0] = res[1] = nil
-        end
-        round_res << res
-      end
-    end
-    tournament_data = {teams: teams, results: results}
-  end
-
   def match_data
     match_data = Array.new
     match_data[1] = self.games.map{ |m| "#{self.round_name(bracket: m.bracket, round:m.round)} #{m.match_name}<br>#{m.game_records.map{|r| (r.player.name.present?) ? r.player.name : '(BYE)'}.join('-')}<br>#{m.comment}" }
     match_data
+  end
+
+  def create_teams_and_results
+    teams = []
+    for i in 1..self.size do
+      if i%2==1
+        teams << [{name: "Player#{i}"}]
+      else
+        teams.last << {name: "Player#{i}"}
+      end
+    end
+
+    results = []
+    for i in 1..self.round_num do
+      match_count = [(self.size / 2**i), 2].max
+      arr = []
+      for i in 1..match_count do
+        arr << [nil, nil]
+      end
+      results << arr
+    end
+
+    self.teams = teams.to_json
+    self.results = results.to_json
   end
 
   def build_players
@@ -179,22 +159,20 @@ class Tournament < ActiveRecord::Base
   def to_json
     {
       title: self.title,
-      tournament_data: self.tournament_data,
+      tournament_data: { teams: self.teams, results: self.results },
       skip_secondary_final: (self.de?) ? !self.secondary_final : false,
       skip_consolation_round: !self.consolation_round,
-      countries: self.players.map{|p| p.country.try(:downcase)},
-      match_data: self.match_data,
+      # countries: self.players.map{|p| p.country.try(:downcase)},
+      # match_data: self.match_data,
       scoreless: self.scoreless?
     }.to_json
   end
 
-  def upload_json
-    File.write("tmp/#{self.id}.json", self.to_json)
-    return if Rails.env.development?
+  def upload_json(json)
+    file_path = File.join(Rails.root, "/tmp/#{self.id}.json")
+    File.write(file_path, json)
 
-    src = File.join(Rails.root, "/tmp/#{self.id}.json")
-    src_file = File.new(src)
-    TournamentUploader.new.store!(src_file)
+    TournamentUploader.new.store!( File.new(file_path) ) if Rails.env.production?
   end
 
   def upload_img

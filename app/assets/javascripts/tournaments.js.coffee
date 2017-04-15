@@ -11,9 +11,35 @@ $ ->
       $('#tournament').bracket({
         skipConsolationRound: gon.skip_consolation_round,
         skipSecondaryFinal: gon.skip_secondary_final,
-        init: gon.tournament_data
+        init: gon.tournament_data,
+        decorator: {
+          edit: edit_fn,
+          render: render_fn
+        }
       })
       d.resolve()
+
+    edit_fn = (container, data, doneCb) ->
+      # do something here
+
+    render_fn = (container, data, score, state) ->
+      switch state
+        when "empty-bye"
+          container.append("BYE")
+          return
+        when "empty-tbd"
+          container.append("TBD")
+          return
+        when "entry-no-score"
+          container.append(data.flag).append(data.name)
+          return
+        when "entry-default-win"
+          container.append(data.flag).append(data.name)
+          return
+        when "entry-complete"
+          container.append(data.flag).append(data.name)
+          return
+
 
     hideDecimal = ->
       jQuery.each($('.score'), ->
