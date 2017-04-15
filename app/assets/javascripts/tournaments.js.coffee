@@ -72,7 +72,7 @@ $ ->
       if(score_width != DEFAULT_SCORE_WIDTH)
         $('#tournament .score').width(score_width)
 
-    createBracket().done(hideDecimal(), addCountryFlg(), prepareImage(), resizeBracket())
+    createBracket().done(hideDecimal(), addCountryFlg(), resizeBracket())
 
 
     # Show game info on hover
