@@ -93,35 +93,37 @@ class TournamentsController < ApplicationController
 
 
   def update
-    # Players一覧更新時
-    if params[:tournament][:players_attributes].present?
-      success_url = tournament_edit_games_path(@tournament)
-      success_notice = I18n.t('flash.players.update.success')
-      failure_url = 'players/edit_all'
-      failure_notice = I18n.t('flash.players.update.failure')
-
-      # 一括登録利用時
-      players = params[:tournament][:players_all][:players]
-      if players != @tournament.players_list
-        players.lines.each_with_index do |line, i|
-          break if i >= @tournament.size
-          params[:tournament][:players_attributes]["#{i}"]["name"] = line.chomp
-        end
-      end
-      params[:tournament][:players_all] = nil
-    else
-      success_url = tournament_edit_players_path(@tournament)
-      success_notice = I18n.t('flash.tournament.update.success')
-      failure_url = {action: 'edit'}
-      failure_notice = I18n.t('flash.tournament.update.failure')
-    end
-
-    if @tournament.update(tournament_params)
-      redirect_to success_url, notice: success_notice
-    else
-      flash.now[:alert] = failure_notice
-      render failure_url
-    end
+    p params
+    redirect_to success_url, notice: success_notice
+    # # Players一覧更新時
+    # if params[:tournament][:players_attributes].present?
+    #   success_url = tournament_edit_games_path(@tournament)
+    #   success_notice = I18n.t('flash.players.update.success')
+    #   failure_url = 'players/edit_all'
+    #   failure_notice = I18n.t('flash.players.update.failure')
+    #
+    #   # 一括登録利用時
+    #   players = params[:tournament][:players_all][:players]
+    #   if players != @tournament.players_list
+    #     players.lines.each_with_index do |line, i|
+    #       break if i >= @tournament.size
+    #       params[:tournament][:players_attributes]["#{i}"]["name"] = line.chomp
+    #     end
+    #   end
+    #   params[:tournament][:players_all] = nil
+    # else
+    #   success_url = tournament_edit_players_path(@tournament)
+    #   success_notice = I18n.t('flash.tournament.update.success')
+    #   failure_url = {action: 'edit'}
+    #   failure_notice = I18n.t('flash.tournament.update.failure')
+    # end
+    #
+    # if @tournament.update(tournament_params)
+    #   redirect_to success_url, notice: success_notice
+    # else
+    #   flash.now[:alert] = failure_notice
+    #   render failure_url
+    # end
   end
 
 
