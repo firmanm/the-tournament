@@ -62,8 +62,9 @@
         -# - values = @tournament.teams.flatten.map{|m| m ? m['name'] : nil}.join("\r\n")
         - values = ""
         - @tournament.teams.flatten.each do |m|
-          - values += (m) ? m['name'] : nil}.join("\r\n")
-          -# - values += m.to_s
+          - values += m['name'] if m
+          - values += ", #{m['flag']}" if m && m['flag'].present?
+          - values += "\r\n"
         = f.input :teams, as: :text, label: false, input_html: {rows: @tournament.size+1, value: values}
       %br
       = f.button :submit, class: 'btn-danger'
