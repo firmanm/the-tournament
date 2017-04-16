@@ -70,7 +70,35 @@ $ ->
         })
       , 1500
 
-    createBracket().done(hideDecimal(), addCountryFlg(), prepareImage())
+
+    getQueryString = ( field, url ) ->
+      href = `url ? url : window.location.href`
+      reg = new RegExp( '[?&]' + field + '=([^&#]*)', 'i' )
+      string = reg.exec(href)
+      return `string ? string[1] : null`
+
+    window.tnmt_id = getQueryString('utm_source') || getQueryString('id')
+    window.DEFAULT_WIDTH = 100
+    window.width = getQueryString('width') || DEFAULT_WIDTH
+    window.DEFAULT_SCORE_WIDTH = 26
+    window.score_width = getQueryString('score_width') || DEFAULT_SCORE_WIDTH
+
+    resizeBracket = ->
+      if(width != DEFAULT_WIDTH)
+        $('#tournament .round').width(width)
+        $('#tournament .team').width(width)
+        $('#tournament .label').width(width-score_width)
+
+        size_diff = width - DEFAULT_WIDTH
+        round_num = Math.log2(gon.tournament_data.teams.length * 2)
+        bracket_width = $('#tournament .bracket').width()
+        $('#tournament .bracket').width(bracket_width + (size_diff*round_num))
+        $('#tournament .jQBracket').width(bracket_width + (size_diff*round_num) + 10)
+
+      if(score_width != DEFAULT_SCORE_WIDTH)
+        $('#tournament .score').width(score_width)
+
+    createBracket().done(hideDecimal(), addCountryFlg(), prepareImage(), resizeBracket())
 
 
     # Show game info on hover

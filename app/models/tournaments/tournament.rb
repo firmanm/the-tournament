@@ -180,7 +180,8 @@ class Tournament < ActiveRecord::Base
     return if self.user.id != 835 && self.user.admin?
 
     File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
-      open("http://phantomjscloud.com/api/browser/v2/ak-b1hw7-66a8k-1wdyw-xhqh1-f2s4p/?request={url:%22https://the-tournament.jp/ja/tournaments/#{self.id}/raw%22,renderType:%22png%22}") do |f|
+      url = "https://the-tournament.jp/ja/tournaments/#{self.id}/raw"
+      open("http://phantomjscloud.com/api/browser/v2/ak-b1hw7-66a8k-1wdyw-xhqh1-f2s4p/?request={url:%22#{url}%22,renderType:%22png%22}") do |f|
         f.each_line {|line| tmp.puts line}
       end
     end

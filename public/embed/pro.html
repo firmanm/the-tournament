@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang='ja'>
+<head>
+  <meta charset='utf-8'>
+  <meta content='IE=Edge,chrome=1' http-equiv='X-UA-Compatible'>
+  <meta content='width=device-width, initial-scale=1.0' name='viewport'>
+  <title>THE TOURNAMENT(ザ・トーナメント)</title>
+
+  <!--[if lt IE 9]>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js"></script>
+  <![endif]-->
+  <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/twbs/bootstrap/v3.3.7/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/teijo/jquery-bracket/0.7.3/dist/jquery.bracket.min.css">
+  <link rel="stylesheet" type="text/css" href="css/flags16.css">
+
+  <style type="text/css">
+    * { font-family: 'Lucida Grande','Hiragino Kaku Gothic ProN', Meiryo, sans-serif; }
+    body { margin: 0; }
+    a { text-decoration: none; }
+    h1 { font-weight: lighter; }
+    h1 small {
+    font-size: 65%;
+      font-weight: normal;
+      line-height: 1;
+      color: #999999;
+    }
+    #tournament .label, #tournament-sample .label {
+      font-weight: normal;
+      font-size: 100%;
+      line-height: normal;
+      color: #333;
+      width: 76px;
+      text-align: left;
+      overflow: hidden;
+    }
+    #tournament .score, #tournament-sample .score {
+      width: 26px;
+      overflow: hidden;
+    }
+    .tooltip { width: 180px; }
+
+    /* Country Flag */
+    .flag-container {
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .flag-container .flag {
+      width: 16px;
+      height: 14px;
+      display: inline-block;
+    }
+    span.flag, p.flag {
+      padding-left: 20px;
+    }
+    .form-horizontal p.form-control-static.flag {
+      padding-top: 0px;
+      line-height: 16px;
+      margin-top: 5px;
+    }
+    .f16 .flag {
+      background-image: url(https://the-tournament.storage.googleapis.com/assets/world_flags/flags16-3270000446137c1e641cf815589e9706.png);
+      background-repeat: no-repeat;
+    }
+
+    /* embed */
+    body#embed{background:transparent}
+    #emb-container{margin:10px}
+    #emb-header{background:#333;color:#fff}
+    #emb-header h1{font-size:14px;margin:0;padding:5px}
+    #emb-header h1 small{margin-left:15px}
+    #emb-header a{color:#fff}
+    #emb-body{background:#fff;padding-top:10px;border:1px dotted #333}
+    #emb-body #tournament{margin-bottom:20px; overflow: auto;}
+    #emb-body #emb-footer{margin-left:10px}
+    #emb-ad{margin-bottom:5px}
+    #emb-link input{max-width:100%}
+    .download-btn{margin-right:10px;margin-top:-5px}
+
+    #nend_adspace_225241_641487 {
+      text-align: left !important;
+      margin-left: 10px !important;
+    }
+  </style>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdn.rawgit.com/teijo/jquery-bracket/0.7.3/dist/jquery.bracket.min.js"></script>
+  <script src="https://cdn.rawgit.com/twbs/bootstrap/v3.3.7/js/tooltip.js"></script>
+
+  <script type="text/javascript">
+    var getQueryString = function ( field, url ) {
+      var href = url ? url : window.location.href;
+      var reg = new RegExp( '[?&]' + field + '=([^&#]*)', 'i' );
+      var string = reg.exec(href);
+      return string ? string[1] : null;
+    };
+    window.tnmt_id = getQueryString('utm_source') || getQueryString('id');
+    window.DEFAULT_WIDTH = 100;
+    window.width = getQueryString('width') || DEFAULT_WIDTH;
+    window.DEFAULT_SCORE_WIDTH = 26;
+    window.score_width = getQueryString('score_width') || DEFAULT_SCORE_WIDTH;
+
+    $.getJSON("https://the-tournament.storage.googleapis.com/embed/json/"+tnmt_id+".json?t="+Date.now(), function(json){
+      window.gon = json;
+
+      var addCountryFlg, createBracket, hideDecimal;
+      createBracket = function() {
+        var d;
+        d = new $.Deferred;
+        $('#tournament').bracket({
+          skipConsolationRound: gon.skip_consolation_round,
+          skipSecondaryFinal: gon.skip_secondary_final,
+          init: gon.tournament_data
+        });
+        return d.resolve();
+      };
+      hideDecimal = function() {
+        return jQuery.each($('.score'), function() {
+          if (!isNaN(this.innerText)) {
+            if ($.inArray(this.innerText, ["0.2", "0.3"]) >= 0) {
+              return this.innerText = '--';
+            } else if (gon.scoreless) {
+              return this.innerText = '--';
+            } else {
+              return this.innerText = Math.floor(this.innerText);
+            }
+          }
+        });
+      };
+      addCountryFlg = function() {
+        return jQuery.each(gon.countries, function(i, v) {
+          if (v) {
+            return $('.bracket .team').eq(i).find('.label').prepend('<div class="flag-container f16"><div class="flag ' + v + '"></div>');
+          }
+        });
+      };
+      // width指定されてたらリサイズ
+      resizeBracket = function() {
+        if(width != DEFAULT_WIDTH) {
+          $('#tournament .round').width(width);
+          $('#tournament .team').width(width);
+          $('#tournament .label').width(width-score_width);
+
+          var size_diff = width - DEFAULT_WIDTH;
+          var round_num = Math.log2(gon.tournament_data.teams.length * 2);
+          var bracket_width = $('#tournament .bracket').width();
+          $('#tournament .bracket').width(bracket_width + (size_diff*round_num));
+          $('#tournament .jQBracket').width(bracket_width + (size_diff*round_num) + 10);
+        }
+        if(score_width != DEFAULT_SCORE_WIDTH) {
+          $('#tournament .score').width(score_width);
+        }
+      }
+
+      createBracket().done(hideDecimal(), addCountryFlg(), resizeBracket());
+
+      $('.teamContainer').attr({
+        'data-toggle': 'tooltip',
+        'data-placement': 'right'
+      });
+      $('.bracket .teamContainer').each(function(i) {
+        return $('.bracket .teamContainer').eq(i).attr('title', gon.match_data[1][i]);
+      });
+      if ($('.loserBracket').length) {
+        $('.loserBracket .teamContainer').each(function(i) {
+          return $('.loserBracket .teamContainer').eq(i).attr('title', gon.match_data[2][i]);
+        });
+        $('.finals .teamContainer').each(function(i) {
+          return $('.finals .teamContainer').eq(i).attr('title', gon.match_data[3][i]);
+        });
+      }
+      $('.teamContainer').tooltip({
+        html: true
+      });
+
+      $("#original_link").text(gon.title);
+      $("#original_link").attr("href", "https://the-tournament.jp/tournaments/"+tnmt_id);
+    });
+  </script>
+
+  <meta content='noindex' name='robots'>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-30867542-19', 'auto');
+    ga('send', 'pageview');
+  </script>
+</head>
+<body id='embed'>
+  <div id='emb-container'>
+    <div id='emb-header'>
+      <h1>
+        <a id="original_link" href="#" target="_blank"></a>
+        <small class='text-right'>
+          powered by
+          <a href="https://the-tournament.jp/about" target="_blank">THE TOURNAMENT</a>
+        </small>
+      </h1>
+    </div>
+    <div id='emb-body'>
+      <div id='tournament'></div>
+    </div>
+  </div>
+</body>
+</html>
