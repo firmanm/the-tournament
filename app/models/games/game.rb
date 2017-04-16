@@ -29,7 +29,7 @@ class Game < ActiveRecord::Base
   validates :match, presence: true, numericality: {only_integer: true}
   validates :bye, inclusion: {in: [true, false]}, allow_nil: true
   validate  :has_valid_winner?, on: :update
-  validates :comment, length: {maximum: 24}
+  validates :comment, length: {maximum: 50}
 
   after_update :reset_ancestors, :set_parent_game_record, :set_loser_game_record, if: :winner_changed?
   after_update :set_finished_flg, if: :final?
