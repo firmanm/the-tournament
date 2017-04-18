@@ -17,7 +17,7 @@ TheTournament::Application.routes.draw do
     # players
     match 'tournaments/:id/players', to: 'tournaments#players', via: :get, as: :tournament_players
     match 'tournaments/:id/players/edit', to: 'tournaments#edit_players', via: :get, as: :tournament_edit_players
-    match 'tournaments/:id/players', to: 'tournaments#update_players', via: :post, as: :tournament_update_players
+    match 'tournaments/:id/players', to: 'tournaments#update_players', via: :patch, as: :tournament_update_players
 
     match 'tournaments/:id/raw', to: 'tournaments#raw', via: :get
     match 'tournaments/:id/upload', to: 'tournaments#upload', via: :get, as: :upload_tournament

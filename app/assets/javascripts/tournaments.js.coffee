@@ -25,10 +25,10 @@ $ ->
     render_fn = (container, data, score, state) ->
       switch state
         when "empty-bye"
-          container.append("BYE")
+          container.append("--")
           return
         when "empty-tbd"
-          container.append("TBD")
+          container.append("--")
           return
         when "entry-no-score"
           container.append(data.flag).append(data.name)

@@ -93,43 +93,12 @@ class TournamentsController < ApplicationController
 
 
   def update
-    # Players一覧更新時
-    if tournament_params[:teams].present?
-      # success_url = tournament_edit_games_path(@tournament)
-      success_url = tournament_edit_players_path(@tournament)
-      success_notice = I18n.t('flash.players.update.success')
-      failure_url = {action: 'players/edit'}
-      failure_notice = I18n.t('flash.players.update.failure')
-
-      teams = []
-      tournament_params[:teams].lines.each_with_index do |line, i|
-        team = line.chomp.split(",")
-        team_data = (team[0].present?) ? {name: team[0], flag: team[1]} : nil
-        teams << [] if i%2==0
-        teams.last << team_data
-      end
-      p teams.to_json
-      p tournament_params[:teams]
-      tournament_params[:teams] = teams.to_json
-      p tournament_params[:teams]
-    # 基本情報更新
+    if @tournament.update(tournament_params)
+      redirect_to tournament_edit_players_path(@tournament), notice: I18n.t('flash.tournament.update.success')
     else
-      success_url = tournament_edit_players_path(@tournament)
-      success_notice = I18n.t('flash.tournament.update.success')
-      failure_url = {action: 'edit'}
-      failure_notice = I18n.t('flash.tournament.update.failure')
+      flash.now[:alert] = I18n.t('flash.tournament.update.failure')
+      render 'tournaments/edit'
     end
-    p tournament_params[:teams]
-
-    # p tournament_params
-    redirect_to success_url, notice: success_notice
-
-    # if @tournament.update(tournament_params)
-    #   redirect_to success_url, notice: success_notice
-    # else
-    #   flash.now[:alert] = failure_notice
-    #   render failure_url
-    # end
   end
 
 
@@ -154,7 +123,42 @@ class TournamentsController < ApplicationController
 
 
   def edit_players
-    @players = @tournament.teams.flatten
+    @teams_array = @tournament.teams.flatten
+
+    @teams_text = ""
+    @teams_array.each do |m|
+      @teams_text += m['name'] if m
+      @teams_text += ",#{m['flag']}" if m && m['flag'].present?
+      @teams_text += "\r\n"
+    end
+  end
+
+
+  def update_players
+    teams = []
+    # 通常入力
+    if params[:input_type] == 'array'
+      params[:tournament][:teams_array].each_with_index do |team, i|
+        team_data = team['name'].present? ? team : nil
+        teams << [] if i%2==0
+        teams.last << team_data
+      end
+    # まとめて入力
+    elsif params[:input_type] == 'text'
+      params[:tournament][:teams_text].lines.each_with_index do |line, i|
+        team = line.chomp.split(",")
+        team_data = (team[0].present?) ? {name: team[0], flag: team[1]} : nil
+        teams << [] if i%2==0
+        teams.last << team_data
+      end
+    end
+
+    if @tournament.update({teams: teams.to_json})
+      redirect_to tournament_edit_players_path(@tournament), notice: I18n.t('flash.players.update.success')
+    else
+      flash.now[:alert] = I18n.t('flash.players.update.failure')
+      render 'tournaments/edit_players'
+    end
   end
 
 
