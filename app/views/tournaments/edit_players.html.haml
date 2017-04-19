@@ -41,7 +41,7 @@
             - @teams_array.each.with_index(1) do |team, index|
               - if team
                 - name = team['name']
-                - flag = team['flag']
+                - flag = team['flag'].try(:upcase)
               %tr
                 %td
                   %p.form-control-static
@@ -49,7 +49,7 @@
                 %td
                   = text_field_tag 'tournament[teams_array][][name]', name, {class: 'string optional form-control'}
                 %td.hidden-sm.hidden-xs
-                  = text_field_tag 'tournament[teams_array][][flag]', flag, {class: 'string optional form-control'}
+                  = select_tag 'tournament[teams_array][][flag]', options_for_select(Country.all_names_with_codes('ja'), flag), class: 'country optional form-control', include_blank: true
         %br
         = button_tag '更新', {type: 'submit', class: 'btn btn-danger', name: 'input_type', value: 'array'}
 
