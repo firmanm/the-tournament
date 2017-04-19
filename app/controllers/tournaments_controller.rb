@@ -140,6 +140,7 @@ class TournamentsController < ApplicationController
     if params[:input_type] == 'array'
       params[:tournament][:teams_array].each_with_index do |team, i|
         team_data = team['name'].present? ? team : nil
+        team_data['flag'].try(:downcase!) if team_data
         teams << [] if i%2==0
         teams.last << team_data
       end
@@ -147,7 +148,7 @@ class TournamentsController < ApplicationController
     elsif params[:input_type] == 'text'
       params[:tournament][:teams_text].lines.each_with_index do |line, i|
         team = line.chomp.split(",")
-        team_data = (team[0].present?) ? {name: team[0], flag: team[1]} : nil
+        team_data = (team[0].present?) ? {name: team[0], flag: team[1].try(:downcase)} : nil
         teams << [] if i%2==0
         teams.last << team_data
       end

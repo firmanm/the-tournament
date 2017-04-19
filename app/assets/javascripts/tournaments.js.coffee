@@ -30,14 +30,12 @@ $ ->
         when "empty-tbd"
           container.append("--")
           return
-        when "entry-no-score"
-          container.append(data.flag).append(data.name)
-          return
-        when "entry-default-win"
-          container.append(data.flag).append(data.name)
-          return
-        when "entry-complete"
-          container.append(data.flag).append(data.name)
+        else
+          content = ''
+          if data.flag && data.flag != ""
+            content += '<span class="f16"><span class="flag '+data.flag+'"></span></span>'
+          content += data.name
+          container.append(content)
           return
 
 
