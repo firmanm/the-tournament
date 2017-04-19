@@ -204,4 +204,22 @@ class Tournament < ActiveRecord::Base
     end
     players.join("\r\n")
   end
+
+  def team_name(round_num, game_num, team_index)
+    # 1回戦まで来たら対応する参加者名を返す
+    if round_num == 1
+      self.teams[game_num - 1][team_index] || {"name" => '--'}
+    # 2回戦以降の場合は下のラウンドの勝者に遡る
+    else
+      target_round_num = round_num - 1
+      target_game_num = (game_num * 2) - (1 - team_index)
+
+      target_game = self.results[target_round_num - 1][target_game_num - 1]
+      return {"name" => "(TBD)"} if !target_game || target_game[0].nil?
+
+      winner_index = (target_game[0] > target_game[1]) ? 0 : 1
+
+      self.team_name(target_round_num, target_game_num, winner_index)
+    end
+  end
 end

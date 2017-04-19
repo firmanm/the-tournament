@@ -10,14 +10,17 @@ TheTournament::Application.routes.draw do
 
     resources :tournaments, shallow: true do
       get 'page/:page', action: :index, on: :collection
-      resources :games
-      match 'games/edit', to: 'games#edit_all', via: :get, as: :edit_games
     end
 
     # players
     match 'tournaments/:id/players', to: 'tournaments#players', via: :get, as: :tournament_players
     match 'tournaments/:id/players/edit', to: 'tournaments#edit_players', via: :get, as: :tournament_edit_players
     match 'tournaments/:id/players', to: 'tournaments#update_players', via: :patch, as: :tournament_update_players
+
+    # games
+    match 'tournaments/:id/games', to: 'tournaments#games', via: :get, as: :tournament_games
+    match 'tournaments/:id/games/edit', to: 'tournaments#edit_games', via: :get, as: :tournament_edit_games
+    match 'tournaments/:id/games', to: 'tournaments#update_games', via: :patch, as: :tournament_update_games
 
     match 'tournaments/:id/raw', to: 'tournaments#raw', via: :get
     match 'tournaments/:id/upload', to: 'tournaments#upload', via: :get, as: :upload_tournament

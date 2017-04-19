@@ -163,6 +163,10 @@ class TournamentsController < ApplicationController
   end
 
 
+  def edit_games
+  end
+
+
   private
     def set_tournament
       @tournament = Tournament.find(params[:id])

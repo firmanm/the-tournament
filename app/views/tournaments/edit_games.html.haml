@@ -1,0 +1,134 @@
+= content_for :page_title, "#{@tournament.title} #{t('tournament_menu.games')}"
+= content_for :keywords, @tournament.title
+
+= render partial: "shared/tournament_info", locals: {tournament:@tournament, editable: false}
+= render partial: "shared/tournament_navi", locals: {tournament:@tournament, step:3}
+
+%section
+  %h1.headline
+    = fa_icon("list-alt")
+    = t('tournament_menu.games')
+
+  - editable = (current_user == @tournament.user) ? true : false
+  .panel.panel-default
+    .panel-heading 対戦表
+    %table#game-list.table.f16
+      - @tournament.results.each.with_index(1) do |round, round_num|
+        %tr.warning
+          %td(colspan=7)
+            - if round_num == @tournament.round_num
+              = I18n.t('tournament.round_name.final_round')
+            - elsif round_num == @tournament.round_num - 1
+              = I18n.t('tournament.round_name.semi-final_round')
+            - else
+              = I18n.t('tournament.round_name.numbered_round', round: round_num)
+
+        - round.each.with_index(1) do |game, game_num|
+          -# 3位決定戦のgameも必ず作成されるので、なしのときは表示スキップ
+          - next if (!@tournament.consolation_round) && (round_num == @tournament.round_num) && (game_num == 2)
+
+          - colors = ['text-danger', 'text-muted']
+          - color_1 = color_2 = nil
+          - if game[0] && game[1]
+            - color_1 = (game[0] > game[1]) ? colors[0] : colors[1]
+            - color_2 = (game[1] > game[0]) ? colors[0] : colors[1]
+
+          %tr
+            - if round_num == @tournament.round_num
+              %td.width-10= (game_num==1) ? '決勝戦' : '3位決定戦'
+            - else
+              %td.width-10= "第#{game_num}試合"
+
+            -# First Player
+            %td.width-30.text-right{class: color_1}
+              = @tournament.team_name(round_num, game_num, 0)['name']
+            %td.width-8.text-right
+              = game[0]
+
+            %td.width-4.text-center -
+
+            -# Second Player
+            %td.width-8
+              = game[1]
+            %td.width-30{class: color_2}
+              = @tournament.team_name(round_num, game_num, 1)['name']
+            %td.width-10.text-right
+              - if editable
+                = link_to t('edit'), '#', data: {toggle: "modal", target: "#modal", whatever: "@mdo"}, class: 'btn btn-primary btn-sm pull-right'
+
+
+  %hr
+  %div
+    = link_to '完了してトーナメント表を表示する', pretty_tournament_path(@tournament, @tournament.title), class: "btn btn-large btn-danger", data:{no_turbolink:true}
+    %br
+    %small ※試合結果はあとから再度更新可能です
+
+
+
+.modal.fade#modal(tabindex="-1" role="dialog" aria-hidden="true")
+  .modal-dialog.modal-lg(role="document")
+    .modal-content
+      = simple_form_for @tournament.becomes(Tournament), url: tournament_update_games_path(@tournament), html: {class: 'form-horizontal'} do |f|
+        .modal-header
+          %h5.modal-title 試合結果登録
+        .modal-body
+          - scoreless = (@tournament.scoreless?) ? 'hidden' : ''
+          .row{class: scoreless}
+            .col-md-1.col-md-push-5.text-center.visible-md.visible-lg
+              - 5.times do
+                %br
+              %i.fa.fa-minus
+            .col-md-5.text-center{class: 'col-md-pull-1'}
+              .panel{class: 'panel-default'}
+                .panel-heading
+                  %i.fa.fa-2x
+                  %br
+                  %h4
+                    = "player1"
+                %ul.list-group
+                  %li.list-group-item.clearfix
+                    %br
+                    %div.clearfix
+                      .form-group.game_game_records_score.integer.required
+                        .form-group
+                          -# - record_id = r.object.record_num - 1
+                          -# = r.input_field :score, value: r.object.score || 0, class: 'input-lg text-right', id: "game_game_records_attributes_#{record_id}_score", name: "game[game_records_attributes][#{record_id}][score]", min: 0
+            .col-md-5.text-center
+              .panel{class: 'panel-default'}
+                .panel-heading
+                  %i.fa.fa-2x
+                  %br
+                  %h4
+                    = "player2"
+                %ul.list-group
+                  %li.list-group-item.clearfix
+                    %br
+                    %div.clearfix
+                      .form-group.game_game_records_score.integer.required
+                        .form-group
+                          -# - record_id = r.object.record_num - 1
+                          -# = r.input_field :score, value: r.object.score || 0, class: 'input-lg text-right', id: "game_game_records_attributes_#{record_id}_score", name: "game[game_records_attributes][#{record_id}][score]", min: 0
+
+          %div.mb-30
+            - if @tournament.scoreless?
+              %small= t('games.winner_select_scoreless')
+            - else
+              %small= t('games.winner_select_samescore')
+
+            .row
+              .col-md-6
+                %select#winner-select.form-control(disabled)
+                  %option(value="0") --
+                  -#   %option(value="#{r.record_num}")= r.player.name
+
+          %div.mb-30
+            %small コメント(オプション)
+            .row
+              .col-md-6
+                = text_field_tag 'tournament[game][comment]', '', {class: 'string optional form-control'}
+                %p.help-block 24文字まで。トーナメント表マウスオーバー時に表示されます
+
+        .modal-footer
+          = hidden_field_tag 'tournament[game][id]',  ''
+          %button(type="button" class="btn btn-secondary" data-dismiss="modal") キャンセル
+          = f.submit '更新する', class: 'btn btn-primary'
