@@ -34,8 +34,18 @@ disable_winner_select = ->
   $('#winner-select').attr('disabled','disabled')
   $('#winner-select').val('0')
 
+
 $ ->
-  if $('#game-edit').length
+  if ($('body').data('controller')=='tournaments' && $('body').data('action')=='edit_games')
+    # 試合結果編集ボタンを押したときに、モーダルに該当試合のデータをセット
+    $('.btn-edit-game').click ->
+      $('.modal-title').text($(this).data('game-name'))
+      target_game = $(".game_tr[data-round_num='"+$(this).data('round-num')+"'][data-game_num='"+$(this).data('game-num')+"']")
+
+      $('#modal-game .player1.name').text(target_game.find('.player1.name').text())
+      $('#modal-game .player2.name').text(target_game.find('.player2.name').text())
+
+
     # 同点の場合は最初から手動の勝者選択をactiveにしとく
     scores = [Number($('.game_game_records_score input')[0].value), Number($('.game_game_records_score input')[1].value)]
     if scores[0] == scores[1]

@@ -17,11 +17,12 @@
         %tr.warning
           %td(colspan=7)
             - if round_num == @tournament.round_num
-              = I18n.t('tournament.round_name.final_round')
+              - round_name = I18n.t('tournament.round_name.final_round')
             - elsif round_num == @tournament.round_num - 1
-              = I18n.t('tournament.round_name.semi-final_round')
+              - round_name = I18n.t('tournament.round_name.semi-final_round')
             - else
-              = I18n.t('tournament.round_name.numbered_round', round: round_num)
+              - round_name = I18n.t('tournament.round_name.numbered_round', round: round_num)
+            = round_name
 
         - round.each.with_index(1) do |game, game_num|
           -# 3位決定戦のgameも必ず作成されるので、なしのときは表示スキップ
@@ -33,28 +34,29 @@
             - color_1 = (game[0] > game[1]) ? colors[0] : colors[1]
             - color_2 = (game[1] > game[0]) ? colors[0] : colors[1]
 
-          %tr
+          %tr.game_tr(data-round_num="#{round_num}" data-game_num="#{game_num}")
             - if round_num == @tournament.round_num
-              %td.width-10= (game_num==1) ? '決勝戦' : '3位決定戦'
+              - game_name = (game_num==1) ? '決勝戦' : '3位決定戦'
             - else
-              %td.width-10= "第#{game_num}試合"
+              - game_name = "第#{game_num}試合"
+            %td.width-10= game_name
 
             -# First Player
-            %td.width-30.text-right{class: color_1}
+            %td.width-30.text-right.player1.name{class: color_1}
               = @tournament.team_name(round_num, game_num, 0)['name']
-            %td.width-8.text-right
+            %td.width-8.text-right.player1.score
               = game[0]
 
             %td.width-4.text-center -
 
             -# Second Player
-            %td.width-8
+            %td.width-8.player2.score
               = game[1]
-            %td.width-30{class: color_2}
+            %td.width-30.player2.name{class: color_2}
               = @tournament.team_name(round_num, game_num, 1)['name']
             %td.width-10.text-right
               - if editable
-                = link_to t('edit'), '#', data: {toggle: "modal", target: "#modal", whatever: "@mdo"}, class: 'btn btn-primary btn-sm pull-right'
+                = link_to t('edit'), '#', data: {toggle: "modal", target: "#modal-game", round_num: round_num, game_num: game_num, game_name: "#{round_name}#{game_name}"}, class: 'btn btn-primary btn-sm pull-right btn-edit-game'
 
 
   %hr
@@ -65,12 +67,12 @@
 
 
 
-.modal.fade#modal(tabindex="-1" role="dialog" aria-hidden="true")
+.modal.fade#modal-game(tabindex="-1" role="dialog" aria-hidden="true")
   .modal-dialog.modal-lg(role="document")
     .modal-content
       = simple_form_for @tournament.becomes(Tournament), url: tournament_update_games_path(@tournament), html: {class: 'form-horizontal'} do |f|
         .modal-header
-          %h5.modal-title 試合結果登録
+          %h5.modal-title
         .modal-body
           - scoreless = (@tournament.scoreless?) ? 'hidden' : ''
           .row{class: scoreless}
@@ -83,8 +85,7 @@
                 .panel-heading
                   %i.fa.fa-2x
                   %br
-                  %h4
-                    = "player1"
+                  %h4.player1.name
                 %ul.list-group
                   %li.list-group-item.clearfix
                     %br
@@ -98,8 +99,7 @@
                 .panel-heading
                   %i.fa.fa-2x
                   %br
-                  %h4
-                    = "player2"
+                  %h4.player2.name
                 %ul.list-group
                   %li.list-group-item.clearfix
                     %br
