@@ -1,0 +1,71 @@
+= content_for :page_title, "#{@tournament.title}の#{@round_name} 第#{@game_num}試合"
+= content_for :keywords, @tournament.title
+
+= render partial: "shared/tournament_info", locals: {tournament:@tournament, editable:false}
+= render partial: "shared/tournament_navi", locals: {tournament:@tournament, step:3}
+
+%section#game-edit
+  %h1.headline
+    = fa_icon("list-alt")
+    = "#{@round_name} #{@game_name}"
+
+  = simple_form_for @tournament.becomes(Tournament), url: tournament_update_game_path(@tournament, @round_num, @game_num), html: {class: 'form-horizontal'} do |f|
+    - scoreless = (@tournament.scoreless?) ? 'hidden' : ''
+    .row{class: "#{scoreless} .game_game_records_score" }
+      .col-md-1.col-md-push-5.text-center.visible-md.visible-lg
+        - 5.times do
+          %br
+        %i.fa.fa-minus
+      .col-md-5.text-center{class: 'col-md-pull-1'}
+        .panel{class: 'panel-default'}
+          .panel-heading
+            %i.fa.fa-2x
+            %br
+            %h4= @players[0]['name']
+          %ul.list-group
+            %li.list-group-item.clearfix
+              %br
+              %div.clearfix
+                .form-group.game_game_records_score.integer.required
+                  .form-group
+                    = number_field_tag 'game[score][]', @game['score'][0], {class: 'string form-control'}
+      .col-md-5.text-center
+        .panel{class: 'panel-default'}
+          .panel-heading
+            %i.fa.fa-2x
+            %br
+            %h4= @players[1]['name']
+          %ul.list-group
+            %li.list-group-item.clearfix
+              %br
+              %div.clearfix
+                .form-group.game_game_records_score.integer.required
+                  .form-group
+                    = number_field_tag 'game[score][]', @game['score'][1], {class: 'string form-control'}
+
+    %div.mb-30
+      - if @tournament.scoreless?
+        %small= t('games.winner_select_scoreless')
+      - else
+        %small= t('games.winner_select_samescore')
+
+      .row
+        .col-md-6
+          - disabled = @tournament.scoreless ? false : 'disabled'
+          %select#winner-select.form-control{disabled: disabled}
+            %option(value='')
+            %option(value=1)= @players[0]['name']
+            %option(value=2)= @players[1]['name']
+          = hidden_field_tag 'game[winner]', @game['winner']
+
+    %div.mb-30
+      %small コメント(オプション)
+      .row
+        .col-md-6
+          = text_field_tag 'game[comment]', @game['comment'], {class: 'string optional form-control', maxLength: 50}
+          %p.help-block 50文字まで。トーナメント表マウスオーバー時に表示されます
+
+    %hr
+
+    = f.submit '更新する', class: "btn btn-primary disabled"
+    = link_to 'キャンセル', tournament_edit_games_path(@tournament), class: 'btn btn-secondary'

@@ -84,7 +84,7 @@ class Tournament < ActiveRecord::Base
       match_count = [(self.size / 2**i), 2].max
       arr = []
       for i in 1..match_count do
-        arr << [nil, nil]
+        arr << {score: [nil, nil], winner: nil, comment: nil}
       end
       results << arr
     end
@@ -156,13 +156,30 @@ class Tournament < ActiveRecord::Base
     "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/image.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&title=#{CGI.escape(self.title)}"
   end
 
+  def scores
+    scores = []
+    self.results.each do |round|
+      # round << round.map{|m| m['score']}
+      round_scores = []
+      round.each do |game|
+        score = game['score']
+        # 同点ゲームの場合
+        if game['winner'] && score[0]==score[1]
+          score[game['winner']-1] += 0.1
+        end
+        round_scores << score
+      end
+      scores << round_scores
+    end
+    scores
+  end
+
   def to_json
     {
       title: self.title,
-      tournament_data: { teams: self.teams, results: self.results },
+      tournament_data: { teams: self.teams, results: self.scores },
       skip_secondary_final: (self.de?) ? !self.secondary_final : false,
       skip_consolation_round: !self.consolation_round,
-      # countries: self.players.map{|p| p.country.try(:downcase)},
       # match_data: self.match_data,
       scoreless: self.scoreless?
     }.to_json
@@ -215,10 +232,18 @@ class Tournament < ActiveRecord::Base
       target_game_num = (game_num * 2) - (1 - team_index)
 
       target_game = self.results[target_round_num - 1][target_game_num - 1]
-      return {"name" => "(TBD)"} if !target_game || target_game[0].nil?
 
-      winner_index = (target_game[0] > target_game[1]) ? 0 : 1
+      # BYE対応
+      if target_round_num==1 && self.teams[target_game_num - 1].include?(nil)
+        bye_team_index = self.teams[target_game_num - 1].index(nil)
+        return self.teams[target_game_num - 1][1 - bye_team_index]
+      end
 
+      if !target_game || target_game['winner'].nil?
+        return {"name" => "(TBD)"}
+      end
+
+      winner_index = target_game['winner'] - 1
       self.team_name(target_round_num, target_game_num, winner_index)
     end
   end

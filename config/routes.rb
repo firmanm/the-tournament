@@ -20,7 +20,9 @@ TheTournament::Application.routes.draw do
     # games
     match 'tournaments/:id/games', to: 'tournaments#games', via: :get, as: :tournament_games
     match 'tournaments/:id/games/edit', to: 'tournaments#edit_games', via: :get, as: :tournament_edit_games
+    match 'tournaments/:id/games/edit/:round_num/:game_num', to: 'tournaments#edit_game', via: :get, as: :tournament_edit_game
     match 'tournaments/:id/games', to: 'tournaments#update_games', via: :patch, as: :tournament_update_games
+    match 'tournaments/:id/games/:round_num/:game_num', to: 'tournaments#update_game', via: :patch, as: :tournament_update_game
 
     match 'tournaments/:id/raw', to: 'tournaments#raw', via: :get
     match 'tournaments/:id/upload', to: 'tournaments#upload', via: :get, as: :upload_tournament

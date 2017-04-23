@@ -13,17 +13,18 @@ judge_winner = (score_1, score_2) ->
 
 # formの値とdivのclassをリセット
 reset_winner = ->
-  $('.game_game_records_winner input').attr('value', '')
   $('.panel').removeClass('panel-warning').addClass('panel-default')
   $('.panel-heading i').removeClass('fa-trophy fa-times')
+  $('#game_winner').val('')
+  $('.btn.btn-primary').addClass('disabled')
 
 # winner/loserの要素をそれぞれセット
 set_winner = (winner) ->
-  $('.game_game_records_winner input')[winner-1].value = true
-  $('.game_game_records_winner input')[2-winner].value = false
   $('.panel').eq(winner-1).addClass('panel-warning')
   $('.panel-heading i').eq(winner-1).addClass('fa-trophy')
   $('.panel-heading i').eq(2-winner).addClass('fa-times')
+  $('#game_winner').val(winner)
+  $('.btn.btn-primary').removeClass('disabled')
 
 # 手動の勝者選択を可能にする
 enable_winner_select = ->
@@ -32,23 +33,18 @@ enable_winner_select = ->
 # 手動の勝者選択を不可にして設定値をリセット
 disable_winner_select = ->
   $('#winner-select').attr('disabled','disabled')
-  $('#winner-select').val('0')
 
 
 $ ->
-  if ($('body').data('controller')=='tournaments' && $('body').data('action')=='edit_games')
-    # 試合結果編集ボタンを押したときに、モーダルに該当試合のデータをセット
-    $('.btn-edit-game').click ->
-      $('.modal-title').text($(this).data('game-name'))
-      target_game = $(".game_tr[data-round_num='"+$(this).data('round-num')+"'][data-game_num='"+$(this).data('game-num')+"']")
-
-      $('#modal-game .player1.name').text(target_game.find('.player1.name').text())
-      $('#modal-game .player2.name').text(target_game.find('.player2.name').text())
-
-
+  if ($('body').data('controller')=='tournaments' && $('body').data('action')=='edit_game')
     # 同点の場合は最初から手動の勝者選択をactiveにしとく
     scores = [Number($('.game_game_records_score input')[0].value), Number($('.game_game_records_score input')[1].value)]
-    if scores[0] == scores[1]
+    winner = $("#game_winner").val()
+    if winner
+      set_winner(winner)
+      $('#winner-select').val(winner)
+      enable_winner_select() if scores[0]==scores[1]
+    else
       enable_winner_select()
 
     # スコアが変更されたとき
@@ -61,9 +57,11 @@ $ ->
       # 引き分けじゃなかったら勝者セット
       if winner
         set_winner(winner)
+        $('#winner-select').val(winner)
         disable_winner_select()
       # 引き分けのときは手動で勝者選択できるようにする
       else
+        $('#winner-select').val('')
         enable_winner_select()
 
     # 手動の勝者選択が変更されたとき

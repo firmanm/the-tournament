@@ -1,6 +1,6 @@
 class TournamentsController < ApplicationController
   skip_before_action :authenticate_user!, only: [:index, :show, :embed, :raw, :photos]
-  before_action :set_tournament, only: [:show, :edit, :update, :destroy, :embed, :upload, :players]
+  before_action :set_tournament, only: [:show, :edit, :update, :destroy, :embed, :upload, :players, :edit_game]
   load_and_authorize_resource
 
 
@@ -164,6 +164,43 @@ class TournamentsController < ApplicationController
 
 
   def edit_games
+  end
+
+  def edit_game
+    @round_num = params[:round_num].to_i
+    @game_num = params[:game_num].to_i
+    @game = @tournament.results[@round_num-1][@game_num-1]
+
+    @players = [
+      @tournament.team_name(@round_num, @game_num, 0),
+      @tournament.team_name(@round_num, @game_num, 1)
+    ]
+
+    @round_name = @tournament.round_name(round: @round_num)
+    if @round_num == @tournament.round_num
+      @game_name = (@game_num==1) ? '決勝戦' : '3位決定戦'
+    else
+      @game_name = "第#{@game_num}試合"
+    end
+  end
+
+  def update_game
+    @round_num = params[:round_num].to_i
+    @game_num = params[:game_num].to_i
+
+    game_params = {
+      score: params[:game]['score'].map(&:to_i),
+      winner: params[:game]['winner'].to_i,
+      comment: params[:game]['comment']
+    }
+    @tournament.results[@round_num-1][@game_num-1] = game_params
+
+    if @tournament.update({results: @tournament.results.to_json})
+      redirect_to tournament_edit_games_path(@tournament), notice: I18n.t('flash.game.update.success')
+    else
+      flash.now[:alert] = I18n.t('flash.game.update.failure')
+      render "tournaments/edit_game/#{@round_num}/#{@game_num}"
+    end
   end
 
 
