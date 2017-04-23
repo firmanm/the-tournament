@@ -158,15 +158,23 @@ class Tournament < ActiveRecord::Base
 
   def scores
     scores = []
-    self.results.each do |round|
+    self.results.each.with_index(1) do |round, round_num|
       # round << round.map{|m| m['score']}
       round_scores = []
-      round.each do |game|
+      round.each.with_index(1) do |game, game_num|
         score = game['score']
         # 同点ゲームの場合
         if game['winner'] && score[0]==score[1]
           score[game['winner']-1] += 0.1
         end
+        score.map!{|m| m.try(:abs)}
+
+        # Tooltip用の試合情報をセット
+        match_data = "#{self.round_name(round: round_num)}#{self.game_name(round:round_num, game:game_num)}　"
+        match_data += "#{self.team_name(round_num, game_num, 0)['name']} - #{self.team_name(round_num, game_num, 1)['name']} "
+        match_data += "#{game['comment']}"
+        score << match_data
+
         round_scores << score
       end
       scores << round_scores
@@ -180,7 +188,6 @@ class Tournament < ActiveRecord::Base
       tournament_data: { teams: self.teams, results: self.scores },
       skip_secondary_final: (self.de?) ? !self.secondary_final : false,
       skip_consolation_round: !self.consolation_round,
-      # match_data: self.match_data,
       scoreless: self.scoreless?
     }.to_json
   end

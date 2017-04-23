@@ -1,16 +1,16 @@
 .panel.panel-default
   .panel-heading 対戦表
-  %table#game-list.table.f16
+  %table#game-list.table.f16.table-responsive
     - tournament.results.each.with_index(1) do |round, round_num|
+      - if round_num == tournament.round_num
+        - round_name = I18n.t('tournament.round_name.final_round')
+      - elsif round_num == tournament.round_num - 1
+        - round_name = I18n.t('tournament.round_name.semi-final_round')
+      - else
+        - round_name = I18n.t('tournament.round_name.numbered_round', round: round_num)
       %tr.warning
-        %td(colspan=7)
-          - if round_num == tournament.round_num
-            - round_name = I18n.t('tournament.round_name.final_round')
-          - elsif round_num == tournament.round_num - 1
-            - round_name = I18n.t('tournament.round_name.semi-final_round')
-          - else
-            - round_name = I18n.t('tournament.round_name.numbered_round', round: round_num)
-          = round_name
+        %td.visible-xs.visible-sm(colspan=5)= round_name
+        %td.visible-md.visible-lg(colspan=7)= round_name
 
       - round.each.with_index(1) do |game, game_num|
         -# 3位決定戦のgameも必ず作成されるので、なしのときは表示スキップ
@@ -31,12 +31,13 @@
           - color_1 = colors[1]
           - color_2 = colors[0]
 
-        %tr
-          - if round_num == tournament.round_num
-            - game_name = (game_num==1) ? '決勝戦' : '3位決定戦'
-          - else
-            - game_name = "第#{game_num}試合"
+        - if round_num == tournament.round_num
+          - game_name = (game_num==1) ? '決勝戦' : '3位決定戦'
+        - else
+          - game_name = "第#{game_num}試合"
 
+        -# PC
+        %tr.visible-md.visible-lg
           - rowspan = (game['comment'].present?) ? 2 : 1
           %td.width-10{rowspan: rowspan}= game_name
 
@@ -57,6 +58,32 @@
             - if editable && (['(TBD)', '--'] & [player1['name'], player2['name']]).blank?
               = link_to t('edit'), tournament_edit_game_path(tournament, round_num, game_num), class: 'btn btn-primary btn-sm pull-right'
         - if game['comment'].present?
-          %tr.comment
+          %tr.comment.visible-md.visible-lg
+            %td(colspan=5)
+              %small= game['comment']
+
+        -# SP
+        %tr.visible-xs.visible-sm
+          %td(colspan=4)= game_name
+          %td.text-right
+            - if editable && (['(TBD)', '--'] & [player1['name'], player2['name']]).blank?
+              = link_to t('edit'), tournament_edit_game_path(tournament, round_num, game_num), class: 'btn btn-primary btn-sm pull-right'
+
+        %tr.visible-xs.visible-sm
+          -# First Player
+          %td.width-40.text-right{class: color_1}
+            = player1['name']
+          %td.width-8.text-right.player1.score
+            = game['score'][0].try(:abs) if !tournament.scoreless
+
+          %td.width-4.text-center -
+
+          -# Second Player
+          %td.width-8.player2.score
+            = game['score'][1].try(:abs) if !tournament.scoreless
+          %td.width-40.player2.name{class: color_2}
+            = player2['name']
+        - if game['comment'].present?
+          %tr.comment.visible-xs.visible-sm
             %td(colspan=5)
               %small= game['comment']

@@ -31,7 +31,6 @@ class SingleElimination < Tournament
   end
 
   def round_name(args)
-    bracket = args[:bracket] || 1
     round = args[:round]
 
     if round == self.round_num
@@ -40,6 +39,17 @@ class SingleElimination < Tournament
       I18n.t('tournament.round_name.semi-final_round')
     else
       I18n.t('tournament.round_name.numbered_round', round: round)
+    end
+  end
+
+  def game_name(args)
+    round_num = args[:round]
+    game_num = args[:game]
+
+    if round_num == self.round_num
+      game_name = (game_num==1) ? '決勝戦' : '3位決定戦'
+    else
+      game_name = "第#{game_num}試合"
     end
   end
 
