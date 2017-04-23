@@ -46,7 +46,7 @@ $ ->
           if gon.scoreless   # when the tournament is scoreless
             this.innerText = '--'
           else  # Same score win
-            this.innerText = Math.floor(this.innerText)
+            this.innerText = Math.abs(Math.floor(this.innerText))
       )
 
     setTooltip = ->

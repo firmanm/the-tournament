@@ -6,11 +6,9 @@
     =link_to t('tournament_menu.games'), tournament_games_path(tournament)
   %li{class: (active==3) ? 'active' : ''}
     =link_to t('tournament_menu.players'), tournament_players_path(tournament)
-  %li{class: (active==4) ? 'active' : ''}
-    =link_to tournament_photos_path(tournament), data:{turbolinks: false} do
-      フォトアルバム
-      - if active!=4
-        %span.label.label-warning New!
+  - if tournament.facebook_album_id.present?
+    %li{class: (active==4) ? 'active' : ''}
+      =link_to 'フォトアルバム', tournament_photos_path(tournament), data:{turbolinks: false}
 -# SP版: Pillsでメニュー表示
 %ul.nav.nav-pills.nav-stacked.visible-xs.visible-sm
   %li{class: (active==1) ? 'active' : ''}
@@ -19,9 +17,7 @@
     =link_to t('tournament_menu.games'), tournament_games_path(tournament)
   %li{class: (active==3) ? 'active' : ''}
     =link_to t('tournament_menu.players'), tournament_players_path(tournament)
-  %li{class: (active==4) ? 'active' : ''}
-    =link_to tournament_photos_path(tournament), data:{turbolinks: false} do
-      フォトアルバム
-      - if active!=4
-        %span.label.label-warning New!
+  - if tournament.facebook_album_id.present?
+    %li{class: (active==4) ? 'active' : ''}
+      =link_to 'フォトアルバム', tournament_photos_path(tournament), data:{turbolinks: false}
 %hr

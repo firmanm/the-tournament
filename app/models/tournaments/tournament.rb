@@ -167,7 +167,6 @@ class Tournament < ActiveRecord::Base
         if game['winner'] && score[0]==score[1]
           score[game['winner']-1] += 0.1
         end
-        score.map!{|m| m.try(:abs)}
 
         # Tooltip用の試合情報をセット
         match_data = "#{self.round_name(round: round_num)}#{self.game_name(round:round_num, game:game_num)}　"
