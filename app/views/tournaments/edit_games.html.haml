@@ -9,63 +9,8 @@
     = fa_icon("list-alt")
     = t('tournament_menu.games')
 
-  - editable = (current_user == @tournament.user) ? true : false
-  .panel.panel-default
-    .panel-heading 対戦表
-    %table#game-list.table.f16
-      - @tournament.results.each.with_index(1) do |round, round_num|
-        %tr.warning
-          %td(colspan=7)
-            - if round_num == @tournament.round_num
-              - round_name = I18n.t('tournament.round_name.final_round')
-            - elsif round_num == @tournament.round_num - 1
-              - round_name = I18n.t('tournament.round_name.semi-final_round')
-            - else
-              - round_name = I18n.t('tournament.round_name.numbered_round', round: round_num)
-            = round_name
-
-        - round.each.with_index(1) do |game, game_num|
-          -# 3位決定戦のgameも必ず作成されるので、なしのときは表示スキップ
-          - next if (!@tournament.consolation_round) && (round_num == @tournament.round_num) && (game_num == 2)
-
-          - player1 = @tournament.team_name(round_num, game_num, 0)
-          - player2 = @tournament.team_name(round_num, game_num, 1)
-
-          - colors = ['text-danger', 'text-muted']
-          - color_1 = color_2 = nil
-          - if game['winner'].present?
-            - color_1 = (game['winner']==1) ? colors[0] : colors[1]
-            - color_2 = (game['winner']==2) ? colors[0] : colors[1]
-          - elsif player1['name']!='--' && player2['name']=='--'
-            - color_1 = colors[0]
-            - color_2 = colors[1]
-          - elsif player1['name']=='--' && player2['name']!='--'
-            - color_1 = colors[1]
-            - color_2 = colors[0]
-
-          %tr.game_tr(data-round_num="#{round_num}" data-game_num="#{game_num}")
-            - if round_num == @tournament.round_num
-              - game_name = (game_num==1) ? '決勝戦' : '3位決定戦'
-            - else
-              - game_name = "第#{game_num}試合"
-            %td.width-10= game_name
-
-            -# First Player
-            %td.width-30.text-right{class: color_1}
-              = player1['name']
-            %td.width-8.text-right.player1.score
-              = game['score'][0].try(:abs) if !@tournament.scoreless
-
-            %td.width-4.text-center -
-
-            -# Second Player
-            %td.width-8.player2.score
-              = game['score'][1].try(:abs) if !@tournament.scoreless
-            %td.width-30.player2.name{class: color_2}
-              = player2['name']
-            %td.width-10.text-right
-              - if editable && (['(TBD)', '--'] & [player1['name'], player2['name']]).blank?
-                = link_to t('edit'), tournament_edit_game_path(@tournament, round_num, game_num), class: 'btn btn-primary btn-sm pull-right'
+  - editable = current_user == @tournament.user
+  = render partial: "game_list", locals: {tournament:@tournament, editable: editable}
 
   %hr
   %div

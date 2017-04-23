@@ -163,6 +163,9 @@ class TournamentsController < ApplicationController
   end
 
 
+  def games
+  end
+
   def edit_games
   end
 

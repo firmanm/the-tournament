@@ -284,6 +284,11 @@ div.tagsinput {
 #member-list.table tr > th:first-child {
   border-right: 1px solid #efefef;
 }
+#game-list.table tr.comment td {
+  border-top: none;
+  border-right: none;
+  text-align: center;
+}
 .width-4  { width: 4%; }
 .width-8  { width: 8%; }
 .width-10 { width: 10%; }

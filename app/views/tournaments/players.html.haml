@@ -25,4 +25,4 @@
           %td
             = player ? player['name'] : ''
           %td.hidden-sm.hidden-xs
-            = (player && player['flag']) ? Country[player['flag']] : ''
+            = (player && player['flag'] && Country[player['flag']]) ? Country[player['flag']].translation(:ja) : ''
