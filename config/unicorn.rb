@@ -1,6 +1,6 @@
 worker_processes Integer(ENV["WEB_CONCURRENCY"] || 3)
 if ENV['RAILS_ENV']=='production'
-  timeout 15
+  timeout 30
 else
   timeout 150
 end
@@ -25,4 +25,3 @@ after_fork do |server, worker|
   defined?(ActiveRecord::Base) and
     ActiveRecord::Base.establish_connection
 end
-
