@@ -25,6 +25,8 @@ class Tournament < ActiveRecord::Base
   validates :user_id, presence: true
   validates :size, presence: true
   validate :tnmt_size_must_be_smaller_than_limit, on: :create
+  validate :teams_count_must_be_equal_to_tnmt_size, on: :update
+  validate :do_not_allow_double_bye, on: :update
   validates :type, presence: true, inclusion: {in: ['SingleElimination', 'DoubleElimination']}
   validates :title, presence: true, length: {maximum: 100}, exclusion: {in: %w(index new edit players games)}
   validates :place, length: {maximum: 100}, allow_nil: true
@@ -36,6 +38,16 @@ class Tournament < ActiveRecord::Base
 
   def tnmt_size_must_be_smaller_than_limit
     errors.add(:size, "作成できるサイズ上限を越えています") unless self.user.creatable_sizes.has_value? size
+  end
+
+  def teams_count_must_be_equal_to_tnmt_size
+    errors[:base] << "参加者数がトーナメントのサイズと一致しないようです…。もう一度登録内容をご確認ください。" if teams.count != self.size
+  end
+
+  def do_not_allow_double_bye
+    for i in 1..(self.size/2)
+      errors[:base] << "二回戦シードはまだ未対応です。シード（空欄）同士が一回戦で当たらないように設定してください。" if teams[i-1].nil? && teams[i].nil?
+    end
   end
 
   default_scope {order(created_at: :desc)}

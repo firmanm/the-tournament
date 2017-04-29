@@ -123,12 +123,7 @@ class TournamentsController < ApplicationController
 
 
   def edit_players
-    @teams_text = ""
-    @tournament.teams.each do |m|
-      @teams_text += m['name'] if m
-      @teams_text += ",#{m['flag']}" if m && m['flag'].present?
-      @teams_text += "\r\n"
-    end
+    set_teams_text
   end
 
 
@@ -154,7 +149,10 @@ class TournamentsController < ApplicationController
       @tournament.update_bye_games
       redirect_to tournament_edit_players_path(@tournament), notice: I18n.t('flash.players.update.success')
     else
-      flash.now[:alert] = I18n.t('flash.players.update.failure')
+      set_teams_text
+      @tournament.teams = @tournament.teams.in_groups_of(@tournament.size).first
+
+      flash.now[:alert] = @tournament.errors.full_messages.first
       render 'tournaments/edit_players'
     end
   end
@@ -212,5 +210,14 @@ class TournamentsController < ApplicationController
 
     def tournament_params
       params.require(:tournament).permit(:id, :title, :user_id, :detail, :type, :place, :url, :size, :consolation_round, :tag_list, :double_elimination, :scoreless, :facebook_album_id, :teams, :results, players_attributes: [:id, :name, :group, :country], players_all: [:players])
+    end
+
+    def set_teams_text
+      @teams_text = ""
+      @tournament.teams.each do |m|
+        @teams_text += m['name'] if m
+        @teams_text += ",#{m['flag']}" if m && m['flag'].present?
+        @teams_text += "\r\n"
+      end
     end
 end
