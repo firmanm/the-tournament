@@ -54,8 +54,8 @@
           - disabled = @tournament.scoreless ? false : 'disabled'
           %select#winner-select.form-control{disabled: disabled}
             %option(value='')
-            %option(value=1)= @players[0]['name']
-            %option(value=2)= @players[1]['name']
+            %option(value=0)= @players[0]['name']
+            %option(value=1)= @players[1]['name']
           = hidden_field_tag 'game[winner]', @game['winner']
 
     %div.mb-30

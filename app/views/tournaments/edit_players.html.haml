@@ -38,7 +38,7 @@
                 = t('member_list.country')
                 %i.fa.fa-question-circle(data-toggle='tooltip' title='国を登録すると、トーナメント表に国旗アイコンが表示されます')
             %tr
-            - @teams_array.each.with_index(1) do |team, index|
+            - @tournament.teams.each.with_index(1) do |team, index|
               - if team
                 - name = team['name']
                 - flag = team['flag'].try(:upcase)

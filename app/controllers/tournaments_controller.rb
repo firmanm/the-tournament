@@ -118,15 +118,13 @@ class TournamentsController < ApplicationController
 
 
   def players
-    @players = @tournament.teams.flatten
+    @players = @tournament.teams
   end
 
 
   def edit_players
-    @teams_array = @tournament.teams.flatten
-
     @teams_text = ""
-    @teams_array.each do |m|
+    @tournament.teams.each do |m|
       @teams_text += m['name'] if m
       @teams_text += ",#{m['flag']}" if m && m['flag'].present?
       @teams_text += "\r\n"
@@ -141,20 +139,19 @@ class TournamentsController < ApplicationController
       params[:tournament][:teams_array].each_with_index do |team, i|
         team_data = team['name'].present? ? team : nil
         team_data['flag'].try(:downcase!) if team_data
-        teams << [] if i%2==0
-        teams.last << team_data
+        teams << team_data
       end
     # まとめて入力
     elsif params[:input_type] == 'text'
       params[:tournament][:teams_text].lines.each_with_index do |line, i|
         team = line.chomp.split(",")
         team_data = (team[0].present?) ? {name: team[0], flag: team[1].try(:downcase)} : nil
-        teams << [] if i%2==0
-        teams.last << team_data
+        teams << team_data
       end
     end
 
     if @tournament.update({teams: teams.to_json})
+      @tournament.update_bye_games
       redirect_to tournament_edit_players_path(@tournament), notice: I18n.t('flash.players.update.success')
     else
       flash.now[:alert] = I18n.t('flash.players.update.failure')
@@ -175,8 +172,8 @@ class TournamentsController < ApplicationController
     @game = @tournament.results[@round_num-1][@game_num-1]
 
     @players = [
-      @tournament.team_name(@round_num, @game_num, 0),
-      @tournament.team_name(@round_num, @game_num, 1)
+      @tournament.winner_team(@round_num, @game_num, 0),
+      @tournament.winner_team(@round_num, @game_num, 1)
     ]
 
     @round_name = @tournament.round_name(round: @round_num)
@@ -194,7 +191,8 @@ class TournamentsController < ApplicationController
     game_params = {
       score: params[:game]['score'].map(&:to_i),
       winner: params[:game]['winner'].to_i,
-      comment: params[:game]['comment']
+      comment: params[:game]['comment'],
+      finished: true
     }
     @tournament.results[@round_num-1][@game_num-1] = game_params
 

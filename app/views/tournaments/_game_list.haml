@@ -16,14 +16,16 @@
         -# 3位決定戦のgameも必ず作成されるので、なしのときは表示スキップ
         - next if (!tournament.consolation_round) && (round_num == tournament.round_num) && (game_num == 2)
 
-        - player1 = tournament.team_name(round_num, game_num, 0)
-        - player2 = tournament.team_name(round_num, game_num, 1)
+        - player1 = tournament.winner_team(round_num, game_num, 0)
+        - player2 = tournament.winner_team(round_num, game_num, 1)
 
         - colors = ['text-danger', 'text-muted']
         - color_1 = color_2 = nil
         - if game['winner'].present?
-          - color_1 = (game['winner']==1) ? colors[0] : colors[1]
-          - color_2 = (game['winner']==2) ? colors[0] : colors[1]
+          - color_1 = colors[game['winner']]
+          - color_2 = colors[1-game['winner']]
+          -# - color_1 = (game['winner']==1) ? colors[0] : colors[1]
+          -# - color_2 = (game['winner']==2) ? colors[0] : colors[1]
         - elsif player1['name']!='--' && player2['name']=='--'
           - color_1 = colors[0]
           - color_2 = colors[1]
