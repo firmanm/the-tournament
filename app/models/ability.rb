@@ -10,6 +10,8 @@ class Ability
       can :embed, :all
       can :raw, :all
       can :photos, :all
+      can :games, :all
+      can :players, :all
     end
 
     can :manage, User, id: user.id
