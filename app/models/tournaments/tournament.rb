@@ -21,6 +21,8 @@ class Tournament < ActiveRecord::Base
   acts_as_taggable
 
   belongs_to :user
+  has_many :games, -> { order(bracket: :asc, round: :asc, match: :asc) }, dependent: :destroy
+  has_many :players, -> { order(seed: :asc) }, dependent: :destroy
 
   validates :user_id, presence: true
   validates :size, presence: true
@@ -54,7 +56,7 @@ class Tournament < ActiveRecord::Base
   scope :finished, -> { where(finished: true) }
 
   before_create :initialize_teams_and_results
-  # after_save :upload_json, :upload_img
+  after_save :upload_json, :upload_img
 
   def self.search_tournaments(params)
     if params[:q]
@@ -116,11 +118,11 @@ class Tournament < ActiveRecord::Base
   end
 
   def embed_url
-    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/index.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&width=100"
+    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/v2/index.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&width=100"
   end
 
   def embed_img_url
-    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/image.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&title=#{CGI.escape(self.title)}"
+    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/v2/image.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&title=#{CGI.escape(self.title)}"
   end
 
   def jqb_teams
@@ -187,9 +189,9 @@ class Tournament < ActiveRecord::Base
     }.to_json
   end
 
-  def upload_json(json)
+  def upload_json
     file_path = File.join(Rails.root, "/tmp/#{self.id}.json")
-    File.write(file_path, json)
+    File.write(file_path, self.to_json)
 
     TournamentUploader.new.store!( File.new(file_path) ) if Rails.env.production?
   end

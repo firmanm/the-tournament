@@ -65,7 +65,7 @@
     var tnmt_title = getQueryString('title');
 
     window.onload = function() {
-      document.getElementById('emb-img').src = 'https://the-tournament.storage.googleapis.com/embed/json/'+tnmt_id+'.png?t='+ new Date().getTime();
+      document.getElementById('emb-img').src = 'https://the-tournament.storage.googleapis.com/embed/v2/json/'+tnmt_id+'.png?t='+ new Date().getTime();
       document.getElementById('original_link').innerText = decodeURIComponent(tnmt_title);
       document.getElementById('original_link').href = 'https://the-tournament.jp/tournaments/'+tnmt_id;
     };
@@ -95,7 +95,13 @@
     </div>
     <div id='emb-body'>
       <div style="">
-        <img id="emb-img" src="" style="max-width:2000px;">
+        <img id="emb-img" src="">
+      </div>
+      <div id='emb-ad'>
+        <script type="text/javascript">
+          var nend_params = {"media":41572,"site":225241,"spot":641487,"type":1,"oriented":1};
+        </script>
+        <script type="text/javascript" src="https://js1.nend.net/js/nendAdLoader.js"></script>
       </div>
     </div>
   </div>

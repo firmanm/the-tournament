@@ -151,7 +151,12 @@
         }
       }
 
-      createBracket().done(hideDecimal(), addCountryFlg(), resizeBracket());
+      // (BYE)表記を修正
+      renameBye = function() {
+        $(".label:contains('(BYE)')").text('--')
+      }
+
+      createBracket().done(hideDecimal(),resizeBracket(),renameBye());
 
       $('.teamContainer').attr({
         'data-toggle': 'tooltip',
