@@ -21,17 +21,12 @@ class Tournament < ActiveRecord::Base
   acts_as_taggable
 
   belongs_to :user
-  has_many :games, -> { order(bracket: :asc, round: :asc, match: :asc) }, dependent: :destroy
-  has_many :players, -> { order(seed: :asc) }, dependent: :destroy
 
-  accepts_nested_attributes_for :players
-  accepts_nested_attributes_for :games
-
-  validates_associated :games, on: :create
-  validates_associated :players
   validates :user_id, presence: true
   validates :size, presence: true
   validate :tnmt_size_must_be_smaller_than_limit, on: :create
+  validate :teams_count_must_be_equal_to_tnmt_size, on: :update
+  validate :not_allow_double_bye, on: :update
   validates :type, presence: true, inclusion: {in: ['SingleElimination', 'DoubleElimination']}
   validates :title, presence: true, length: {maximum: 100}, exclusion: {in: %w(index new edit players games)}
   validates :place, length: {maximum: 100}, allow_nil: true
@@ -45,11 +40,20 @@ class Tournament < ActiveRecord::Base
     errors.add(:size, "作成できるサイズ上限を越えています") unless self.user.creatable_sizes.has_value? size
   end
 
+  def teams_count_must_be_equal_to_tnmt_size
+    errors[:base] << "参加者数がトーナメントのサイズと一致しないようです…。もう一度登録内容をご確認ください。" if teams.count != self.size
+  end
+
+  def not_allow_double_bye
+    0.step(self.size-1, 2) do |i|
+      errors[:base] << "二回戦シードはまだ未対応です。シード（空欄）同士が一回戦で当たらないように設定してください。" if teams[i].nil? && teams[i+1].nil?
+    end
+  end
+
   default_scope {order(created_at: :desc)}
   scope :finished, -> { where(finished: true) }
 
-  before_create :build_players, :build_winner_games, :build_third_place_game
-  after_create :create_first_round_records
+  before_create :initialize_teams_and_results
   after_save :upload_json, :upload_img
 
   def self.search_tournaments(params)
@@ -71,64 +75,24 @@ class Tournament < ActiveRecord::Base
     tournaments
   end
 
-  def tournament_data
-    teams = Array.new
-    results = Array.new
-    for i in 1..self.round_num
-      round_res = Array.new  # create result array for each round
-      results << round_res
-      self.games.where(bracket: 1, round: i).each do |game|
-        # Set team info
-        teams << game.game_records.map{|r| (r.player.name.present?) ? r.player.name : '(BYE)'}.to_a  if i == 1
-
-        # Set match Info
-        res =  game.game_records.map{|r| r.score}.to_a
-        # Bye Game
-        if game.bye == true
-          win_record = game.game_records.find_by(winner: true)
-          if win_record.record_num == 1
-            res[0] = 0.3
-            res[1] = 0.2
-          else
-            res[0] = 0.2
-            res[1] = 0.3
-          end
-        # Same Score Game
-        elsif game.finished? && (game.game_records.first.score == game.game_records.last.score)
-          win_record = game.game_records.find_by(winner: true)
-          res[win_record.record_num-1] += 0.1
-        # Unfinished Game
-        elsif !game.finished?
-          res[0] = res[1] = '--'
-        end
-        round_res << res
-      end
-    end
-    tournament_data = {teams: teams, results: results}
-  end
-
-  def match_data
-    match_data = Array.new
-    match_data[1] = self.games.map{ |m| "#{self.round_name(bracket: m.bracket, round:m.round)} #{m.match_name}<br>#{m.game_records.map{|r| (r.player.name.present?) ? r.player.name : '(BYE)'}.join('-')}<br>#{m.comment}" }
-    match_data
-  end
-
-  def build_players
+  def initialize_teams_and_results
+    teams = []
     for i in 1..self.size do
-      self.players.build(name: "Player#{i}", seed: i)
+      teams << {name: "Player#{i}"}
     end
-  end
 
-  def create_first_round_records
-    self.games.where(bracket: 1, round: 1).each do |game|
-      game_players = [
-        self.players.find_by(seed: 2*(game.match)-1),
-        self.players.find_by(seed: 2*(game.match))
-      ]
-      for i in 1..2
-        game.game_records.create(player: game_players[i-1], record_num: i)
+    results = []
+    for i in 1..self.round_num do
+      match_count = [(self.size / 2**i), 2].max
+      arr = []
+      for i in 1..match_count do
+        arr << {score: [nil, nil], winner: nil, comment: nil, bye: false, finished: false}
       end
+      results << arr
     end
+
+    self.teams = teams.to_json
+    self.results = results.to_json
   end
 
   def round_num
@@ -143,25 +107,8 @@ class Tournament < ActiveRecord::Base
     return nil
   end
 
-  def build_winner_games
-    for i in 1..self.round_num do
-      match_num = self.size / (2**i)
-      match_num.times do |k|
-        self.games.build(bracket:1, round:i, match:k+1)
-      end
-    end
-  end
-
   def de?
     self.type == 'DoubleElimination'
-  end
-
-  def member_registered?
-    self.players.first.name != 'Player1'
-  end
-
-  def result_registered?
-    self.games.first.winner.present?
   end
 
   def encoded_title
@@ -169,59 +116,129 @@ class Tournament < ActiveRecord::Base
   end
 
   def embed_url
-    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/index.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&width=100"
+    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/v2/index.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&width=100"
   end
 
   def embed_img_url
-    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/image.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&title=#{CGI.escape(self.title)}"
+    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/v2/image.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&title=#{CGI.escape(self.title)}"
+  end
+
+  def jqb_teams
+    teams = []
+    self.teams.each_with_index do |team, i|
+      teams << [] if i%2 == 0
+      teams.last << team
+    end
+    teams
+  end
+
+  def jqb_scores
+    scores = []
+    self.results.each.with_index(1) do |round, round_num|
+      round_scores = []
+      round.each.with_index(1) do |game, game_num|
+        score = [game['score'][0], game['score'][1]]  #キャッシュで[2]にmatch_dataが残るときがあるので、手動で[0]と[1]のみ取得してセット
+        # 同点ゲームの場合
+        if game['winner'] && score[0]==score[1]
+          score.map!(&:to_i)
+          score[game['winner']] += 0.1
+        end
+
+        # Tooltip用の試合情報をセット
+        match_data = "【"
+        match_data += "#{self.round_name(round: round_num)}" if round_num != self.round_num   #決勝戦・3位決定戦はgame_nameのみ
+        match_data += "#{self.game_name(round:round_num, game:game_num)}】　"
+        match_data += "#{self.winner_team(round_num, game_num, 0)['name']} - #{self.winner_team(round_num, game_num, 1)['name']} "
+        match_data += "#{game['comment']}"
+        score << match_data
+
+        round_scores << score
+      end
+      scores << round_scores
+    end
+    scores
+  end
+
+  def update_bye_games
+    self.teams.each.with_index(1) do |team, i|
+      next if team.present?
+
+      round_num = 1
+      game_num = i.quo(2).ceil
+      winner_index = i%2  # #3(i=3, i%2==1)がbyeなら、winnerは#4なので、winner_indexは1になる
+
+      result = {
+        score: [nil, nil],
+        winner: winner_index,
+        comment: nil,
+        finished: true
+      }
+      self.results[round_num - 1][game_num - 1] = result
+    end
+    self.update({results: self.results.to_json})
   end
 
   def to_json
     {
       title: self.title,
-      tournament_data: self.tournament_data,
+      tournament_data: { teams: self.jqb_teams, results: self.jqb_scores },
       skip_secondary_final: (self.de?) ? !self.secondary_final : false,
       skip_consolation_round: !self.consolation_round,
-      countries: self.players.map{|p| p.country.try(:downcase)},
-      match_data: self.match_data,
       scoreless: self.scoreless?
     }.to_json
   end
 
   def upload_json
-    File.write("tmp/#{self.id}.json", self.to_json)
-    src = File.join(Rails.root, "/tmp/#{self.id}.json")
-    src_file = File.new(src)
-
-    TournamentUploader.new.store!(src_file)
+    file_path = File.join(Rails.root, "/tmp/#{self.id}.json")
+    File.write(file_path, self.to_json)
+    TournamentUploader.new.store!( File.new(file_path) ) if Rails.env.production?
   end
 
   def upload_img
-    if self.user.id == 835 || self.user.admin?
-      File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
-        url = "https://the-tournament.jp/ja/tournaments/#{self.id}/raw"
-        open("http://phantomjscloud.com/api/browser/v2/ak-b1hw7-66a8k-1wdyw-xhqh1-f2s4p/?request={url:%22#{url}%22,renderType:%22png%22}") do |f|
-          f.each_line {|line| tmp.puts line}
-        end
-      end
+    return if Rails.env.development?
+    return if self.user.id != 835 || !self.user.admin?
 
-      # Upload Image
-      uploader = TournamentUploader.new
-      src = File.join(Rails.root, "/tmp/#{self.id}.png")
-      src_file = File.new(src)
-      uploader.store!(src_file)
+    File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
+      url = "https://the-tournament.jp/ja/tournaments/#{self.id}/raw"
+      open("http://phantomjscloud.com/api/browser/v2/ak-b1hw7-66a8k-1wdyw-xhqh1-f2s4p/?request={url:%22#{url}%22,renderType:%22png%22}") do |f|
+        f.each_line {|line| tmp.puts line}
+      end
     end
+
+    # Upload Image
+    uploader = TournamentUploader.new
+    src = File.join(Rails.root, "/tmp/#{self.id}.png")
+    src_file = File.new(src)
+    uploader.store!(src_file)
   end
 
-  def players_list
-    if self.players
-      players = self.players.pluck(:name)
+  # 1回戦第2試合は、round_num=1, game_num=2, team_index=0or1
+  def winner_team(round_num, game_num, team_index)
+    # 1回戦まで来たら対応する参加者名を返す
+    return self.teams[2 * game_num - (2-team_index)] || {"name" => '--'} if round_num == 1
+
+    # 2回戦以降の場合は下のラウンドの勝者に遡る
+    target_round_num = round_num - 1
+    target_game_num = (game_num * 2) - (1 - team_index)
+
+    # 3位決定戦のときは準決勝の2試合がtarget_game
+    consolation_round = (round_num == self.round_num) && (game_num == 2)
+    target_game_num = 1 - team_index if consolation_round
+
+    target_game = self.results[target_round_num - 1][target_game_num - 1]
+
+    # 前の試合結果が確定していない場合は(TBD)
+    if !target_game['finished']
+      {"name" => "(TBD)"}
+    # 勝者がいる場合はそのteamを返す（通常winのケースとbyeのケースを両方含む）
+    elsif target_game['winner'].present?
+      winner_index = target_game['winner']
+      winner_index = 1 - winner_index if consolation_round # 3位決定戦の場合はloserを返す
+
+      self.winner_team(target_round_num, target_game_num, winner_index)
+    # finishedだけどwinnerがいないケース = double bye
     else
-      players = []
-      self.size.times do |i|
-        players << "Player#{i}"
-      end
+      {"name" => '--'}
     end
-    players.join("\r\n")
   end
 end

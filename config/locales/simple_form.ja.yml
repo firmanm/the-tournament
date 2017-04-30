@@ -42,7 +42,7 @@ ja:
         profile_img: プロフィール画像を変更する
     hints:
       tournament:
-        size: ※32名より大きな大会の利用は、「<a href='https://goo.gl/forms/xqvYet0AAsQUalI52' target='_blank'>お問い合わせ</a>」より事前に申請してください。
+        size: ※128名より大きな大会を希望される場合は、<a href='https://goo.gl/forms/xqvYet0AAsQUalI52' target='_blank'>こちら</a>からお問い合わせください。
         type: ダブルイリミネーション(敗者復活戦あり)形式は有料プランユーザーのみ利用可能です
         facebook_album_id: ※Facebookで作成したアルバムの写真を表示できます。詳細は<a href='http://blog.the-tournament.jp/entry/2017/03/17/photoalbum' target="_blank">こちら</a>
       user:

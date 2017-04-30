@@ -1,6 +1,6 @@
 class TournamentsController < ApplicationController
   skip_before_action :authenticate_user!, only: [:index, :show, :embed, :raw, :photos]
-  before_action :set_tournament, only: [:show, :edit, :update, :destroy, :embed, :upload]
+  before_action :set_tournament, only: [:show, :edit, :update, :destroy, :embed, :upload, :players, :edit_game]
   load_and_authorize_resource
 
 
@@ -13,44 +13,21 @@ class TournamentsController < ApplicationController
   def show
     redirect_to pretty_tournament_path(@tournament, @tournament.encoded_title), status: 301 if params[:title] != @tournament.encoded_title
 
-    if Rails.env.production?
-      json = JSON.parse(open("https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/json/#{@tournament.id.to_s}.json?t=#{Time.now.to_i}").read)
-    else
-      json = {
-        tournament_data: @tournament.tournament_data,
-        skip_secondary_final: (@tournament.de?) ? !@tournament.secondary_final : false,
-        skip_consolation_round: !@tournament.consolation_round,
-        countries: @tournament.players.map{|p| p.country.try(:downcase)},
-        match_data: @tournament.match_data,
-        scoreless: @tournament.scoreless?
-      }
-    end
+    json = JSON.parse(@tournament.to_json)
     gon.push(json)
   end
 
 
   def raw
-    gon.push({
-      tournament_data: @tournament.tournament_data,
-      skip_secondary_final: (@tournament.de?) ? !@tournament.secondary_final : false,
-      skip_consolation_round: !@tournament.consolation_round,
-      countries: @tournament.players.map{|p| p.country.try(:downcase)},
-      match_data: @tournament.match_data,
-      scoreless: @tournament.scoreless?
-    })
+    json = JSON.parse(@tournament.to_json)
+    gon.push(json)
     render layout: false
   end
 
 
   def embed
-    gon.push({
-      tournament_data: @tournament.tournament_data,
-      skip_secondary_final: (@tournament.de?) ? !@tournament.secondary_final : false,
-      skip_consolation_round: !@tournament.consolation_round,
-      countries: @tournament.players.map{|p| p.country.try(:downcase)},
-      match_data: @tournament.match_data,
-      scoreless: @tournament.scoreless?
-    })
+    json = JSON.parse(@tournament.to_json)
+    gon.push(json)
     render layout: false
   end
 
@@ -82,7 +59,7 @@ class TournamentsController < ApplicationController
         flash[:log] = "<script>ga('send', 'event', 'tournament', 'create');</script>".html_safe
 
         flash[:notice] = I18n.t('flash.tournament.create.success')
-        format.html { redirect_to tournament_edit_players_path(@tournament) }
+        format.html { redirect_to tournament_path(@tournament) }
         format.json { render action: 'show', status: :created, location: @tournament }
       else
         flash.now[:alert] = I18n.t('flash.tournament.create.failure')
@@ -98,34 +75,11 @@ class TournamentsController < ApplicationController
 
 
   def update
-    # Players一覧更新時
-    if params[:tournament][:players_attributes].present?
-      success_url = tournament_edit_games_path(@tournament)
-      success_notice = I18n.t('flash.players.update.success')
-      failure_url = 'players/edit_all'
-      failure_notice = I18n.t('flash.players.update.failure')
-
-      # 一括登録利用時
-      players = params[:tournament][:players_all][:players]
-      if players != @tournament.players_list
-        players.lines.each_with_index do |line, i|
-          break if i >= @tournament.size
-          params[:tournament][:players_attributes]["#{i}"]["name"] = line.chomp
-        end
-      end
-      params[:tournament][:players_all] = nil
-    else
-      success_url = tournament_edit_players_path(@tournament)
-      success_notice = I18n.t('flash.tournament.update.success')
-      failure_url = {action: 'edit'}
-      failure_notice = I18n.t('flash.tournament.update.failure')
-    end
-
     if @tournament.update(tournament_params)
-      redirect_to success_url, notice: success_notice
+      redirect_to tournament_edit_players_path(@tournament), notice: I18n.t('flash.tournament.update.success')
     else
-      flash.now[:alert] = failure_notice
-      render failure_url
+      flash.now[:alert] = I18n.t('flash.tournament.update.failure')
+      render 'tournaments/edit'
     end
   end
 
@@ -145,12 +99,107 @@ class TournamentsController < ApplicationController
   end
 
 
+  def players
+    @players = @tournament.teams
+  end
+
+
+  def edit_players
+    set_teams_text
+  end
+
+
+  def update_players
+    teams = []
+    # 通常入力
+    if params[:input_type] == 'array'
+      params[:tournament][:teams_array].each_with_index do |team, i|
+        team_data = team['name'].present? ? team : nil
+        team_data['flag'].try(:downcase!) if team_data
+        teams << team_data
+      end
+    # まとめて入力
+    elsif params[:input_type] == 'text'
+      params[:tournament][:teams_text].lines.each_with_index do |line, i|
+        team = line.chomp.split(",")
+        team_data = (team[0].present?) ? {name: team[0], flag: team[1].try(:downcase)} : nil
+        teams << team_data
+      end
+    end
+
+    if @tournament.update({teams: teams.to_json})
+      @tournament.update_bye_games
+      redirect_to tournament_edit_players_path(@tournament), notice: I18n.t('flash.players.update.success')
+    else
+      set_teams_text
+      @tournament.teams = @tournament.teams.in_groups_of(@tournament.size).first
+
+      flash.now[:alert] = @tournament.errors.full_messages.first
+      render 'tournaments/edit_players'
+    end
+  end
+
+
+  def games
+  end
+
+  def edit_games
+  end
+
+  def edit_game
+    @round_num = params[:round_num].to_i
+    @game_num = params[:game_num].to_i
+    @game = @tournament.results[@round_num-1][@game_num-1]
+
+    @players = [
+      @tournament.winner_team(@round_num, @game_num, 0),
+      @tournament.winner_team(@round_num, @game_num, 1)
+    ]
+
+    @round_name = @tournament.round_name(round: @round_num)
+    if @round_num == @tournament.round_num
+      @game_name = (@game_num==1) ? '決勝戦' : '3位決定戦'
+    else
+      @game_name = "第#{@game_num}試合"
+    end
+  end
+
+  def update_game
+    @round_num = params[:round_num].to_i
+    @game_num = params[:game_num].to_i
+
+    game_params = {
+      score: params[:game]['score'].map(&:to_i),
+      winner: params[:game]['winner'].to_i,
+      comment: params[:game]['comment'],
+      finished: true
+    }
+    @tournament.results[@round_num-1][@game_num-1] = game_params
+
+    if @tournament.update({results: @tournament.results.to_json})
+      redirect_to tournament_edit_games_path(@tournament), notice: I18n.t('flash.game.update.success')
+    else
+      flash.now[:alert] = I18n.t('flash.game.update.failure')
+      render "tournaments/edit_game/#{@round_num}/#{@game_num}"
+    end
+  end
+
+
   private
     def set_tournament
       @tournament = Tournament.find(params[:id])
     end
 
     def tournament_params
-      params.require(:tournament).permit(:id, :title, :user_id, :detail, :type, :place, :url, :size, :consolation_round, :tag_list, :double_elimination, :scoreless, :facebook_album_id, players_attributes: [:id, :name, :group, :country], players_all: [:players])
+      params.require(:tournament).permit(:id, :title, :user_id, :detail, :type, :place, :url, :size, :consolation_round, :tag_list, :double_elimination, :scoreless, :facebook_album_id, :teams, :results, players_attributes: [:id, :name, :group, :country], players_all: [:players])
+    end
+
+    def set_teams_text
+      @teams_text = ""
+      @tournament.teams.each do |m|
+        @teams_text += m['name'] if m
+        @teams_text += ",#{m['flag']}" if m && m['flag'].present?
+        @teams_text += "\r\n"
+      end
     end
 end

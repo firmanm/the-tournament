@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170318131842) do
+ActiveRecord::Schema.define(version: 20170430175529) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,32 +22,6 @@ ActiveRecord::Schema.define(version: 20170318131842) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "game_records", force: :cascade do |t|
-    t.integer  "game_id"
-    t.integer  "player_id"
-    t.integer  "record_num"
-    t.integer  "score"
-    t.boolean  "winner"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "game_records", ["game_id", "player_id"], name: "index_game_records_on_game_id_and_player_id", using: :btree
-
-  create_table "games", force: :cascade do |t|
-    t.integer  "tournament_id"
-    t.integer  "bracket"
-    t.integer  "round"
-    t.integer  "match"
-    t.boolean  "bye"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "type",          limit: 255, default: "Winner"
-    t.string   "comment",       limit: 24
-  end
-
-  add_index "games", ["tournament_id"], name: "index_games_on_tournament_id", using: :btree
 
   create_table "plans", force: :cascade do |t|
     t.integer  "user_id",    null: false
@@ -60,19 +34,6 @@ ActiveRecord::Schema.define(version: 20170318131842) do
 
   add_index "plans", ["expires_at"], name: "index_plans_on_expires_at", using: :btree
   add_index "plans", ["user_id"], name: "index_plans_on_user_id", using: :btree
-
-  create_table "players", force: :cascade do |t|
-    t.integer  "tournament_id"
-    t.integer  "seed"
-    t.string   "name",          limit: 255
-    t.string   "group",         limit: 255
-    t.text     "desc"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "country",       limit: 255
-  end
-
-  add_index "players", ["tournament_id"], name: "index_players_on_tournament_id", using: :btree
 
   create_table "taggings", force: :cascade do |t|
     t.integer  "tag_id"
@@ -109,6 +70,8 @@ ActiveRecord::Schema.define(version: 20170318131842) do
     t.boolean  "finished",                      default: false
     t.boolean  "pickup",                        default: false
     t.string   "facebook_album_id", limit: 255
+    t.json     "teams"
+    t.json     "results"
   end
 
   add_index "tournaments", ["finished"], name: "index_tournaments_on_finished", using: :btree

@@ -263,14 +263,17 @@ div.tagsinput {
     font-size: 100%;
     line-height: normal;
     color: #333;
-    width: 76px;
     text-align: left;
     overflow: hidden;
   }
   .score {
-    width: 26px;
     overflow: hidden;
   }
+}
+
+div.jQBracket .teamContainer {
+  z-index: auto;
+  word-wrap: break-word;
 }
 
 .headline {
@@ -279,10 +282,14 @@ div.tagsinput {
   margin-bottom: 20px;
 }
 
-#game-list.table tr > td:first-child,
 #member-list.table tr > td:first-child,
 #member-list.table tr > th:first-child {
   border-right: 1px solid #efefef;
+}
+#game-list.table tr.comment td {
+  border-top: none;
+  border-right: none;
+  text-align: center;
 }
 .width-4  { width: 4%; }
 .width-8  { width: 8%; }
@@ -290,6 +297,7 @@ div.tagsinput {
 .width-30 { width: 30%; }
 .width-40 { width: 40%; }
 .width-50 { width: 50%; }
+
 
 
 /*****************************************************************

@@ -42,7 +42,7 @@ en:
         profile_img: Change profile image.
     hints:
       tournament:
-        size: Adding more than 32 players is available only for Premium plan user.
+        size: Please contact from <a href='https://goo.gl/forms/xqvYet0AAsQUalI52' target='_blank'>here</a> for creating bigger than 128 size bracket.
         type: Double Elimination is available only for Premium plan user.
       user:
         profile_img: You need to sign up for Gravatar.
@@ -51,4 +51,3 @@ en:
         type:
           SingleElimination: Single Elimination
           DoubleElimination: Double Elimination
-

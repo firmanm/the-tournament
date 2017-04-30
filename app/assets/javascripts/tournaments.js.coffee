@@ -4,33 +4,58 @@
 
 $ ->
   # tournament#show page
-  if ($('#tournament').length)
+  if ($('body').data('controller')=='tournaments' && $('body').data('action')=='show')
     # Tournament creation
     createBracket = ->
       d = new $.Deferred
       $('#tournament').bracket({
         skipConsolationRound: gon.skip_consolation_round,
         skipSecondaryFinal: gon.skip_secondary_final,
-        init: gon.tournament_data
+        teamWidth: 100,
+        scoreWidth: 35,
+        init: gon.tournament_data,
+        decorator: {
+          edit: edit_fn,
+          render: render_fn
+        }
       })
       d.resolve()
+
+    edit_fn = (container, data, doneCb) ->
+      # Do something here
+
+    render_fn = (container, data, score, state) ->
+      switch state
+        when "empty-bye"
+          container.append("--")
+          return
+        when "empty-tbd"
+          container.append("--")
+          return
+        else
+          content = ''
+          if data.flag && data.flag != ""
+            content += '<span class="f16"><span class="flag '+data.flag+'"></span></span>'
+          content += data.name
+          container.append(content)
+          return
 
     hideDecimal = ->
       jQuery.each($('.score'), ->
         if !isNaN(this.innerText)
-          if $.inArray(this.innerText, ["0.2", "0.3"]) >= 0  # Hide score on bye match
-            this.innerText = '--'
-          else if gon.scoreless   # when the tournament is scoreless
+          if gon.scoreless   # when the tournament is scoreless
             this.innerText = '--'
           else  # Same score win
-            this.innerText = Math.floor(this.innerText)
+            this.innerText = Math.abs(Math.floor(this.innerText))
       )
 
-    addCountryFlg = ->
-      jQuery.each(gon.countries, (i, v) ->
-        if v
-          $('.bracket .team').eq(i).find('.label').prepend('<div class="flag-container f16"><div class="flag '+v+'"></div>')
-      )
+    setTooltip = ->
+      $('.bracket .teamContainer').each (i) ->
+        $(this).attr({
+          'data-balloon-pos': 'right',
+          'data-balloon-length': 'medium',
+          'data-balloon': [].concat.apply([], gon.tournament_data['results'])[i][2]
+        })
 
     prepareImage = ->
       setTimeout ->
@@ -44,57 +69,7 @@ $ ->
         })
       , 1500
 
-
-    getQueryString = ( field, url ) ->
-      href = `url ? url : window.location.href`
-      reg = new RegExp( '[?&]' + field + '=([^&#]*)', 'i' )
-      string = reg.exec(href)
-      return `string ? string[1] : null`
-
-    window.tnmt_id = getQueryString('utm_source') || getQueryString('id')
-    window.DEFAULT_WIDTH = 100
-    window.width = getQueryString('width') || DEFAULT_WIDTH
-    window.DEFAULT_SCORE_WIDTH = 26
-    window.score_width = getQueryString('score_width') || DEFAULT_SCORE_WIDTH
-
-    resizeBracket = ->
-      if(width != DEFAULT_WIDTH)
-        $('#tournament .round').width(width)
-        $('#tournament .team').width(width)
-        $('#tournament .label').width(width-score_width)
-
-        size_diff = width - DEFAULT_WIDTH
-        round_num = Math.log2(gon.tournament_data.teams.length * 2)
-        bracket_width = $('#tournament .bracket').width()
-        $('#tournament .bracket').width(bracket_width + (size_diff*round_num))
-        $('#tournament .jQBracket').width(bracket_width + (size_diff*round_num) + 10)
-
-      if(score_width != DEFAULT_SCORE_WIDTH)
-        $('#tournament .score').width(score_width)
-
-    createBracket().done(hideDecimal(), addCountryFlg(), prepareImage(), resizeBracket())
-
-
-    # Show game info on hover
-    $('.teamContainer').attr({
-      'data-toggle': 'tooltip',
-      'data-placement': 'right',
-    })
-    $('.bracket .teamContainer').each (i) ->
-      $('.bracket .teamContainer').eq(i).attr('title', gon.match_data[1][i])
-    if $('.loserBracket').length
-      $('.loserBracket .teamContainer').each (i) ->
-        $('.loserBracket .teamContainer').eq(i).attr('title', gon.match_data[2][i])
-      $('.finals .teamContainer').each (i) ->
-        $('.finals .teamContainer').eq(i).attr('title', gon.match_data[3][i])
-    $('.teamContainer').tooltip({html:true})
-
-    # Image Download
-    $("#download_btn, #btn-upload_img").button('loading')
-
-  # tournament#edit page - Tags input
-  if $('#tournament_tag_list').length
-    $('#tournament_tag_list').tagsInput({'width':'100%', 'height':'auto'})
+    createBracket().done(hideDecimal(), setTooltip())
 
 
   # tournament#photos

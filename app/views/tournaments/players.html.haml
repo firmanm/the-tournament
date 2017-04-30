@@ -1,0 +1,28 @@
+= content_for :page_title, "#{@tournament.title} #{t('tournament_menu.players')}"
+= content_for :keywords, @tournament.title
+
+- editable = @tournament.user==current_user || current_user.try(:admin?)
+= render partial: "shared/tournament_info", locals: {tournament:@tournament, editable: editable}
+= render partial: "shared/tournament_menu", locals: {tournament:@tournament, active:3}
+
+%section#member-list
+  %h1.headline
+    = fa_icon("users")
+    = t('tournament_menu.players')
+  .panel.panel-default
+    %table#member-list.table.f16
+      %tr.active
+        %th.width-10= t('member_list.number')
+        %th.width-60= t('member_list.name')
+        - if editable
+          %th.width-30.hidden-sm.hidden-xs= t('member_list.country')
+        - else
+          %th.width-30.hidden-sm.hidden-xs
+      - @players.each.with_index(1) do |player, index|
+        %tr
+          %td
+            = index
+          %td
+            = player ? player['name'] : ''
+          %td.hidden-sm.hidden-xs
+            = (player && player['flag'] && Country[player['flag']]) ? Country[player['flag']].translation(:ja) : ''
