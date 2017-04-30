@@ -21,8 +21,6 @@ class Tournament < ActiveRecord::Base
   acts_as_taggable
 
   belongs_to :user
-  has_many :games, -> { order(bracket: :asc, round: :asc, match: :asc) }, dependent: :destroy
-  has_many :players, -> { order(seed: :asc) }, dependent: :destroy
 
   validates :user_id, presence: true
   validates :size, presence: true
@@ -136,7 +134,6 @@ class Tournament < ActiveRecord::Base
 
   def jqb_scores
     scores = []
-    p self.results
     self.results.each.with_index(1) do |round, round_num|
       round_scores = []
       round.each.with_index(1) do |game, game_num|
@@ -194,13 +191,12 @@ class Tournament < ActiveRecord::Base
   def upload_json
     file_path = File.join(Rails.root, "/tmp/#{self.id}.json")
     File.write(file_path, self.to_json)
-
     TournamentUploader.new.store!( File.new(file_path) ) if Rails.env.production?
   end
 
   def upload_img
     return if Rails.env.development?
-    return if self.user.id != 835 && self.user.admin?
+    return if self.user.id != 835 || !self.user.admin?
 
     File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
       url = "https://the-tournament.jp/ja/tournaments/#{self.id}/raw"

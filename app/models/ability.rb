@@ -14,7 +14,5 @@ class Ability
 
     can :manage, User, id: user.id
     can :manage, Tournament, user_id: user.id
-    can :manage, Game, tournament: { user_id: user.id }
-    can :manage, Player, tournament: { user_id: user.id }
   end
 end
