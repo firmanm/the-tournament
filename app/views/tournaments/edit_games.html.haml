@@ -1,6 +1,7 @@
 = content_for :page_title, "#{@tournament.title} #{t('tournament_menu.games')}"
 = content_for :keywords, @tournament.title
 
+- editable = @tournament.user==current_user || current_user.try(:admin?)
 = render partial: "shared/tournament_info", locals: {tournament:@tournament, editable: false}
 = render partial: "shared/tournament_navi", locals: {tournament:@tournament, step:3}
 
@@ -9,7 +10,6 @@
     = fa_icon("list-alt")
     = t('tournament_menu.games')
 
-  - editable = current_user == @tournament.user
   = render partial: "game_list", locals: {tournament:@tournament, editable: editable}
 
   %hr

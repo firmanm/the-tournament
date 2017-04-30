@@ -47,8 +47,8 @@ class Tournament < ActiveRecord::Base
   end
 
   def not_allow_double_bye
-    for i in 1..(self.size)
-      errors[:base] << "二回戦シードはまだ未対応です。シード（空欄）同士が一回戦で当たらないように設定してください。" if teams[i-1].nil? && teams[i].nil?
+    0.step(self.size-1, 2) do |i|
+      errors[:base] << "二回戦シードはまだ未対応です。シード（空欄）同士が一回戦で当たらないように設定してください。" if teams[i].nil? && teams[i+1].nil?
     end
   end
 
@@ -136,19 +136,21 @@ class Tournament < ActiveRecord::Base
 
   def jqb_scores
     scores = []
+    p self.results
     self.results.each.with_index(1) do |round, round_num|
-      # round << round.map{|m| m['score']}
       round_scores = []
       round.each.with_index(1) do |game, game_num|
-        score = game['score']
+        score = [game['score'][0], game['score'][1]]  #キャッシュで[2]にmatch_dataが残るときがあるので、手動で[0]と[1]のみ取得してセット
         # 同点ゲームの場合
         if game['winner'] && score[0]==score[1]
-          s = score[game['winner']].to_i
-          score[game['winner']] = s + 0.1
+          score.map!(&:to_i)
+          score[game['winner']] += 0.1
         end
 
         # Tooltip用の試合情報をセット
-        match_data = "#{self.round_name(round: round_num)}#{self.game_name(round:round_num, game:game_num)}　"
+        match_data = "【"
+        match_data += "#{self.round_name(round: round_num)}" if round_num != self.round_num   #決勝戦・3位決定戦はgame_nameのみ
+        match_data += "#{self.game_name(round:round_num, game:game_num)}】　"
         match_data += "#{self.winner_team(round_num, game_num, 0)['name']} - #{self.winner_team(round_num, game_num, 1)['name']} "
         match_data += "#{game['comment']}"
         score << match_data
