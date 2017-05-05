@@ -191,15 +191,16 @@ class Tournament < ActiveRecord::Base
   def upload_json
     file_path = File.join(Rails.root, "/tmp/#{self.id}.json")
     File.write(file_path, self.to_json)
-    TournamentUploader.new.store!( File.new(file_path) ) if Rails.env.production?
+    TournamentUploader.new.store!( File.new(file_path) ) if Rails.env.production? && ENV['FOG_DIRECTORY'] != 'the-tournament-stg'
   end
 
   def upload_img
     return if Rails.env.development?
+    return if ENV['FOG_DIRECTORY'] == 'the-tournament-stg'
     return if self.user.id != 835 || !self.user.admin?
 
     File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
-      url = "https://the-tournament.jp/ja/tournaments/#{self.id}/raw"
+      url = "#{root_url}/tournaments/#{self.id}/raw"
       open("http://phantomjscloud.com/api/browser/v2/ak-b1hw7-66a8k-1wdyw-xhqh1-f2s4p/?request={url:%22#{url}%22,renderType:%22png%22}") do |f|
         f.each_line {|line| tmp.puts line}
       end
