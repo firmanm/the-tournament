@@ -1,4 +1,4 @@
-TheTournament::Application.routes.draw do
+Rails.application.routes.draw do
   break if ARGV.join.include? 'assets:precompile'
 
   scope "(:locale)", shallow_path: "(:locale)", locale: /ja|en/ do
