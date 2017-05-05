@@ -127,10 +127,15 @@ class TournamentsController < ApplicationController
       end
     end
 
+    p "******"
+    p teams
+
     if @tournament.update({teams: teams.to_json})
+      p "-----"
       @tournament.update_bye_games
       redirect_to tournament_edit_players_path(@tournament), notice: I18n.t('flash.players.update.success')
     else
+      p "====="
       set_teams_text
       @tournament.teams = @tournament.teams.in_groups_of(@tournament.size).first
 
@@ -194,7 +199,7 @@ class TournamentsController < ApplicationController
     end
 
     def tournament_params
-      params.require(:tournament).permit(:id, :title, :user_id, :detail, :type, :place, :url, :size, :consolation_round, :tag_list, :double_elimination, :scoreless, :facebook_album_id, :teams, :results, players_attributes: [:id, :name, :group, :country], players_all: [:players])
+      params.require(:tournament).permit(:id, :title, :user_id, :detail, :place, :url, :size, :consolation_round, :tag_list, :double_elimination, :scoreless, :facebook_album_id, :teams, :results, players_attributes: [:id, :name, :group, :country], players_all: [:players])
     end
 
     def set_teams_text

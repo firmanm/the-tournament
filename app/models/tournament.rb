@@ -5,7 +5,6 @@
 #  id                :integer          not null, primary key
 #  user_id           :integer
 #  size              :integer
-#  type              :string(255)      default("SingleElimination")
 #  title             :string(255)
 #  place             :string(255)
 #  detail            :text
@@ -15,6 +14,11 @@
 #  url               :string(255)
 #  secondary_final   :boolean          default(FALSE)
 #  scoreless         :boolean          default(FALSE)
+#  finished          :boolean          default(FALSE)
+#  pickup            :boolean          default(FALSE)
+#  facebook_album_id :string(255)
+#  teams             :json
+#  results           :json
 #
 
 class Tournament < ActiveRecord::Base
@@ -24,10 +28,9 @@ class Tournament < ActiveRecord::Base
 
   validates :user_id, presence: true
   validates :size, presence: true
-  validate :tnmt_size_must_be_smaller_than_limit, on: :create
-  validate :teams_count_must_be_equal_to_tnmt_size, on: :update
+  # validate :tnmt_size_must_be_smaller_than_limit, on: :create
+  # validate :teams_count_must_be_equal_to_tnmt_size, on: :update
   validate :not_allow_double_bye, on: :update
-  validates :type, presence: true, inclusion: {in: ['SingleElimination', 'DoubleElimination']}
   validates :title, presence: true, length: {maximum: 100}, exclusion: {in: %w(index new edit players games)}
   validates :place, length: {maximum: 100}, allow_nil: true
   validates :detail, length: {maximum: 500}, allow_nil: true
@@ -107,10 +110,6 @@ class Tournament < ActiveRecord::Base
     return nil
   end
 
-  def de?
-    self.type == 'DoubleElimination'
-  end
-
   def encoded_title
     self.title.gsub(/　| |\//, '-')
   end
@@ -182,7 +181,7 @@ class Tournament < ActiveRecord::Base
     {
       title: self.title,
       tournament_data: { teams: self.jqb_teams, results: self.jqb_scores },
-      skip_secondary_final: (self.de?) ? !self.secondary_final : false,
+      skip_secondary_final: false,
       skip_consolation_round: !self.consolation_round,
       scoreless: self.scoreless?
     }.to_json
@@ -240,6 +239,29 @@ class Tournament < ActiveRecord::Base
     # finishedだけどwinnerがいないケース = double bye
     else
       {"name" => '--'}
+    end
+  end
+
+  def round_name(args)
+    round = args[:round]
+
+    if round == self.round_num
+      I18n.t('tournament.round_name.final_round')
+    elsif round == self.round_num - 1
+      I18n.t('tournament.round_name.semi-final_round')
+    else
+      I18n.t('tournament.round_name.numbered_round', round: round)
+    end
+  end
+
+  def game_name(args)
+    round_num = args[:round]
+    game_num = args[:game]
+
+    if round_num == self.round_num
+      game_name = (game_num==1) ? '決勝戦' : '3位決定戦'
+    else
+      game_name = "第#{game_num}試合"
     end
   end
 end
