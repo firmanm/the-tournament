@@ -176,7 +176,10 @@ class TournamentsController < ApplicationController
     }
     @tournament.results[@round_num-1][@game_num-1] = game_params
 
-    if @tournament.update({results: @tournament.results.to_json})
+    tournament_params = { results: @tournament.results.to_json }
+    tournament_params[:finished] = true if @round_num == @tournament.round_num && @game_num == 1
+
+    if @tournament.update(tournament_params)
       redirect_to tournament_edit_games_path(@tournament), notice: I18n.t('flash.game.update.success')
     else
       flash.now[:alert] = I18n.t('flash.game.update.failure')
