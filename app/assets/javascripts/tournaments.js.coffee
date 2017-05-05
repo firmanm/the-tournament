@@ -4,7 +4,7 @@
 
 $ ->
   # tournament#show page
-  if ($('body').data('controller')=='tournaments' && $('body').data('action')=='show')
+  if ($('#tournament').length)
     # Tournament creation
     createBracket = ->
       d = new $.Deferred
