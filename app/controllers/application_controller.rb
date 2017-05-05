@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   before_action :set_locale, :authenticate_user!
   #before_action :configure_permitted_parameters, if: :devise_controller?
+  http_basic_authenticate_with name: ENV['BASIC_AUTH_USERNAME'], password: ENV['BASIC_AUTH_PASSWORD'] if Rails.env == "production" && ENV['FOG_DIRECTORY'] == 'the-tournament-stg'
 
   def default_url_options(options={})
     {locale: I18n.locale}
