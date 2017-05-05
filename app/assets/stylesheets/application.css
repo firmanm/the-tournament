@@ -11,7 +11,7 @@
  *= require_self
  *= require jquery.bracket.min
  *= require jquery.tagsinput.css
- *= require world_flags/flags16
+ *= require flags16
  *= require balloon.min
  *= require_tree .
  */
