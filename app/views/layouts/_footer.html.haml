@@ -29,3 +29,11 @@
         %li= link_to t('contact'), 'https://goo.gl/forms/xqvYet0AAsQUalI52', target: '_blank'
         %li= link_to t('terms_of_use'), "/terms", target: '_blank'
         %li= link_to t('privacy_policy'), "/privacy", target: '_blank'
+      %br
+      %ul.list-inline.f16
+        %li
+          %span.flag.jp
+          = link_to '日本語', url_for(locale: :ja)
+        %li
+          %span.flag.us
+          = link_to 'English', url_for(locale: :en)
