@@ -10,9 +10,7 @@
     = fa_icon("users")
     = t('tournament_menu.players')
 
-  = simple_form_for @tournament.becomes(Tournament), url: tournament_update_players_path(@tournament), html: {class: 'form-horizontal'} do |f|
-    - f.object = @tournament.becomes(@tournament.class)
-
+  = simple_form_for @tournament, url: tournament_update_players_path(@tournament), html: {class: 'form-horizontal'} do |f|
     %ul.nav.nav-tabs(role='tablist')
       %li.active(role='presentation')
         %a(href="#normal" aria-controls="home" role="tab" data-toggle="tab") 通常入力

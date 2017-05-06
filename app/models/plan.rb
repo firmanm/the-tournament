@@ -11,7 +11,7 @@
 #  updated_at :datetime
 #
 
-class Plan < ActiveRecord::Base
+class Plan < ApplicationRecord
   belongs_to :user
   DEFAULT_SIZE = 128
 end

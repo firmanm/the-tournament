@@ -9,5 +9,5 @@
 #  updated_at    :datetime
 #
 
-class Category < ActiveRecord::Base
+class Category < ApplicationRecord
 end

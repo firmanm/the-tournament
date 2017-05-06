@@ -21,15 +21,15 @@
 #  results           :json
 #
 
-class Tournament < ActiveRecord::Base
+class Tournament < ApplicationRecord
   acts_as_taggable
 
   belongs_to :user
 
   validates :user_id, presence: true
   validates :size, presence: true
-  # validate :tnmt_size_must_be_smaller_than_limit, on: :create
-  # validate :teams_count_must_be_equal_to_tnmt_size, on: :update
+  validate :tnmt_size_must_be_smaller_than_limit, on: :create
+  validate :teams_count_must_be_equal_to_tnmt_size, on: :update
   validate :not_allow_double_bye, on: :update
   validates :title, presence: true, length: {maximum: 100}, exclusion: {in: %w(index new edit players games)}
   validates :place, length: {maximum: 100}, allow_nil: true
@@ -94,8 +94,8 @@ class Tournament < ActiveRecord::Base
       results << arr
     end
 
-    self.teams = teams.to_json
-    self.results = results.to_json
+    self.teams = teams
+    self.results = results
   end
 
   def round_num
@@ -174,7 +174,7 @@ class Tournament < ActiveRecord::Base
       }
       self.results[round_num - 1][game_num - 1] = result
     end
-    self.update({results: self.results.to_json})
+    self.update({results: self.results})
   end
 
   def to_json

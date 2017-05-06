@@ -9,7 +9,7 @@
     = fa_icon("list-alt")
     = "#{@round_name} #{@game_name}"
 
-  = simple_form_for @tournament.becomes(Tournament), url: tournament_update_game_path(@tournament, @round_num, @game_num), html: {class: 'form-horizontal'} do |f|
+  = simple_form_for @tournament, url: tournament_update_game_path(@tournament, @round_num, @game_num), html: {class: 'form-horizontal'} do |f|
     - scoreless = (@tournament.scoreless?) ? 'hidden' : ''
     .row{class: "#{scoreless} .game_game_records_score" }
       .col-md-1.col-md-push-5.text-center.visible-md.visible-lg
