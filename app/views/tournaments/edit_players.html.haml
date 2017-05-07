@@ -65,4 +65,10 @@
         %br
         = text_area_tag 'tournament[teams_text]', @teams_text, {rows: @tournament.size+1, class: 'text optional form-control'}
         %br
-        = button_tag '更新', {type: 'submit', class: 'btn btn-danger', name: 'input_type', value: 'text'}
+        %div
+          = button_tag '更新', {type: 'submit', class: 'btn btn-danger', name: 'input_type', value: 'text'}
+          %p.pull-right
+            登録数：
+            %span#teams_count= @tournament.teams.count
+            \/
+            %span#tournament_size= @tournament.size

@@ -3,7 +3,7 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $(document).on 'turbolinks:load', ->
-  # tournament#show page
+  # on pages with tournament
   if ($('#tournament').length)
     # Tournament creation
     createBracket = ->
