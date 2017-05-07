@@ -1,7 +1,7 @@
 -# PC版: タブでメニュー表示
 %ul.nav.nav-pills.visible-md.visible-lg
   %li{class: (active==1) ? 'active' : ''}
-    =link_to t('tournament_menu.tournament_bracket'), pretty_tournament_path(tournament, tournament.encoded_title), data:{turbolinks: false}
+    =link_to t('tournament_menu.tournament_bracket'), pretty_tournament_path(tournament, tournament.encoded_title)
   %li{class: (active==2) ? 'active' : ''}
     =link_to t('tournament_menu.games'), tournament_games_path(tournament)
   %li{class: (active==3) ? 'active' : ''}
@@ -12,7 +12,7 @@
 -# SP版: Pillsでメニュー表示
 %ul.nav.nav-pills.nav-stacked.visible-xs.visible-sm
   %li{class: (active==1) ? 'active' : ''}
-    =link_to t('tournament_menu.tournament_bracket'), pretty_tournament_path(tournament, tournament.encoded_title), data:{turbolinks: false}
+    =link_to t('tournament_menu.tournament_bracket'), pretty_tournament_path(tournament, tournament.encoded_title)
   %li{class: (active==2) ? 'active' : ''}
     =link_to t('tournament_menu.games'), tournament_games_path(tournament)
   %li{class: (active==3) ? 'active' : ''}

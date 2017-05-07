@@ -50,14 +50,11 @@ class TournamentsController < ApplicationController
 
 
   def create
-    @tournament = SingleElimination.new(tournament_params)  #TODO: Fix when enabling double elimination
+    @tournament = Tournament.new(tournament_params)
     @tournament.user = current_user
 
     respond_to do |format|
       if @tournament.save
-        # GAにイベントを送信
-        flash[:log] = "<script>ga('send', 'event', 'tournament', 'create');</script>".html_safe
-
         flash[:notice] = I18n.t('flash.tournament.create.success')
         format.html { redirect_to tournament_path(@tournament) }
         format.json { render action: 'show', status: :created, location: @tournament }
@@ -114,7 +111,7 @@ class TournamentsController < ApplicationController
     # 通常入力
     if params[:input_type] == 'array'
       params[:tournament][:teams_array].each_with_index do |team, i|
-        team_data = team['name'].present? ? team : nil
+        team_data = team['name'].present? ? { name: team['name'] } : nil
         team_data['flag'].try(:downcase!) if team_data
         teams << team_data
       end
@@ -127,7 +124,7 @@ class TournamentsController < ApplicationController
       end
     end
 
-    if @tournament.update({teams: teams.to_json})
+    if @tournament.update({teams: teams})
       @tournament.update_bye_games
       redirect_to tournament_edit_players_path(@tournament), notice: I18n.t('flash.players.update.success')
     else
@@ -176,7 +173,7 @@ class TournamentsController < ApplicationController
     }
     @tournament.results[@round_num-1][@game_num-1] = game_params
 
-    tournament_params = { results: @tournament.results.to_json }
+    tournament_params = { results: @tournament.results }
     tournament_params[:finished] = true if @round_num == @tournament.round_num && @game_num == 1
 
     if @tournament.update(tournament_params)
@@ -194,7 +191,7 @@ class TournamentsController < ApplicationController
     end
 
     def tournament_params
-      params.require(:tournament).permit(:id, :title, :user_id, :detail, :type, :place, :url, :size, :consolation_round, :tag_list, :double_elimination, :scoreless, :facebook_album_id, :teams, :results, players_attributes: [:id, :name, :group, :country], players_all: [:players])
+      params.require(:tournament).permit(:id, :title, :user_id, :detail, :place, :url, :size, :consolation_round, :tag_list, :double_elimination, :scoreless, :facebook_album_id, :teams, :results)
     end
 
     def set_teams_text

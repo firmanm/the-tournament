@@ -10,9 +10,7 @@
     = fa_icon("users")
     = t('tournament_menu.players')
 
-  = simple_form_for @tournament.becomes(Tournament), url: tournament_update_players_path(@tournament), html: {class: 'form-horizontal'} do |f|
-    - f.object = @tournament.becomes(@tournament.class)
-
+  = simple_form_for @tournament, url: tournament_update_players_path(@tournament), html: {class: 'form-horizontal'} do |f|
     %ul.nav.nav-tabs(role='tablist')
       %li.active(role='presentation')
         %a(href="#normal" aria-controls="home" role="tab" data-toggle="tab") 通常入力
@@ -37,7 +35,8 @@
               %th.width-60= t('member_list.name')
               %th.width-30.hidden-sm.hidden-xs
                 = t('member_list.country')
-                %i.fa.fa-question-circle(data-toggle='tooltip' title='国を登録すると、トーナメント表に国旗アイコンが表示されます')
+                %span(data-balloon-pos="top" data-balloon-length="medium" data-balloon="国を登録すると、トーナメント表に国旗アイコンが表示されます")
+                  %i.fa.fa-question-circle
             %tr
             - @tournament.teams.each.with_index(1) do |team, index|
               - if team

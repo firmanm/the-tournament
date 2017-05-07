@@ -6,14 +6,34 @@
     = stylesheet_link_tag "application", :media => "all"
     = favicon_link_tag 'favicon.ico', rel: 'shortcut icon'
 
+    <!-- Google Tag Manager -->
+    - if Rails.env.production?
+      %script
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-NB7BRT');
+
+    / Le HTML5 shim, for IE6-8 support of HTML elements
+    /[if lt IE 9]
+      = javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js", async: 'async'
+    = include_gon
+    = javascript_include_tag "application"
+    %script(src="https://embed.small.chat/T02RE3SKUG59854MFX.js" async)
+
+
   - is_about_page = controller.action_name=='about'
   - is_top_page = controller.action_name=='top'
   - is_profile_page = controller.controller_name=='users' && controller.action_name=='show'
 
   -# %body
   %body{id: (is_about_page) ? 'about-page' : ''}(data-controller="#{params[:controller]}" data-action="#{params[:action]}")
+    <!-- Google Tag Manager -->
+    - if Rails.env.production?
+      %noscript
+        %iframe(src="https://www.googletagmanager.com/ns.html?id=GTM-NB7BRT" height="0" width="0" style="display:none;visibility:hidden")
 
-    = google_tag_manager if Rails.env.production?
 
     - nav_partial = (is_about_page) ? 'navbar_about' : 'navbar'
     = render partial: "layouts/#{nav_partial}"
@@ -43,13 +63,4 @@
               = render partial: "layouts/sidebar"
 
     = render partial: "layouts/footer"
-
-
-    / Le HTML5 shim, for IE6-8 support of HTML elements
-    /[if lt IE 9]
-      = javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js", async: 'async'
-    = include_gon
-    = javascript_include_tag "application", async: 'async'
     = render partial: "shared/facebook"
-
-    %script(src="https://embed.small.chat/T02RE3SKUG59854MFX.js" async)

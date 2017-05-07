@@ -26,7 +26,7 @@
       あなたが作成したトーナメント
     .list-group
       - @user_tnmts.each do |tournament|
-        =link_to pretty_tournament_path(tournament, tournament.encoded_title), class: 'list-group-item clearfix', data:{no_turbolink:true} do
+        =link_to pretty_tournament_path(tournament, tournament.encoded_title), class: 'list-group-item clearfix' do
           %span.list-group-item-heading
             = tournament.title
             = fa_icon("angle-right", "pull-right")
@@ -39,7 +39,7 @@
     = t '.new_tournaments'
   .list-group
     - @tournaments.each do |tournament|
-      =link_to pretty_tournament_path(tournament, tournament.encoded_title), class: 'list-group-item clearfix', data:{no_turbolink:true} do
+      =link_to pretty_tournament_path(tournament, tournament.encoded_title), class: 'list-group-item clearfix' do
         - if tournament.created_at > 3.days.ago
           %span.label.label-warning New!
         %span.list-group-item-heading
@@ -54,7 +54,7 @@
     = t '.wip_tournaments'
   .list-group
     - @unfinished_tnmts.each do |tournament|
-      =link_to pretty_tournament_path(tournament, tournament.encoded_title), class: 'list-group-item clearfix', data:{no_turbolink:true} do
+      =link_to pretty_tournament_path(tournament, tournament.encoded_title), class: 'list-group-item clearfix' do
         %span.list-group-item-heading
           = tournament.title
           = fa_icon("angle-right", "pull-right")

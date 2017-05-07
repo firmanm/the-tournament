@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170430175529) do
+ActiveRecord::Schema.define(version: 20170505141603) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,10 +29,9 @@ ActiveRecord::Schema.define(version: 20170430175529) do
     t.date     "expires_at", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["expires_at"], name: "index_plans_on_expires_at", using: :btree
+    t.index ["user_id"], name: "index_plans_on_user_id", using: :btree
   end
-
-  add_index "plans", ["expires_at"], name: "index_plans_on_expires_at", using: :btree
-  add_index "plans", ["user_id"], name: "index_plans_on_user_id", using: :btree
 
   create_table "taggings", force: :cascade do |t|
     t.integer  "tag_id"
@@ -43,21 +41,18 @@ ActiveRecord::Schema.define(version: 20170430175529) do
     t.string   "tagger_type",   limit: 255
     t.string   "context",       limit: 128
     t.datetime "created_at"
+    t.index ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], name: "taggings_idx", unique: true, using: :btree
   end
-
-  add_index "taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], name: "taggings_idx", unique: true, using: :btree
 
   create_table "tags", force: :cascade do |t|
     t.string  "name",           limit: 255
     t.integer "taggings_count",             default: 0
+    t.index ["name"], name: "index_tags_on_name", unique: true, using: :btree
   end
-
-  add_index "tags", ["name"], name: "index_tags_on_name", unique: true, using: :btree
 
   create_table "tournaments", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "size"
-    t.string   "type",              limit: 255, default: "SingleElimination"
     t.string   "title",             limit: 255
     t.string   "place",             limit: 255
     t.text     "detail"
@@ -72,11 +67,10 @@ ActiveRecord::Schema.define(version: 20170430175529) do
     t.string   "facebook_album_id", limit: 255
     t.json     "teams"
     t.json     "results"
+    t.index ["finished"], name: "index_tournaments_on_finished", using: :btree
+    t.index ["pickup"], name: "index_tournaments_on_pickup", using: :btree
+    t.index ["user_id"], name: "index_tournaments_on_user_id", using: :btree
   end
-
-  add_index "tournaments", ["finished"], name: "index_tournaments_on_finished", using: :btree
-  add_index "tournaments", ["pickup"], name: "index_tournaments_on_pickup", using: :btree
-  add_index "tournaments", ["user_id"], name: "index_tournaments_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email",                  limit: 255, default: "",    null: false
@@ -97,9 +91,8 @@ ActiveRecord::Schema.define(version: 20170430175529) do
     t.text     "profile"
     t.string   "url",                    limit: 255
     t.string   "facebook_url",           limit: 255
+    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   end
-
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
 end

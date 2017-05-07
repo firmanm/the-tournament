@@ -10,11 +10,11 @@
     - else
       %li= link_to t('tournament_info.others'), tournaments_path(category: 'others')
     %li
-      =link_to tournament.title, tournament_path(tournament)
+      =link_to tournament.title, pretty_tournament_path(tournament, tournament.title)
 
 %section
   %h1.title.clearfix
-    = link_to tournament.title, pretty_tournament_path(tournament, tournament.title), data:{no_turbolink:true}
+    = link_to tournament.title, pretty_tournament_path(tournament, tournament.title)
     %small.pull-right= tournament.created_at.strftime("%Y.%m.%d")
   - if tournament.place.present?
     %small @#{tournament.place}

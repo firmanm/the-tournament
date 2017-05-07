@@ -17,9 +17,13 @@
 #  updated_at             :datetime
 #  admin                  :boolean          default(FALSE)
 #  email_subscription     :boolean          default(TRUE)
+#  name                   :string(255)
+#  profile                :text
+#  url                    :string(255)
+#  facebook_url           :string(255)
 #
 
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,

@@ -11,13 +11,10 @@
 // about supported directives.
 //
 //= require jquery
-//= require jquery.turbolinks
 //= require jquery_ujs
-//= require twitter/bootstrap
 //= require jquery.bracket.min
 //= require jquery.tagsinput.min
-//= require spin
-//= require jquery.spin
+//= require twitter/bootstrap
 //= require html2canvas
 //= require turbolinks
 //= require_tree .
