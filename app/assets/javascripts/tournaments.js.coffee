@@ -72,6 +72,11 @@ $(document).on 'turbolinks:load', ->
     createBracket().done(hideDecimal(), setTooltip())
 
 
+  # tournament#edit page - Tags input
+  if $('#tournament_tag_list').length
+    $('#tournament_tag_list').tagsInput({'width':'100%', 'height':'auto'})
+
+
   # tournament#photos
   if ($('body').data('controller')=='tournaments' && $('body').data('action')=='photos')
     if gon.album_id != null && gon.album_id != ''

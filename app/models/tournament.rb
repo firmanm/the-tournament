@@ -64,14 +64,6 @@ class Tournament < ApplicationRecord
       tournaments = Tournament.where('title LIKE ? OR detail LIKE ?', "%#{params[:q]}%", "%#{params[:q]}%")
     elsif params[:tag]
       tournaments = Tournament.tagged_with(params[:tag])
-    elsif params[:category]
-      if params[:category] != 'others'
-        tags = Category.where(category_name: params[:category]).map(&:tag_name)
-        tournaments = Tournament.tagged_with(tags, any:true)
-      else
-        tags = Category.all.map(&:tag_name)
-        tournaments = Tournament.tagged_with(tags, exclude:true)
-      end
     else
       tournaments = Tournament.all
     end
@@ -103,11 +95,7 @@ class Tournament < ApplicationRecord
   end
 
   def category
-    self.tag_list.each do |tag|
-      category = Category.find_by(tag_name: tag)
-      return category if category.present?
-    end
-    return nil
+    self.tag_list.first
   end
 
   def encoded_title

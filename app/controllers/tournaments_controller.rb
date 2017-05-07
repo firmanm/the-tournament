@@ -5,8 +5,21 @@ class TournamentsController < ApplicationController
 
 
   def index
+    if params[:q]
+      @title = "「#{params[:q]}」のトーナメント検索結果"
+    elsif params[:tag]
+      @title = "#{params[:tag]}のトーナメント一覧"
+    else
+      @title = "トーナメント一覧"
+    end
+    @page_title = (params[:page]) ? "#{@title} #{params[:page]}ページ目" : @title
+
     tournaments = Tournament.search_tournaments(params)
-    @tournaments = tournaments.page(params[:page]).per(15)
+    per_page = 30
+    @tournaments = tournaments.page(params[:page]).per(per_page)
+
+    @page_start_count = params[:page] ? (params[:page].to_i - 1) * per_page + 1 : 1
+    @page_end_count = @page_start_count + @tournaments.count - 1
   end
 
 

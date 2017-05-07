@@ -1,35 +1,34 @@
-- keyword = params[:q] || params[:tag] || params[:category] || "すべて"
-= content_for :page_title, "#{keyword}のトーナメント一覧"
+= content_for :page_title, @page_title
 
 %div
   %ol.breadcrumb
     %li
-      =link_to 'HOME', root_path
+      =link_to 'TOP', root_path
     %li
       =link_to t('tournament_info.all_tournaments'), tournaments_path
-    - if params[:category].present?
-      %li= link_to params[:category], tournaments_path(category: params[:category])
-    - elsif params[:tag].present?
+    - if params[:tag].present?
       %li= link_to params[:tag], tournaments_path(tag: params[:tag])
+    - elsif params[:q].present?
+      %li= params[:q]
 
 %section
-  %h1.title.clearfix= t('.search_tournament')
+  %h1.title.clearfix= @title
 
 %section
-  %h1.headline
-    = fa_icon("search")
-    = t('.keyword_search_result', q: keyword)
+  %p
+    #{@tournaments.total_count}件中 #{@page_start_count}-#{@page_end_count}件を表示
+
   .list-group
     - if @tournaments.blank?
-      .list-group-item No Tournament was found for "#{params[:q]}".
+      .list-group-item トーナメントが見つかりませんでした。。
     - @tournaments.each do |tournament|
       =link_to pretty_tournament_path(tournament, tournament.encoded_title), class: 'list-group-item clearfix' do
+        - if tournament.finished
+          %span.label.label-warning= t('static_pages.top.finished')
         %span.list-group-item-heading
           = tournament.title
           = fa_icon("angle-right", "pull-right")
           %small (#{tournament.created_at.strftime("%Y.%m.%d")})
-        - if tournament.finished
-          %span.label.label-warning= t('static_pages.top.finished')
-        - else
-          %span.label.label-default= t('static_pages.top.wip')
+        - tournament.tag_list.take(3).each do |tag|
+          %span.label.label-default= tag
     = paginate @tournaments

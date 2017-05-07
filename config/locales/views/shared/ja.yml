@@ -9,3 +9,11 @@ ja:
     country: 国(任意)
     group: 所属(任意)
     edit_detail: 詳細設定
+
+  views:
+    pagination:
+      first:    "&laquo;"
+      last:     "&raquo;"
+      previous: "&lsaquo;"
+      next:     "&rsaquo;"
+      truncate: "..."

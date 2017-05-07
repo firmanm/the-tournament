@@ -1,16 +1,13 @@
 %div
   %ol.breadcrumb
     %li
-      =link_to 'HOME', root_path
+      =link_to 'TOP', root_path
     %li
       =link_to t('tournament_info.all_tournaments'), tournaments_path
     - if tournament.category.present?
-      %li= link_to tournament.category.category_name, tournaments_path(category: tournament.category.category_name)
-      %li= link_to tournament.category.tag_name, tournaments_path(tag: tournament.category.tag_name)
-    - else
-      %li= link_to t('tournament_info.others'), tournaments_path(category: 'others')
+      %li= link_to tournament.category, tournaments_path(tag: tournament.category)
     %li
-      =link_to tournament.title, pretty_tournament_path(tournament, tournament.title)
+      = tournament.title
 
 %section
   %h1.title.clearfix

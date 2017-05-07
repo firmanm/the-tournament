@@ -9,3 +9,11 @@ en:
     country: Country
     group: Group
     edit_detail: Edit detail
+
+  views:
+    pagination:
+      first:    "&laquo;"
+      last:     "&raquo;"
+      previous: "&lsaquo;"
+      next:     "&rsaquo;"
+      truncate: "..."
