@@ -551,8 +551,6 @@ GEM
       builder (~> 3.0)
     sixarm_ruby_unaccent (1.1.1)
     slop (3.6.0)
-    spinjs-rails (1.4)
-      rails (>= 3.1)
     spring (2.0.1)
       activesupport (>= 4.2)
     spring-commands-rspec (1.0.4)
@@ -670,7 +668,6 @@ DEPENDENCIES
   simple_form!
   simplecov
   sitemap_generator
-  spinjs-rails
   spring
   spring-commands-rspec
   therubyracer

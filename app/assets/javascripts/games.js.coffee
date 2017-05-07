@@ -25,6 +25,7 @@ set_winner = (winner) ->
   $('.panel-heading i').eq(1-winner).addClass('fa-times')
   $('#game_winner').val(winner)
   $('.btn.btn-primary').removeClass('disabled')
+  console.log("winnerセットしたよ")
 
 # 手動の勝者選択を可能にする
 enable_winner_select = ->
