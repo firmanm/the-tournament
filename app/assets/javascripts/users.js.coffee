@@ -1,4 +1,4 @@
-$ ->
+$(document).on 'turbolinks:load', ->
   # user/show
   if($('body').data('controller')=='users' && $('body').data('action')=='show')
     window.fbAsyncInit = ->

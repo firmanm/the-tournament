@@ -25,7 +25,6 @@ set_winner = (winner) ->
   $('.panel-heading i').eq(1-winner).addClass('fa-times')
   $('#game_winner').val(winner)
   $('.btn.btn-primary').removeClass('disabled')
-  console.log("winnerセットしたよ")
 
 # 手動の勝者選択を可能にする
 enable_winner_select = ->
@@ -36,7 +35,7 @@ disable_winner_select = ->
   $('#winner-select').attr('disabled','disabled')
 
 
-$ ->
+$(document).on 'turbolinks:load', ->
   if ($('body').data('controller')=='tournaments' && $('body').data('action')=='edit_game')
     # 同点の場合は最初から手動の勝者選択をactiveにしとく
     scores = [Number($('.game_game_records_score input')[0].value), Number($('.game_game_records_score input')[1].value)]

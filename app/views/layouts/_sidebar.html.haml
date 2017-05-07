@@ -2,7 +2,7 @@
 %section.well.sidebar-nav.text-center
   - if current_user
     %p
-      = link_to user_path(current_user), 'data-turbolinks':false do
+      = link_to user_path(current_user), data:{turbolinks:false} do
         %strong= current_user.try(:email)
       = link_to destroy_user_session_path, method: :delete do
         %small (#{t('signout')})
