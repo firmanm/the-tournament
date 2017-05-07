@@ -2,7 +2,6 @@ source 'https://rubygems.org'
 ruby '2.3.1'
 
 gem 'rails', '5.0.0'
-# gem 'rails', '4.2.6'
 gem 'pg'
 gem 'foreman', '0.71.0'
 gem 'unicorn'
@@ -47,8 +46,6 @@ end
 
 group :production do
   gem 'rails_12factor'
-  gem 'airbrake'
-  gem 'asset_sync'
 end
 
 group :development do
