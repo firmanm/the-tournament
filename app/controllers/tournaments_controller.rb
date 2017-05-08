@@ -111,8 +111,7 @@ class TournamentsController < ApplicationController
     # 通常入力
     if params[:input_type] == 'array'
       params[:tournament][:teams_array].each_with_index do |team, i|
-        team_data = team['name'].present? ? { name: team['name'] } : nil
-        team_data['flag'].try(:downcase!) if team_data
+        team_data = team['name'].present? ? { name: team['name'], flag: team['flag'].try(:downcase) } : nil
         teams << team_data
       end
     # まとめて入力
