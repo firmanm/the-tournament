@@ -57,6 +57,7 @@ class Tournament < ApplicationRecord
   scope :finished, -> { where(finished: true) }
 
   before_create :initialize_teams_and_results
+  before_save :auto_tagging
   after_save :upload_json, :upload_img
 
   def self.search_tournaments(params)
@@ -182,9 +183,8 @@ class Tournament < ApplicationRecord
   end
 
   def upload_img
-    return if Rails.env.development?
-    return if ENV['FOG_DIRECTORY'] == 'the-tournament-stg'
-    return if self.user.id != 835 || !self.user.admin?
+    return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
+    return if self.user.id != 835 || !self.user.admin?  # 管理者と特定のユーザーでのみ実行
 
     File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
       url = "#{root_url}/tournaments/#{self.id}/raw"
@@ -251,5 +251,27 @@ class Tournament < ApplicationRecord
     else
       game_name = "第#{game_num}試合"
     end
+  end
+
+  # タイトルをもとに自動タグ付け
+  def auto_tagging
+    tags = %w(将棋 ラグビー ホッケー バドミントン ソフトボール バレーボール  ドッヂボール フットサル フェンシング バスケットボール ビリヤード 柔道 剣道 野球 卓球 サッカー テニス シャドウバース シャドバ スプラトゥーン クラッシュ・ロワイヤル クラロワ オーバーウォッチ Overwatch スマッシュブラザーズ スマブラ 遊戯王 人狼 雪合戦 麻雀 Shardbound)
+    match = self.title.match(/#{tags.join('|')}/)
+    return if !match
+
+    # FIXME: 表記ゆれ対応
+    if match[0] == 'シャドバ'
+      tag = 'シャドウバース'
+    elsif match[0] == 'クラロワ'
+      tag = 'クラッシュ・ロワイヤル'
+    elsif match[0] == 'Overwatch'
+      tag = 'オーバーウォッチ'
+    elsif match[0] == 'スマブラ'
+      tag = 'スマッシュブラザーズ'
+    else
+      tag = match[0]
+    end
+
+    self.tag_list.add(tag)
   end
 end

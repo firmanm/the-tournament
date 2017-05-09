@@ -8,6 +8,15 @@ namespace :tasks do
   end
 
   task :truncate_tags_and_taggings => :environment do
-    ActiveRecord::Base.connection.execute('TRUNCATE TABLE tags, taggings;')
+    ActiveRecord::Base.connection.execute('TRUNCATE TABLE tags, taggings RESTART IDENTITY;')
+  end
+
+  task :add_tags => :environment do
+    Tournament.skip_callback(:save, :before, :auto_tagging)
+    Tournament.all.each do |tournament|
+      tournament.auto_tagging
+      tournament.save if tournament.tag_list.present?
+    end
+    Tournament.set_callback(:save, :before, :auto_tagging)
   end
 end

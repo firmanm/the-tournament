@@ -29,10 +29,14 @@
       .list-group
         - @tournaments.each do |tournament|
           =link_to pretty_tournament_path(tournament, tournament.encoded_title), class: 'list-group-item clearfix' do
+            - if tournament.finished
+              %span.label.label-warning= t('static_pages.top.finished')
             %span.list-group-item-heading
               = tournament.title
               = fa_icon("angle-right", "pull-right")
             %small (#{tournament.created_at.strftime("%Y.%m.%d")})
+            - tournament.tag_list.take(3).each do |tag|
+              %span.label.label-default= tag
     = paginate @tournaments
   - else
     .well
