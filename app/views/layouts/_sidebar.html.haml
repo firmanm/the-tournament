@@ -27,10 +27,11 @@
         = submit_tag(t("layouts.sidebar.search"), class:"btn btn-default")
 
 -# Category
-%section
-  %h4
-    = fa_icon("tags")
-    = t('tournaments.tags')
-  .well
-    - tag_cloud(Tournament.tag_counts_on(:tags, limit: 40, order: "count desc"), %w(css1 css2 css3 css4)) do |tag, css_class|
-      = link_to tag.name, tournaments_path(tag: tag.name), class: css_class
+/
+  %section
+    %h4
+      = fa_icon("tags")
+      = t('tournaments.tags')
+    .well
+      - tag_cloud(Tournament.tag_counts_on(:tags, limit: 40, order: "count desc"), %w(css1 css2 css3 css4)) do |tag, css_class|
+        = link_to tag.name, tournaments_path(tag: tag.name), class: css_class
