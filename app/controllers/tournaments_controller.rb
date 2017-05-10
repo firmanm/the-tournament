@@ -1,5 +1,5 @@
 class TournamentsController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index, :show, :embed, :raw, :photos, :games, :players]
+  skip_before_action :authenticate_user!, only: [:index, :show, :embed, :raw, :photos, :games, :players, :new, :create]
   before_action :set_tournament, only: [:show, :edit, :update, :destroy, :embed, :upload, :players, :edit_game]
   load_and_authorize_resource
 
@@ -59,11 +59,13 @@ class TournamentsController < ApplicationController
 
   def new
     @tournament = Tournament.new
+    @token = SecureRandom.hex(8) if !current_user || current_user.guest?
   end
 
 
   def create
     @tournament = Tournament.new(tournament_params)
+    sign_in(User.find(1)) if !current_user  # 未ログインの場合、ゲストユーザーとしてログインさせる
     @tournament.user = current_user
 
     respond_to do |format|
@@ -203,7 +205,7 @@ class TournamentsController < ApplicationController
     end
 
     def tournament_params
-      params.require(:tournament).permit(:id, :title, :user_id, :detail, :place, :url, :size, :consolation_round, :tag_list, :double_elimination, :scoreless, :facebook_album_id, :teams, :results)
+      params.require(:tournament).permit(:id, :title, :user_id, :detail, :place, :url, :size, :consolation_round, :tag_list, :double_elimination, :scoreless, :facebook_album_id, :teams, :results, :token)
     end
 
     def set_teams_text

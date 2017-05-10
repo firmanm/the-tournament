@@ -33,6 +33,18 @@
   %h1.headline
     = fa_icon("info-circle")
     = t('tournament_menu.basic_info')
+
+  - if !current_user || current_user.guest?
+    .panel.panel-warning
+      .panel-heading
+        【重要】トーナメント更新用URL
+      .panel-body
+        %p
+          ログインせずにトーナメントを作成しようとしています。以下の更新用URLを必ず保管しておいてください。
+          %br
+          %small （URLは「登録」ボタンを押して大会作成した後に有効になります）
+        %p
+          %b.text-info= token_url(@token)
   %p
     %strong.text-danger ※「参加者数」は後から変更できませんのでご注意ください。
     %br

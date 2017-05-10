@@ -1,6 +1,6 @@
 -# Profile
 %section.well.sidebar-nav.text-center
-  - if current_user
+  - if current_user && !current_user.guest?
     %p
       = link_to user_path(current_user), data:{turbolinks:false} do
         %strong= current_user.try(:email)
@@ -13,7 +13,7 @@
       = link_to fa_icon('list')+"作成済みトーナメント", user_path(current_user), class: 'btn btn-default'
   - else
     = link_to 'トーナメント作成', new_tournament_path, class: 'btn btn-danger btn-block btn-lg'
-    %small= t('layouts.sidebar.need_signin_or_signup_html', signin_link: link_to(t('signin'), new_user_session_path), signup_link: link_to(t('signup'), new_user_registration_path))
+    -# %small= t('layouts.sidebar.need_signin_or_signup_html', signin_link: link_to(t('signin'), new_user_session_path), signup_link: link_to(t('signup'), new_user_registration_path))
 
 -# Search
 %section

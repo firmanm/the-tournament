@@ -3,17 +3,20 @@
     %p.navbar-text.hidden-xs.hidden-sm= t('site_description')
 
     / Show Acccount menu on SP view
-    - if current_user
+    - if current_user && !current_user.guest?
       %li
         = link_to 'マイページ', user_path(current_user), class: 'visible-xs visible-sm', 'data-turbolinks': false
       = menu_item t('signout'), destroy_user_session_path, method: :delete, class: 'visible-xs visible-sm'
+    - elsif current_user && current_user.guest?
+      = menu_item t("layouts.sidebar.user_registration"), new_user_registration_path, class: 'visible-xs visible-sm'
+      = menu_item t('signin'), new_user_session_path, class: 'visible-xs visible-sm'
     - else
       = menu_item t("layouts.sidebar.user_registration"), new_user_registration_path, class: 'visible-xs visible-sm'
       = menu_item t('signin'), new_user_session_path, class: 'visible-xs visible-sm'
 
 
   %ul.nav.navbar-nav.navbar-right.visible-md.visible-lg
-    - if current_user
+    - if current_user && !current_user.guest?
       %li
         = link_to user_path(current_user), {'data-turbolinks': false} do
           = fa_icon('user')

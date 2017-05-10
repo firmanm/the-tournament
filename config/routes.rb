@@ -12,6 +12,8 @@ Rails.application.routes.draw do
       get 'page/:page', action: :index, on: :collection
     end
 
+    match '/tokens/:token', to: 'users#token_auth', via: :get, as: :token
+
     scope :tournaments do
       # players
       match '/:id/players', to: 'tournaments#players', via: :get, as: :tournament_players

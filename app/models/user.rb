@@ -43,4 +43,8 @@ class User < ApplicationRecord
   def creatable_sizes
     {"〜4名"=> 4, "5〜8名"=> 8, "9〜16名"=>16, "17〜32名"=>32, "33〜64名"=>64, "65〜128名"=>128}.select{|k,v| v <= self.limit_size}
   end
+
+  def guest?
+    self.id == 1
+  end
 end

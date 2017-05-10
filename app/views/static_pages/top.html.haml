@@ -6,11 +6,9 @@
 %section.well.text-center
   //PC版
   %div.visible-md.visible-lg
-    - if current_user
-      = link_to t('.create_tournament'), new_tournament_path, class: 'btn btn-danger btn-block btn-lg center-block'
-    - else
-      = link_to t('.create_tournament'), new_tournament_path, class: 'btn btn-danger btn-block btn-lg center-block'
-      %small= t('layouts.sidebar.need_signin_or_signup_html', signin_link: link_to(t('signin'), new_user_session_path), signup_link: link_to(t('signup'), new_user_registration_path))
+    = link_to t('.create_tournament'), new_tournament_path, class: 'btn btn-danger btn-block btn-lg center-block'
+    -# - if !current_user
+      -# %small= t('layouts.sidebar.need_signin_or_signup_html', signin_link: link_to(t('signin'), new_user_session_path), signup_link: link_to(t('signup'), new_user_registration_path))
   //SP版
   %div.visible-xs.visible-sm
     - if current_user
@@ -19,7 +17,7 @@
       = link_to t('layouts.sidebar.create_tournament'), new_tournament_path, class: 'btn btn-danger btn-block btn-lg center-block'
       %small= t('layouts.sidebar.need_signin_or_signup_html', signin_link: link_to(t('signin'), new_user_session_path), signup_link: link_to(t('signup'), new_user_registration_path))
 
-- if current_user && @user_tnmts.present?
+- if current_user && @user_tnmts.present? && !current_user.guest?
   %section
     %h1.headline
       = fa_icon('list')

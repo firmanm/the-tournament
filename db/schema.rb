@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170507060923) do
+ActiveRecord::Schema.define(version: 20170510123029) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(version: 20170507060923) do
     t.string   "facebook_album_id", limit: 255
     t.json     "teams"
     t.json     "results"
+    t.string   "token",             limit: 255
     t.index ["finished"], name: "index_tournaments_on_finished", using: :btree
     t.index ["pickup"], name: "index_tournaments_on_pickup", using: :btree
     t.index ["user_id"], name: "index_tournaments_on_user_id", using: :btree

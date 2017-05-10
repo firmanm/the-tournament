@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:show]
+  skip_before_action :authenticate_user!, only: [:show, :token_auth]
   before_action :set_user, only: [:show, :edit, :update]
   load_and_authorize_resource
 
@@ -26,6 +26,17 @@ class UsersController < ApplicationController
         format.html { render edit_user_path(@user) }
         format.json { render json: @user.errors, status: :unprocessable_entity }
       end
+    end
+  end
+
+  def token_auth
+    tournament = Tournament.find_by(token: params[:token])
+    if tournament
+      sign_in(User.find(1))
+      redirect_to edit_tournament_path(tournament)
+    else
+      flash[:alert] = 'トークンの認証に失敗しました。お手数ですがURLを再度ご確認ください。。'
+      redirect_to root_path
     end
   end
 
