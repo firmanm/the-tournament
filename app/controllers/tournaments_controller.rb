@@ -1,7 +1,8 @@
 class TournamentsController < ApplicationController
   skip_before_action :authenticate_user!, only: [:index, :show, :embed, :raw, :photos, :games, :players, :new, :create]
-  before_action :set_tournament, only: [:show, :edit, :update, :destroy, :embed, :upload, :players, :edit_game]
+  # before_action :set_tournament, only: [:show, :edit, :update, :destroy, :embed, :upload, :players, :edit_game]
   load_and_authorize_resource
+  before_action :authenticate_guest_user, only: [:edit, :update, :destroy, :upload, :edit_players, :update_players, :edit_games, :edit_game, :update_game]
 
 
   def index
@@ -59,13 +60,22 @@ class TournamentsController < ApplicationController
 
   def new
     @tournament = Tournament.new
-    @token = SecureRandom.hex(8) if !current_user || current_user.guest?
+
+    # ゲストユーザーでログインしたまま来たら、tokenを変えるので一度ログアウトさせる
+    sign_out(current_user) if current_user && current_user.guest?
+    @token = SecureRandom.hex(8) if !current_user
   end
 
 
   def create
     @tournament = Tournament.new(tournament_params)
-    sign_in(User.find(1)) if !current_user  # 未ログインの場合、ゲストユーザーとしてログインさせる
+
+    # 未ログインの場合、ゲストユーザーとしてログインさせる
+    if !current_user
+      sign_in(User.find(1))
+      session[:tournament_token] = tournament_params[:token]
+    end
+
     @tournament.user = current_user
 
     respond_to do |format|
@@ -215,5 +225,12 @@ class TournamentsController < ApplicationController
         @teams_text += ",#{m['flag']}" if m && m['flag'].present?
         @teams_text += "\r\n"
       end
+    end
+
+    def authenticate_guest_user
+      return if !current_user.guest?
+
+      p session[:tournament_token]
+      p @tournament.token
     end
 end
