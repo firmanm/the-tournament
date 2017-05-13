@@ -3,18 +3,11 @@ class Ability
 
   def initialize(user)
     user ||= User.new # guest user (not logged in)
-    if user.admin?
-      can :manage, :all
-    else
-      can :read, :all
-      can :embed, :all
-      can :raw, :all
-      can :photos, :all
-      can :games, :all
-      can :players, :all
-    end
+    can :manage, :all if user.admin?
 
-    can :manage, User, id: user.id
     can :manage, Tournament, user_id: user.id
+    can [:read, :raw, :photos, :games, :players], Tournament
+
+    can :manage, User, id: user.id  if user.id != 1  #ゲストユーザーは編集させない
   end
 end

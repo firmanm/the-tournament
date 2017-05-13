@@ -1,6 +1,5 @@
 class UsersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :token_auth]
-  before_action :set_user, only: [:show, :edit, :update]
   load_and_authorize_resource
 
   def show
@@ -41,10 +40,6 @@ class UsersController < ApplicationController
   end
 
   private
-    def set_user
-      @user = User.find(params[:id])
-    end
-
     def user_params
       params.require(:user).permit(:email, :email_subscription, :name, :url, :facebook_url, :profile)
     end

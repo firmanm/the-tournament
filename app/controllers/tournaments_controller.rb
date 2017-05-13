@@ -1,6 +1,5 @@
 class TournamentsController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:index, :show, :embed, :raw, :photos, :games, :players, :new, :create]
-  # before_action :set_tournament, only: [:show, :edit, :update, :destroy, :embed, :upload, :players, :edit_game]
+  skip_before_action :authenticate_user!, only: [:index, :show, :raw, :photos, :games, :players, :new, :create]
   load_and_authorize_resource
   before_action :authenticate_guest_user, only: [:edit, :update, :destroy, :upload, :edit_players, :update_players, :edit_games, :edit_game, :update_game]
 
@@ -210,10 +209,6 @@ class TournamentsController < ApplicationController
 
 
   private
-    def set_tournament
-      @tournament = Tournament.find(params[:id])
-    end
-
     def tournament_params
       params.require(:tournament).permit(:id, :title, :user_id, :detail, :place, :url, :size, :consolation_round, :tag_list, :double_elimination, :scoreless, :facebook_album_id, :teams, :results, :token)
     end
@@ -227,6 +222,7 @@ class TournamentsController < ApplicationController
       end
     end
 
+    #TODO:
     def authenticate_guest_user
       return if !current_user.guest?
 
