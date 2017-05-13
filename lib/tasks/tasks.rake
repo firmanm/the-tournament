@@ -8,7 +8,7 @@ namespace :tasks do
   end
 
   task :guest_migrate => :environment do
-    # User.create(id: 1, email: 'guest@the-tournament.jp', password: SecureRandom.hex(8))
+    User.create(id: 1, email: 'guest@the-tournament.jp', password: SecureRandom.hex(8))
     Plan.find(1).update(user_id: 1, size: 32)
   end
 end
