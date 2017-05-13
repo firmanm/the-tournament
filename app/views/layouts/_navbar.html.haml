@@ -20,9 +20,10 @@
       %li
         = link_to t('signout'),destroy_user_session_path, method: :delete
     - else
-      %li
-        = link_to '#' do
-          = fa_icon('user')
-          ゲストユーザー
+      - if current_user.try(:guest?)
+        %li
+          = link_to '#' do
+            = fa_icon('user')
+            ゲストユーザー
       %li= link_to t("layouts.sidebar.user_registration"), new_user_registration_path
       %li= link_to t('signin'), new_user_session_path

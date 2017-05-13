@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :token_auth]
-  load_and_authorize_resource
+  load_and_authorize_resource except: [:token_auth]
 
   def show
     @tournaments = @user.tournaments.page(params[:page]).per(15)
@@ -32,9 +32,10 @@ class UsersController < ApplicationController
     tournament = Tournament.find_by(token: params[:token])
     if tournament
       sign_in(User.find(1))
+      session[:tournament_token] = params[:token]
       redirect_to edit_tournament_path(tournament)
     else
-      flash[:alert] = 'トークンの認証に失敗しました。お手数ですがURLを再度ご確認ください。。'
+      flash[:alert] = '認証に失敗しました。お手数ですが編集用URLを再度ご確認ください。。'
       redirect_to root_path
     end
   end

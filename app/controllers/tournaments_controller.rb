@@ -222,11 +222,11 @@ class TournamentsController < ApplicationController
       end
     end
 
-    #TODO:
+    # ゲストユーザーの編集時は、tokenがトーナメントのものと一致するかチェックする
     def authenticate_guest_user
       return if !current_user.guest?
 
-      p session[:tournament_token]
-      p @tournament.token
+      message = '編集権限がありません。ゲストで作成したトーナメントを編集する際は、編集用URLから再度アクセスしてください。'
+      raise CanCan::AccessDenied.new(message, :edit, Tournament) if session[:tournament_token] != @tournament.token
     end
 end
