@@ -77,16 +77,13 @@ class TournamentsController < ApplicationController
 
     @tournament.user = current_user
 
-    respond_to do |format|
-      if @tournament.save
-        flash[:notice] = I18n.t('flash.tournament.create.success')
-        format.html { redirect_to tournament_path(@tournament) }
-        format.json { render action: 'show', status: :created, location: @tournament }
-      else
-        flash.now[:alert] = I18n.t('flash.tournament.create.failure')
-        format.html { render action: 'new' }
-        format.json { render json: @tournament.errors, status: :unprocessable_entity }
-      end
+    if @tournament.save
+      flash[:notice] = I18n.t('flash.tournament.create.success')
+      redirect_to tournament_path(@tournament)
+    else
+      @token = session[:tournament_token]
+      flash.now[:alert] = I18n.t('flash.tournament.create.failure')
+      render action: 'new'
     end
   end
 
@@ -107,10 +104,7 @@ class TournamentsController < ApplicationController
 
   def destroy
     @tournament.destroy
-    respond_to do |format|
-      format.html { redirect_to root_path, notice: 'トーナメントを削除しました' }
-      format.json { head :no_content }
-    end
+    redirect_to root_path, notice: 'トーナメントを削除しました'
   end
 
 

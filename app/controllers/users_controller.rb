@@ -2,6 +2,7 @@ class UsersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :token_auth]
   load_and_authorize_resource except: [:token_auth]
 
+
   def show
     @tournaments = @user.tournaments.page(params[:page]).per(15)
 
@@ -12,21 +13,20 @@ class UsersController < ApplicationController
     end
   end
 
+
   def edit
   end
 
+
   def update
-    respond_to do |format|
-      if @user.update(user_params)
-        format.html { redirect_to user_path(@user), notice: 'Success on updating user info.' }
-        format.json { head :no_content }
-      else
-        flash.now[:alert] = 'Failed on updating user info.'
-        format.html { render edit_user_path(@user) }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    if @user.update(user_params)
+      redirect_to user_path(@user), notice: 'Success on updating user info.'
+    else
+      flash.now[:alert] = 'Failed on updating user info.'
+      render edit_user_path(@user)
     end
   end
+
 
   def token_auth
     tournament = Tournament.find_by(token: params[:token])
@@ -39,6 +39,8 @@ class UsersController < ApplicationController
       redirect_to root_path
     end
   end
+
+
 
   private
     def user_params
