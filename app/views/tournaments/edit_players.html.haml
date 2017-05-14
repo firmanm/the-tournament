@@ -51,7 +51,7 @@
                 %td.hidden-sm.hidden-xs
                   = select_tag 'tournament[teams_array][][flag]', options_for_select(Country.all_names_with_codes('ja'), flag), class: 'country optional form-control', include_blank: true
         %br
-        = button_tag '更新', {type: 'submit', class: 'btn btn-danger', name: 'input_type', value: 'array'}
+        = button_tag '更新する', {type: 'submit', class: 'btn btn-danger', name: 'input_type', value: 'array'}
 
       / まとめてテキスト入力
       #special.tab-pane(role='tabpanel')
@@ -66,7 +66,7 @@
         = text_area_tag 'tournament[teams_text]', @teams_text, {rows: @tournament.size+1, class: 'text optional form-control'}
         %br
         %div
-          = button_tag '更新', {type: 'submit', class: 'btn btn-danger', name: 'input_type', value: 'text'}
+          = button_tag '更新する', {type: 'submit', class: 'btn btn-danger', name: 'input_type', value: 'text'}
           %p.pull-right
             登録数：
             %span#teams_count= @tournament.teams.count

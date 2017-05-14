@@ -79,7 +79,7 @@ class TournamentsController < ApplicationController
 
     if @tournament.save
       flash[:notice] = I18n.t('flash.tournament.create.success')
-      redirect_to tournament_path(@tournament)
+      redirect_to tournament_edit_players_path(@tournament)
     else
       @token = session[:tournament_token]
       flash.now[:alert] = I18n.t('flash.tournament.create.failure')
@@ -143,7 +143,7 @@ class TournamentsController < ApplicationController
 
     if @tournament.update({teams: teams})
       @tournament.update_bye_games
-      redirect_to tournament_edit_players_path(@tournament), notice: I18n.t('flash.players.update.success')
+      redirect_to tournament_edit_games_path(@tournament), notice: I18n.t('flash.players.update.success')
     else
       set_teams_text
       @tournament.teams = @tournament.teams.in_groups_of(@tournament.size).first
