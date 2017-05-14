@@ -1,8 +1,12 @@
 = content_for :page_title, "#{@tournament.title} #{t('tournament_menu.games')}"
 = content_for :keywords, @tournament.title
 
-- editable = @tournament.user==current_user || current_user.try(:admin?)
-= render partial: "shared/tournament_info", locals: {tournament:@tournament, editable: false}
+= link_to fa_icon("reply")+t('back_to_tournament'), pretty_tournament_path(@tournament, @tournament.title), class: 'btn btn-default'
+
+%section
+  %h1.title.clearfix
+    = link_to @tournament.title, pretty_tournament_path(@tournament, @tournament.title)
+
 = render partial: "shared/tournament_navi", locals: {tournament:@tournament, step:3}
 
 %section
@@ -10,10 +14,5 @@
     = fa_icon("list-alt")
     = t('tournament_menu.games')
 
+  - editable = @tournament.user==current_user || current_user.try(:admin?)
   = render partial: "game_list", locals: {tournament:@tournament, editable: editable}
-
-  %hr
-  %div
-    = link_to '完了してトーナメント表を表示する', pretty_tournament_path(@tournament, @tournament.title), class: "btn btn-large btn-danger"
-    %br
-    %small ※試合結果はあとから再度更新可能です
