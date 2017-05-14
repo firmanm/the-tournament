@@ -47,4 +47,8 @@ class User < ApplicationRecord
   def guest?
     self.id == 1
   end
+
+  def public_name
+    self.name.present? ? self.name : "user#{self.id}"
+  end
 end

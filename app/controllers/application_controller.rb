@@ -14,6 +14,16 @@ class ApplicationController < ActionController::Base
     I18n.locale = params[:locale] || I18n.default_locale
   end
 
+  def after_sign_in_path_for(user)
+    # 非ゲストユーザーで、ログイン後リダイレクト先がない場合は、マイページに飛ばす
+    if !user.guest?
+      stored_location_for(user) || user_path(user)
+    else
+      super
+    end
+  end
+
+
   rescue_from CanCan::AccessDenied do |exception|
     redirect_to root_url, alert: exception.message
   end

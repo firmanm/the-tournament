@@ -5,14 +5,14 @@
   %div.cover
 
   %h1.title.clearfix
-    = @user.name || @user.email
+    = @user.public_name
     - if current_user && @user == current_user
-      = link_to '編集', edit_user_path(@user), class: 'btn btn-primary pull-right', style: 'color: #fff !important;'
-
+      = link_to fa_icon('cog')+'編集', edit_user_path(@user), class: 'btn btn-primary pull-right', style: 'color: #fff !important;'
+      
   %p
     = sanitize @user.profile, tags: %w(h1 h2 h3 h4 h5 h6 ul ol li p a img table tr td em br strong), attributes:  %w(id class href)
 
-  - if @user.url
+  - if @user.url.present?
     %p
       = link_to @user.url, target: '_blank' do
         = @user.url
@@ -22,7 +22,7 @@
 %section
   %h1.headline
     = fa_icon("trophy")
-    大会一覧
+    作成済みトーナメント表一覧
 
   - if @tournaments.present?
     %div.panel.panel-default

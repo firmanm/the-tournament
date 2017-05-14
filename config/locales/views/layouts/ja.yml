@@ -5,7 +5,7 @@ ja:
     sidebar:
       user_registration: ユーザー登録(無料)
       create_tournament: 新規トーナメント作成
-      tournament_search: 大会検索
+      tournament_search: トーナメントを探す
       search_placeholder: 大会名、キーワード
       search: 検索
       too_many_tournaments: ※大会作成数の上限に達しています。

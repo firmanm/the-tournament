@@ -1,19 +1,7 @@
--# Profile
-%section.well.sidebar-nav.text-center
-  - if current_user && !current_user.guest?
-    %p
-      = link_to user_path(current_user), data:{turbolinks:false} do
-        %strong= current_user.try(:email)
-      = link_to destroy_user_session_path, method: :delete do
-        %small (#{t('signout')})
-    %p
-      = link_to 'トーナメント作成', new_tournament_path, class: 'btn btn-danger btn-block btn-lg'
-    %br
-    %div
-      = link_to fa_icon('list')+"作成済みトーナメント", user_path(current_user), class: 'btn btn-default'
-  - else
-    = link_to 'トーナメント作成', new_tournament_path, class: 'btn btn-danger btn-block btn-lg'
-    -# %small= t('layouts.sidebar.need_signin_or_signup_html', signin_link: link_to(t('signin'), new_user_session_path), signup_link: link_to(t('signup'), new_user_registration_path))
+-# Ad
+-# %script(type="text/javascript")
+-#   var nend_params = {"media":41572,"site":225241,"spot":751939,"type":1,"oriented":1};
+-# %script(type="text/javascript" src="https://js1.nend.net/js/nendAdLoader.js")
 
 -# Search
 %section
@@ -21,16 +9,11 @@
     = fa_icon("search")
     = t('layouts.sidebar.tournament_search')
   = form_tag('/tournaments', method: :get) do
-    .input-group.well
-      = text_field_tag(:q, params[:q], class:"form-control", placeholder: t('layouts.sidebar.search_placeholder'))
-      %span.input-group-btn
-        = submit_tag(t("layouts.sidebar.search"), class:"btn btn-default")
-
--# Category
-%section
-  %h4
-    = fa_icon("tags")
-    = t('tournaments.tags')
-  .well
-    - tag_cloud(Tournament.tag_counts_on(:tags, limit: 40, order: "count desc"), %w(css1 css2 css3 css4)) do |tag, css_class|
-      = link_to tag.name, tournaments_path(tag: tag.name), class: css_class
+    .well
+      .input-group
+        = text_field_tag(:q, params[:q], class:"form-control", placeholder: t('layouts.sidebar.search_placeholder'))
+        %span.input-group-btn
+          = submit_tag(t("layouts.sidebar.search"), class:"btn btn-default")
+      %br
+      - tag_cloud(Tournament.tag_counts_on(:tags, limit: 40, order: "count desc"), %w(css1 css2 css3 css4)) do |tag, css_class|
+        = link_to tag.name, tournaments_path(tag: tag.name), class: css_class

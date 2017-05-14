@@ -1,22 +1,27 @@
 = nav_bar responsive: true, brand: image_tag("logo_w.png", alt: "THE TOURNAMENT"), brand_link: '/' do
-  = menu_group class: 'visible-xs visible-sm' do
-    %p.navbar-text.hidden-xs.hidden-sm= t('site_description')
+  %p.navbar-text.hidden-xs.hidden-sm= t('site_description')
 
-    / Show Acccount menu on SP view
+  -# SP
+  %ul.nav.navbar-nav.navbar-right.visible-xs.visible-sm
+    %li= link_to fa_icon('trophy')+'トーナメント作成', new_tournament_path
+
     - if current_user && !current_user.guest?
-      %li= link_to 'マイページ', user_path(current_user), class: 'visible-xs visible-sm', 'data-turbolinks': false
-      = menu_item t('signout'), destroy_user_session_path, method: :delete, class: 'visible-xs visible-sm'
+      %li= link_to fa_icon('user')+'マイページ', user_path(current_user), 'data-turbolinks': false
+      %li= link_to fa_icon('sign-out')+t('signout'), destroy_user_session_path, method: :delete
     - else
-      = menu_item t("layouts.sidebar.user_registration"), new_user_registration_path, class: 'visible-xs visible-sm'
-      = menu_item t('signin'), new_user_session_path, class: 'visible-xs visible-sm'
+      %li= link_to fa_icon('users')+t("layouts.sidebar.user_registration"), new_user_registration_path
+      %li= link_to fa_icon('sign-in')+t('signin'), new_user_session_path
 
-
+  -# PC
   %ul.nav.navbar-nav.navbar-right.visible-md.visible-lg
+    %form.navbar-form.navbar-left
+      = link_to 'トーナメント作成', new_tournament_path, class: 'btn btn-danger'
+
     - if current_user && !current_user.guest?
       %li
         = link_to user_path(current_user), {'data-turbolinks': false} do
           = fa_icon('user')
-          = current_user.name || current_user.email
+          マイページ
       %li
         = link_to t('signout'),destroy_user_session_path, method: :delete
     - else
