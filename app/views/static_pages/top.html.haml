@@ -7,12 +7,13 @@
   //PC版
   %div.visible-md.visible-lg
     = link_to t('.create_tournament'), new_tournament_path, class: 'btn btn-danger btn-block btn-lg center-block'
-    -# - if !current_user
-      -# %small= t('layouts.sidebar.need_signin_or_signup_html', signin_link: link_to(t('signin'), new_user_session_path), signup_link: link_to(t('signup'), new_user_registration_path))
+    - if !current_user || current_user.guest?
+      %small= t('layouts.sidebar.need_signin_or_signup_html', signin_link: link_to(t('signin'), new_user_session_path), signup_link: link_to(t('signup'), new_user_registration_path))
   //SP版
   %div.visible-xs.visible-sm
-    = link_to t('layouts.sidebar.create_tournament'), new_tournament_path, class: 'btn btn-danger btn-block btn-lg center-block'
-    -# %small= t('layouts.sidebar.need_signin_or_signup_html', signin_link: link_to(t('signin'), new_user_session_path), signup_link: link_to(t('signup'), new_user_registration_path))
+    = link_to 'トーナメント表作成', new_tournament_path, class: 'btn btn-danger btn-block btn-lg center-block'
+    - if !current_user || current_user.guest?
+      %small= t('layouts.sidebar.need_signin_or_signup_html', signin_link: link_to(t('signin'), new_user_session_path), signup_link: link_to(t('signup'), new_user_registration_path))
 
 - if @user_tnmts.present?
   %section

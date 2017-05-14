@@ -4,13 +4,13 @@ ja:
       how_to_use: サービスの使い方
     sidebar:
       user_registration: ユーザー登録(無料)
-      create_tournament: 新規トーナメント作成
-      tournament_search: トーナメントを探す
+      create_tournament: 新規トーナメント表作成
+      tournament_search: トーナメント表を探す
       search_placeholder: 大会名、キーワード
       search: 検索
       too_many_tournaments: ※大会作成数の上限に達しています。
       get_free_tournaments: 無料作成枠を増やす
-      tournaments_list: 作成済みトーナメント
+      tournaments_list: 作成済みトーナメント表
       mypage: マイページ
-      need_signin_or_signup_html: "%{signin_link}もしくは%{signup_link}が必要です。"
-      tournaments_created: トーナメント作成数
+      need_signin_or_signup_html: "すべての機能を利用するには、%{signin_link}もしくは%{signup_link}が必要です。"
+      tournaments_created: トーナメント表作成数

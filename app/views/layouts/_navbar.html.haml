@@ -3,7 +3,7 @@
 
   -# SP
   %ul.nav.navbar-nav.navbar-right.visible-xs.visible-sm
-    %li= link_to fa_icon('trophy')+'トーナメント作成', new_tournament_path
+    %li= link_to fa_icon('trophy')+'トーナメント表作成', new_tournament_path
 
     - if current_user && !current_user.guest?
       %li= link_to fa_icon('user')+'マイページ', user_path(current_user), 'data-turbolinks': false
@@ -15,7 +15,7 @@
   -# PC
   %ul.nav.navbar-nav.navbar-right.visible-md.visible-lg
     %form.navbar-form.navbar-left
-      = link_to 'トーナメント作成', new_tournament_path, class: 'btn btn-danger'
+      = link_to 'トーナメント表作成', new_tournament_path, class: 'btn btn-danger'
 
     - if current_user && !current_user.guest?
       %li
