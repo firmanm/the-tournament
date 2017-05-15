@@ -12,9 +12,21 @@
 %section
   %h1.title.clearfix
     = link_to tournament.title, pretty_tournament_path(tournament, tournament.title)
-    %small.pull-right= tournament.created_at.strftime("%Y.%m.%d")
+
+    -# 編集ボタン
+    - if editable
+      .btn-group.pull-right
+        %button.btn.btn-primary.dropdown-toggle(type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+          編集する
+          %span.caret
+        %ul.dropdown-menu
+          %li= link_to fa_icon('info-circle')+'基本情報の更新', edit_tournament_path(tournament)
+          %li= link_to fa_icon('users')+'参加者の更新', tournament_edit_players_path(tournament)
+          %li= link_to fa_icon('list-alt')+'試合結果の更新', tournament_edit_games_path(tournament)
+
   - if tournament.place.present?
     %small @#{tournament.place}
+  %small.pull-right= tournament.created_at.strftime("%Y.%m.%d")
   %ul.list-inline
     - tournament.tag_list.each do |tag|
       %li
@@ -25,9 +37,9 @@
     %p= link_to "#{tournament.url} <i class='fa fa-external-link'></i>".html_safe, tournament.url, target:'_blank'
 
 -# 所有者のみ編集ボタン表示
-- if editable
-  %section.well.text-center
-    = link_to fa_icon("cogs")+'トーナメント更新', edit_tournament_path(tournament), class: "btn btn-danger btn-block btn-lg center-block"
-    %small トーナメント情報の編集・参加者の登録・試合結果の登録はこちらから可能です。
+-# - if editable
+-#   %section.well.text-center
+-#     = link_to fa_icon("cogs")+'トーナメント更新', edit_tournament_path(tournament), class: "btn btn-danger btn-block btn-lg center-block"
+-#     %small トーナメント情報の編集・参加者の登録・試合結果の登録はこちらから可能です。
 
 %hr

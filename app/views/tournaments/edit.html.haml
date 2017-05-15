@@ -3,10 +3,6 @@
 
 = link_to fa_icon("reply")+t('back_to_tournament'), pretty_tournament_path(@tournament, @tournament.title), class: 'btn btn-default'
 
-%section
-  %h1.title.clearfix
-    = link_to @tournament.title, pretty_tournament_path(@tournament, @tournament.title)
-
 = render partial: "shared/tournament_navi", locals: {tournament:@tournament, step:1}
 
 %section

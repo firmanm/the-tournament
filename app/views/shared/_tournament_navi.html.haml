@@ -1,4 +1,19 @@
 %section
+  %h1.title.clearfix
+    = link_to tournament.title, pretty_tournament_path(tournament, tournament.title)
+
+    -# 編集ボタン
+    .btn-group.pull-right
+      %button.btn.btn-primary.dropdown-toggle(type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false")
+        編集する
+        %span.caret
+      %ul.dropdown-menu
+        %li= link_to fa_icon('info-circle')+'基本情報の更新', edit_tournament_path(tournament)
+        %li= link_to fa_icon('users')+'参加者の更新', tournament_edit_players_path(tournament)
+        %li= link_to fa_icon('list-alt')+'試合結果の更新', tournament_edit_games_path(tournament)
+
+
+%section
   - btn_1_class = (step==1) ? 'btn-primary' : 'btn-default'
   - btn_2_class = (step==2) ? 'btn-primary' : 'btn-default'
   - btn_3_class = (step==3) ? 'btn-primary' : 'btn-default'
