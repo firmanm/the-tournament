@@ -17,6 +17,62 @@
 
 %section
   %h1.headline
+    = fa_icon('star')
+    人気のトーナメント表カテゴリ
+  .row
+    .col-lg-3.col-sm-6.col-xs-6
+      = link_to tournaments_path(tag: 'サッカー') do
+        .thumbnail
+          = image_tag('top/soccer.jpg', class: 'img-responsive')
+          .caption.text-center
+            %b サッカーのトーナメント表
+    .col-lg-3.col-sm-6.col-xs-6
+      = link_to tournaments_path(tag: '野球') do
+        .thumbnail
+          = image_tag('top/baseball.jpg', class: 'img-responsive')
+          .caption.text-center
+            %b 野球のトーナメント表
+    .col-lg-3.col-sm-6.col-xs-6
+      = link_to tournaments_path(tag: 'テニス') do
+        .thumbnail
+          = image_tag('top/tennis.jpg', class: 'img-responsive')
+          .caption.text-center
+            %b テニスのトーナメント表
+    .col-lg-3.col-sm-6.col-xs-6
+      = link_to tournaments_path(tag: '柔道') do
+        .thumbnail
+          = image_tag('top/karate.jpg', class: 'img-responsive')
+          .caption.text-center
+            %b 柔道のトーナメント表
+  .row
+    .col-lg-3.col-sm-6.col-xs-6
+      = link_to tournaments_path(tag: 'シャドウバース') do
+        .thumbnail
+          = image_tag('top/shadowverse.jpg', class: 'img-responsive')
+          .caption.text-center
+            %b シャドウバースのトーナメント表
+    .col-lg-3.col-sm-6.col-xs-6
+      = link_to tournaments_path(tag: 'クラッシュ・ロワイヤル') do
+        .thumbnail
+          = image_tag('top/clashroyale.jpg', class: 'img-responsive')
+          .caption.text-center
+            %b クラッシュ・ロワイヤルのトーナメント表
+    .col-lg-3.col-sm-6.col-xs-6
+      = link_to tournaments_path(tag: 'スプラトゥーン') do
+        .thumbnail
+          = image_tag('top/splatoon.png', class: 'img-responsive')
+          .caption.text-center
+            %b スプラトゥーンのトーナメント表
+    .col-lg-3.col-sm-6.col-xs-6
+      = link_to tournaments_path(tag: 'スマッシュブラザーズ') do
+        .thumbnail
+          = image_tag('top/smashbrothers.png', class: 'img-responsive')
+          .caption.text-center
+            %b スマッシュブラザーズのトーナメント表
+
+
+%section
+  %h1.headline
     = fa_icon('bullhorn')
     = t '.new_tournaments'
   .list-group
