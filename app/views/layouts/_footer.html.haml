@@ -19,9 +19,13 @@
     .container
       %p
         Copyright &copy; THE TOURNAMENT  2014-#{Date.today.strftime("%Y")} All Rights Reserved.
-      %p
-        - unless controller.action_name == 'about'
-          = link_to t('site_description'), "/about"
+      - if controller.action_name != 'about'
+        %p= link_to t('site_description'), "/about"
+      - if controller.action_name == 'top'
+        %p
+          %small
+            Polygonal Image Credit:
+            %a(href="http://www.freepik.com/free-photos-vectors/abstract" target="_blank") Abstract vector created by Freepik
       %ul.list-inline
         %li= link_to 'このサイトについて', "/about"
         %li= link_to t('official_blog'), 'https://blog.the-tournament.jp', target: '_blank'
