@@ -16,7 +16,6 @@ reset_winner = ->
   $('.panel').removeClass('panel-warning').addClass('panel-default')
   $('.panel-heading i').removeClass('fa-trophy fa-times')
   $('#game_winner').val('')
-  $('#btn-update-game').addClass('disabled')
 
 # winner/loserの要素をそれぞれセット
 set_winner = (winner) ->
@@ -24,7 +23,6 @@ set_winner = (winner) ->
   $('.panel-heading i').eq(winner).addClass('fa-trophy')
   $('.panel-heading i').eq(1-winner).addClass('fa-times')
   $('#game_winner').val(winner)
-  $('#btn-update-game').removeClass('disabled')
 
 # 手動の勝者選択を可能にする
 enable_winner_select = ->
