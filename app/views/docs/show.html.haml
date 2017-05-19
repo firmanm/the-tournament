@@ -1,0 +1,19 @@
+= content_for :page_title, "#{params[:title]} - #{@category}"
+
+%div
+  %ol.breadcrumb
+    %li
+      =link_to 'TOP', root_path
+    %li
+      =link_to 'サービスの使い方', docs_path
+    %li
+      = @category
+    %li
+      = params[:title]
+
+
+%section
+  %h1.title.clearfix= params[:title]
+
+
+= render partial: "docs/#{@category}/#{params[:title]}"

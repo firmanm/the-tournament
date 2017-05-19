@@ -36,6 +36,9 @@ Rails.application.routes.draw do
       match '/:id/(:title)', to: 'tournaments#show', via: :get, as: :pretty_tournament, constraints: {title: /[^\/]+/}
     end
 
+    match '/docs', to: 'docs#index', via: :get, as: :docs
+    match '/docs/:title', to: 'docs#show', via: :get, as: :doc, constraints: {title: /[^\/]+/}
+
     match ':action', controller: :static_pages, via: :get
   end
 end
