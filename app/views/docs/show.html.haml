@@ -7,13 +7,12 @@
     %li
       =link_to 'サービスの使い方', docs_path
     %li
-      = @category
-    %li
       = params[:title]
 
 
 %section
-  %h1.title.clearfix= params[:title]
-
+  %h1.title.clearfix
+    = params[:title]
+    %small= @category
 
 = render partial: "docs/#{@category}/#{params[:title]}"

@@ -1,5 +1,8 @@
 = nav_bar responsive: true, brand: image_tag("logo_w.png", alt: "THE TOURNAMENT"), brand_link: '/' do
-  %p.navbar-text.hidden-xs.hidden-sm= t('site_description')
+  -# %p.navbar-text.hidden-xs.hidden-sm= t('site_description')
+  %ul.nav.navbar-nav.navbar-left
+    %li= link_to fa_icon('question-circle')+"使い方ガイド", docs_path
+
 
   -# SP
   %ul.nav.navbar-nav.navbar-right.visible-xs.visible-sm

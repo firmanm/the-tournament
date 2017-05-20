@@ -1,0 +1,65 @@
+%p
+  THE TOURNAMENTには、アカウント登録せずにお手軽にトーナメントを作成できる「ゲストユーザー機能」があります。
+  %br
+  このページではこの「ゲストユーザー機能」の使い方を説明します。
+%br
+
+.panel.panel-danger
+  .panel-heading
+    = fa_icon('exclamation-circle')
+    ゲストユーザーの制約
+  .panel-body
+    ゲストユーザーでは、作成できるトーナメント表が32名サイズまでとなります（通常は128名まで）。
+    また作成したトーナメントごとに、編集するための専用URLを保管しておく必要があります。
+    継続的に利用される場合は、無料のアカウント登録がオススメです。
+%br
+
+
+%hr
+%br
+%br
+
+
+%p.h3
+  = fa_icon('caret-right')
+  トーナメント作成画面へ
+%br
+.row
+  .col-lg-9
+    = image_tag('docs/ログインせずにトーナメント表を作成する/1.jpg', class: 'img-responsive', style: 'border: 1px solid #ddd;')
+%br
+
+
+%hr
+%br
+%br
+
+
+%p.h3
+  = fa_icon('caret-right')
+  基本情報を登録する
+%br
+.row
+  .col-lg-9
+    = image_tag('docs/ログインせずにトーナメント表を作成する/2.png', class: 'img-responsive', style: 'border: 1px solid #ddd;')
+%br
+%br
+.panel.panel-info
+  .panel-heading
+    = fa_icon('info-circle')
+    あとからトーナメント情報を編集したい
+  .panel-body
+    ゲストユーザーで作成する場合、一度サイトを離れてからトーナメント表を編集する際に、「更新用URL」にアクセスする必要があります。
+    もし更新用URLを紛失した場合は、info@notsobad.jpまでお問い合わせください。
+.panel.panel-warning
+  .panel-heading
+    = fa_icon('frown-o')
+    編集画面のURLをコピーしておいたけど、アクセスできなくなってしまった
+  .panel-body
+    トーナメント表の編集画面のURLに直接アクセスしても、一度セッションが切れてしまうとアクセスが拒否されてしまいます。
+    お手数ですが必ず「更新用URL」からアクセスするようにしてください。
+    %br
+    %ul
+      %li ❌： https://the-tournament.jp/tournaments/xxx/edit
+      %li ⭕： https://the-tournament.jp/tournaments/tokens/xxxxxxxxxxxxxxxx（正しい更新用URL）
+%br
