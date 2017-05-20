@@ -16,8 +16,9 @@
   .panel.panel-info
     .panel-heading= category
     .list-group
-      - docs.each do |doc|
-        - title = File.basename(doc.delete('_'), '.html.haml')
+      - docs.sort.each do |doc|
+        -# - title = File.basename(doc.delete('_'), '.html.haml')
+        - title = doc.match(/.*\/_(.*).html.haml/)[1]
         = link_to doc_path(title: title), class: 'list-group-item' do
           %span.list-group-item-heading
             = title

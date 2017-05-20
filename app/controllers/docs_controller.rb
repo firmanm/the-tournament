@@ -4,7 +4,7 @@ class DocsController < ApplicationController
   def index
     path = "#{Rails.root}/app/views/docs"
     files = Dir.glob("#{File.expand_path(path)}/**/_*").map{|m| m.split(/app\/views\/docs\//).last}
-    @docs_by_categories = files.group_by{|file| file.split('/')[0] }
+    @docs_by_categories = files.group_by{|file| file.split('/')[0] }.sort.to_h
   end
 
   def show
