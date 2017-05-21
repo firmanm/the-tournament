@@ -16,3 +16,18 @@
     %small= @category
 
 = render partial: "docs/#{@category}/#{params[:title]}"
+
+%hr
+
+%section
+  .clearfix
+    - if @prev
+      .pull-left
+        = link_to doc_path(title: @prev) do
+          = fa_icon('chevron-left') 
+          = @prev
+    - if @next
+      .pull-right
+        = link_to doc_path(title: @next) do
+          = @next
+          = fa_icon('chevron-right')
