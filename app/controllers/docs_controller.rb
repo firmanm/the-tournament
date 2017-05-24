@@ -15,7 +15,7 @@ class DocsController < ApplicationController
 
     # 前の記事/次の記事を表示
     category_path = "#{Rails.root}/app/views/docs/#{@category}/_*"
-    category_files = Dir.glob("#{File.expand_path(category_path)}").map{|m| m.split(/app\/views\/docs\//).last}
+    category_files = Dir.glob("#{File.expand_path(category_path)}").map{|m| m.split(/app\/views\/docs\//).last}.sort
     index = category_files.index(file)
     @prev = category_files[index - 1].split('/').last.delete('_.htmlhaml') if index > 0
     @next = category_files[index + 1].split('/').last.delete('_.htmlhaml') if index < category_files.length - 1
