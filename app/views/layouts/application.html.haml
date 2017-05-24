@@ -25,7 +25,6 @@
 
   - is_about_page = controller.action_name=='about'
   - is_top_page = controller.action_name=='top'
-  - is_profile_page = controller.controller_name=='users' && controller.action_name=='show'
 
   -# %body
   %body{id: (is_about_page) ? 'about-page' : ''}(data-controller="#{params[:controller]}" data-action="#{params[:action]}")
@@ -54,13 +53,8 @@
             = flash[:log]
             = bootstrap_flash
             = yield
-
-          - if is_profile_page
-            .col-md-3
-              = render partial: "layouts/sidebar_profile"
-          -else
-            .col-md-3.hidden-xs.hidden-sm
-              = render partial: "layouts/sidebar"
+          .col-md-3
+            = render partial: "layouts/sidebar"
 
     = render partial: "layouts/footer"
     = render partial: "shared/facebook"

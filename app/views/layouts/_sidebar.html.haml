@@ -1,14 +1,54 @@
--# Search
-%section
-  %h4
-    = fa_icon("search")
-    = t('layouts.sidebar.tournament_search')
-  = form_tag('/tournaments', method: :get) do
-    .well
-      .input-group
-        = text_field_tag(:q, params[:q], class:"form-control", placeholder: t('layouts.sidebar.search_placeholder'))
-        %span.input-group-btn
-          = submit_tag(t("layouts.sidebar.search"), class:"btn btn-default")
-      %br
-      - tag_cloud(Tournament.tag_counts_on(:tags, limit: 40, order: "count desc"), %w(css1 css2 css3 css4)) do |tag, css_class|
-        = link_to tag.name, tournaments_path(tag: tag.name), class: css_class
+- if controller.controller_name=='users' && controller.action_name=='show'
+  -# Profile
+  %hr.hidden-md.hidden-lg
+  %section
+    %h4
+      = fa_icon("info-circle")
+      最新ニュース
+    - if @user.facebook_url.present?
+      .fb-page(data-href="#{@user.facebook_url}" data-tabs="timeline" data-small-header="false" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="false")
+        %blockquote(cite="#{@user.facebook_url}" class="fb-xfbml-parse-ignore")
+          %a(href="#{@user.facebook_url}")
+            = @user.name || @user.email
+    - elsif current_user && @user==current_user
+      .well
+        %p
+          FacebookページのURLを登録すると、ここにタイムラインを表示することができます。
+        %p
+          = link_to '編集', edit_user_path(@user), class: 'btn btn-primary', style: 'color: #fff !important;'
+
+
+- elsif controller.controller_name == 'docs' && controller.action_name == 'show'
+  %hr.hidden-md.hidden-lg
+  %section
+    %h4
+      = fa_icon("question-circle")
+      サービスの使い方
+  - @docs_by_categories.each do |category, docs|
+    .panel.panel-default
+      .panel-heading= category
+      .list-group
+        - docs.sort.each do |doc|
+          -# - title = File.basename(doc.delete('_'), '.html.haml')
+          - title = doc.match(/.*\/_(.*).html.haml/)[1]
+          = link_to doc_path(title: title), class: 'list-group-item' do
+            %span.list-group-item-heading
+              = title
+              = fa_icon("angle-right", "pull-right")
+
+
+- else
+  -# Search
+  %section.hidden-xs.hidden-sm
+    %h4
+      = fa_icon("search")
+      = t('layouts.sidebar.tournament_search')
+    = form_tag('/tournaments', method: :get) do
+      .well
+        .input-group
+          = text_field_tag(:q, params[:q], class:"form-control", placeholder: t('layouts.sidebar.search_placeholder'))
+          %span.input-group-btn
+            = submit_tag(t("layouts.sidebar.search"), class:"btn btn-default")
+        %br
+        - tag_cloud(Tournament.tag_counts_on(:tags, limit: 40, order: "count desc"), %w(css1 css2 css3 css4)) do |tag, css_class|
+          = link_to tag.name, tournaments_path(tag: tag.name), class: css_class
