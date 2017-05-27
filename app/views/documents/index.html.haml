@@ -11,15 +11,15 @@
 %section
   %h1.title.clearfix サービスの使い方
 
-
-- @docs_by_categories.each do |category, docs|
+%section
   .panel.panel-info
-    .panel-heading= category
-    .list-group
-      - docs.sort.each do |doc|
-        -# - title = File.basename(doc.delete('_'), '.html.haml')
-        - title = doc.match(/.*\/_(.*).html.haml/)[1]
-        = link_to doc_path(title: title), class: 'list-group-item' do
+    - category_id = 0
+    - @documents.each do |doc|
+      - if category_id != doc.category_id
+        - category_id = doc.category_id
+        .panel-heading= Document::CATEGORIES[category_id]
+      .list-group
+        = link_to doc_path(category_id: doc.category_id, document_id: doc.document_id), class: 'list-group-item' do
           %span.list-group-item-heading
-            = title
+            = doc.title
             = fa_icon("angle-right", "pull-right")

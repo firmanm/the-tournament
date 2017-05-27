@@ -1,0 +1,33 @@
+= content_for :page_title, "#{@doc.title} - #{@category}"
+
+%div
+  %ol.breadcrumb
+    %li
+      =link_to 'TOP', root_path
+    %li
+      =link_to 'サービスの使い方', docs_path
+    %li
+      = @doc.title
+
+
+%section
+  %h1.title.clearfix
+    = @doc.title
+    %small= @category
+
+= render partial: "documents/#{@doc.category_id}/#{@doc.document_id}"
+
+%hr
+
+%section
+  .clearfix
+    - if @prev
+      .pull-left
+        = link_to doc_path(category_id: @prev.category_id, document_id: @prev.document_id) do
+          = fa_icon('chevron-left')
+          = @prev.title
+    - if @next
+      .pull-right
+        = link_to doc_path(category_id: @next.category_id, document_id: @next.document_id) do
+          = @next.title
+          = fa_icon('chevron-right')

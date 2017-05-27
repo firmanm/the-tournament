@@ -18,22 +18,22 @@
           = link_to '編集', edit_user_path(@user), class: 'btn btn-primary', style: 'color: #fff !important;'
 
 
-- elsif controller.controller_name == 'docs' && controller.action_name == 'show'
+- elsif controller.controller_name == 'documents' && controller.action_name == 'show'
   %hr.hidden-md.hidden-lg
   %section
     %h4
       = fa_icon("question-circle")
       サービスの使い方
-  - @docs_by_categories.each do |category, docs|
-    .panel.panel-default
-      .panel-heading= category
-      .list-group
-        - docs.sort.each do |doc|
-          -# - title = File.basename(doc.delete('_'), '.html.haml')
-          - title = doc.match(/.*\/_(.*).html.haml/)[1]
-          = link_to doc_path(title: title), class: 'list-group-item' do
+    .panel.panel-info
+      - category_id = 0
+      - @documents.each do |doc|
+        - if category_id != doc.category_id
+          - category_id = doc.category_id
+          .panel-heading= Document::CATEGORIES[category_id]
+        .list-group
+          = link_to doc_path(category_id: doc.category_id, document_id: doc.document_id), class: 'list-group-item' do
             %span.list-group-item-heading
-              = title
+              = doc.title
               = fa_icon("angle-right", "pull-right")
 
 
