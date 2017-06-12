@@ -11,4 +11,36 @@ namespace :tasks do
     User.create(id: 1, email: 'guest@the-tournament.jp', password: SecureRandom.hex(8))
     Plan.find(1).update(user_id: 1, size: 32)
   end
+
+  task :restore_tournament_from_json => :environment do
+    json_file_path = "https://storage.googleapis.com/the-tournament/embed/v2/json/#{ENV['TOURNAMENT_ID']}.json"
+    json_data = open(json_file_path) do |io|
+      JSON.load(io)
+    end
+
+    teams = json_data['tournament_data']['teams'].flatten
+
+    results = []
+    results_json = json_data['tournament_data']['results']
+    results_json.each do |round|
+      arr = []
+      round.each do |result|
+        finished = result[0].present?
+
+        if finished
+          winner = (result[0] > result[1]) ? 0 : 1
+          score = [result[0].floor, result[1].floor]
+        else
+          winner = nil
+          score = [nil, nil]
+        end
+
+        arr << {score: score, winner: winner, comment:"", finished:finished}
+      end
+      results << arr
+    end
+
+    tnmt = Tournament.find(ENV['TOURNAMENT_ID'])
+    tnmt.update(teams: teams, results: results)
+  end
 end

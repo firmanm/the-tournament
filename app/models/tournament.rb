@@ -177,9 +177,11 @@ class Tournament < ApplicationRecord
   end
 
   def upload_json
+    return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
+
     file_path = File.join(Rails.root, "/tmp/#{self.id}.json")
     File.write(file_path, self.to_json)
-    TournamentUploader.new.store!( File.new(file_path) ) if Rails.env.production? && ENV['FOG_DIRECTORY'] != 'the-tournament-stg'
+    TournamentUploader.new.store!( File.new(file_path) )
   end
 
   def upload_img
