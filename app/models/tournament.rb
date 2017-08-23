@@ -185,15 +185,17 @@ class Tournament < ApplicationRecord
   end
 
   def upload_img
-    return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
-    return if self.user.id != 835 || !self.user.admin?  # 管理者と特定のユーザーでのみ実行
+    # return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
+    # return if self.user.id != 835 || !self.user.admin?  # 管理者と特定のユーザーでのみ実行
 
+p "-----"
     File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
       url = "#{root_url}/tournaments/#{self.id}/raw"
       open("http://phantomjscloud.com/api/browser/v2/ak-b1hw7-66a8k-1wdyw-xhqh1-f2s4p/?request={url:%22#{url}%22,renderType:%22png%22}") do |f|
         f.each_line {|line| tmp.puts line}
       end
     end
+p "====="
 
     # Upload Image
     uploader = TournamentUploader.new
