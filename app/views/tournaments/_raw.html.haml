@@ -1,0 +1,352 @@
+= stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"
+= stylesheet_link_tag "https://cdn.rawgit.com/lafeber/world-flags-sprite/9a8b5ea6/stylesheets/flags16.css"
+= stylesheet_link_tag "https://cdn.rawgit.com/kazzkiq/balloon.css/d7884de6/balloon.min.css"
+
+:css
+  * {
+  font-family: 'Lucida Grande','Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  font-size: 13px;
+  color: #333;
+  }
+
+  .bracket {
+  display: flex;
+  flex-wrap: nowrap;
+  position: relative;
+  }
+  .round {
+  display: flex;
+  flex-direction: column;
+  }
+  .match {
+  display: flex;
+  flex-grow: 1;
+  }
+  .teamContainer {
+  margin: auto 0;
+  padding: 7px 0;
+  }
+  .team {
+  display: flex;
+  align-items: center;
+  background-color: #EEE;
+  position: relative;
+  }
+  .team:first-child {
+  margin-bottom: 1px;
+  }
+  .team:last-child {
+  margin-top: 1px;
+  }
+
+  .label {
+  width: 100px;
+  padding-left: 5px;
+  overflow: scroll;
+  }
+  .score {
+  width: 40px;
+  text-align: center;
+  background-color: rgba(255,255,255,0.4);
+  }
+  .label, .score {
+  height: 25px;
+  line-height: 25px;
+  }
+
+  .lineContainer {
+  display: flex;
+  flex-direction: column;
+  }
+  .lineContainer > div {
+  display: flex;
+  flex-grow: 1;
+  }
+  .lineContainer > div > div {
+  width: 20px;
+  }
+
+  /* 奇数試合 */
+  .match:nth-child(odd) .lineContainer > div:last-child > div:first-child {
+  border-top: 2px solid #999;
+  }
+  .match:nth-child(odd) .lineContainer > div:last-child > div:first-child {
+  border-right: 2px solid #999;
+  }
+  .match:nth-child(odd) .lineContainer > div:last-child > div:last-child {
+  border-bottom: 2px solid #999;
+  }
+
+  /* 偶数試合 */
+  .match:nth-child(even) .lineContainer > div:first-child > div:first-child {
+  border-bottom: 2px solid #999;
+  }
+  .match:nth-child(even) .lineContainer > div:first-child > div:first-child {
+  border-right: 2px solid #999;
+  }
+  .match:nth-child(even) .lineContainer > div:first-child > div:last-child {
+  border-top: 2px solid #999;
+  }
+
+  .match:nth-child(even) { margin-top: -2px; }
+  .match.highlightSecond { z-index: 100; }
+  .match.highlightFirst  { z-index: 101; }
+  .match.highlight   { z-index: 102; }
+  .match:hover { z-index: 103; }
+
+
+  /* 勝敗のスコア表示 */
+  .team.winner .score, .winner .popupScore { color: #060; }
+  .team.loser .score, .loser .popupScore { color: #900; }
+  /* .match:not(.final) .team.loser:not(.highlightSecond):not(.highlight) .label { opacity: 0.7; } */
+
+
+  /* 優勝/準優勝 */
+  .match.highlightFirst .team.winner, .final.round .final.match .winner { background-color: #DA0; }
+  .match.highlightSecond .team.winner, .final.round .final.match .loser { background-color: #CCC; }
+  .match:nth-child(n).highlightFirst .lineContainer > div > div:nth-child(n) { border-color: #DA0; }
+  .match:nth-child(n).highlightSecond .lineContainer > div > div:nth-child(n) { border-color: #CCC; }
+
+  .final.round { margin: auto 0; }
+  .final.match { flex-grow: unset; }
+
+  .bubble {
+  height: 22px;
+  line-height: 22px;
+  width: 30px;
+  right: -35px;
+  position: absolute;
+  text-align: center;
+  font-size: 11px;
+  }
+  .bubble:after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: -5px;
+  width: 0;
+  height: 0;
+  border-top: 5px solid transparent;
+  border-left: 0;
+  border-right: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  }
+  .final.match .winner .bubble {
+  background-color: #DA0;
+  color: #960;
+  }
+  .final.match .winner .bubble:after {
+  border-right-color: #DA0;
+  }
+  .final.match .loser .bubble {
+  background-color: #CCC;
+  color: #333;
+  }
+  .final.match .loser .bubble:after {
+  border-right-color: #CCC;
+  }
+
+
+  /* チームハイライト */
+  .team.highlight { background-color: #3C0 !important; }
+  .highlight .lineContainer > div > div { border-color: #3C0 !important; }
+
+
+  /* ポップアップ表示 */
+  /* .match:focus { outline: none; z-index: 200;} */
+  .match:focus  .popupContainer { visibility: visible; }
+  .popupContainer a:active { visibility: visible; }
+
+  .popupContainer {
+  visibility: hidden;
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* z-index: 999; */
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
+  }
+  .popupContent {
+  position: relative;
+  background-color: #fff;
+  width: 90vw;
+  max-width: 500px;
+  padding: 15px 3%;
+  border-radius: 3px;
+  }
+  .popupFooter { text-align: center; }
+  .popupFooter button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  border-bottom: 1px dotted #CCC;
+  }
+  .popupFooter button:before {
+  content: '\002715';
+  margin-right: 5px;
+  }
+  .popupContent h3 {
+  text-align: center;
+  }
+  .popupContent .popupTeamContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  margin: 35px 0;
+  }
+  .popupLabel, .popupScore {
+  font-size: 1.2rem;
+  padding: 10px;
+  }
+  .popupLabel .profile {
+  width: 100px;
+  max-width: 90%;
+  height: 100px;
+  margin: auto;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-bottom: 15px;
+  }
+  .popupTeamContainer .popupTeam {
+  width: 40%;
+  background-color: #EFEFEF;
+  padding: 20px 0;
+  position: relative;
+  }
+  hr.popupDivider {
+  margin: 30px 0;
+  border-top: 1px solid #DDD;
+  }
+  .popupTeam.winner {
+  border: 2px solid #DA0;
+  background-color: rgba(221,170,0,0.1);
+  }
+  .popupTeam.loser {
+  border: 2px solid #CCC;
+  background-color: rgba(204,204,204,0.1);
+  }
+
+  .popupBubble {
+  position: absolute;
+  top: -20px;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  }
+  .winner .popupBubble { color: #DA0; }
+  .loser .popupBubble { color: #AAA; }
+
+
+  /* ３位決定戦 */
+  .skip.consolation { display: none; }
+
+  .consolation.match {
+  position: absolute;
+  top: 50%;
+  margin-top: 50px;
+  }
+
+  .consolation.match .winner .bubble {
+  background-color: #963;
+  color: #D95;
+  }
+  .consolation.match .winner .bubble:after {
+  border-right-color: #963;
+  }
+  .consolation.match .loser .bubble {
+  background-color: #678;
+  color: #CCD;
+  }
+  .consolation.match .loser .bubble:after {
+  border-right-color: #678;
+  }
+
+.bracket
+  - tournament.results.each.with_index(1) do |round, round_num|
+    - is_final_round = round_num == tournament.round_num
+    - round_class = is_final_round ? 'final' : ''
+    .round{class: round_class}
+      - round.each.with_index(1) do |match, match_num|
+        // 最終ラウンドは、決勝か３位決定戦のclass付与
+        // それ以外は、優勝/準優勝チームのmatchをハイライト
+        - if is_final_round
+          - match_class = (match_num == 1) ? 'final' : 'consolation'
+          // ３位決定戦スキップのときは非表示
+          - if (match_num == 2) && !tournament.consolation_round
+            - match_class += ' skip'
+        - else
+          - if match_num == tournament.highlight_match(round_num, 1)
+            - match_class =  'highlightFirst'
+          - elsif match_num == tournament.highlight_match(round_num, 2)
+            - match_class =  'highlightSecond'
+        .match{class: match_class}
+          -# .teamContainer
+          .teamContainer(data-balloon-pos='right' data-balloon-length='medium' data-balloon="#{tournament.match_info(round_num, match_num, match)}")
+            - for team_index in 0..1 do
+              - if !match['winner'].nil?
+                - team_class = (match['winner']==team_index) ? 'winner' : 'loser'
+              - team = tournament.winner_team(round_num, match_num, team_index)
+              .team{class: team_class, 'data-teamid': team['id']}
+                .label
+                  - if team['flag'].present?
+                    %span.f16
+                      %span.flag{class: team['flag']}
+                  = team['name']
+                .score= match['score'][team_index] || '--'
+
+                - if is_final_round && match_num == 1
+                  - if team_class == 'winner'
+                    .bubble 1st
+                  - elsif team_class == 'loser'
+                    .bubble 2nd
+                - elsif is_final_round && match_num == 2
+                  - if team_class == 'winner'
+                    .bubble 3rd
+                  - elsif team_class == 'loser'
+                    .bubble 4th
+
+          - if !is_final_round
+            .lineContainer
+              %div
+                %div
+                %div
+              %div
+                %div
+                %div
+
+:javascript
+  /* ハイライト */
+  let teams = document.getElementsByClassName('team');
+  for (var i = 0; i < teams.length; i++) {
+    teams[i].addEventListener('mouseover', function(e){
+      this.classList.add("highlight");  // idがないブロック(TBDなど)も一応ハイライトされるように
+
+      let teamid = this.dataset.teamid;
+      let selectedTeams = document.querySelectorAll('[data-teamid="'+ teamid +'"]');
+      for (var j = 0; j < selectedTeams.length; j++) {
+        selectedTeams[j].classList.add("highlight");
+
+        // winnerの場合はmatchにもhighlightつけてlineContainerをハイライト
+        if(selectedTeams[j].classList.contains('winner')) {
+          let match = selectedTeams[j].parentNode.parentNode;
+          match.classList.add("highlight");
+        }
+      }
+    }, false);
+
+    teams[i].addEventListener('mouseout', function(){
+      for (var k = 0; k < teams.length; k++) {
+        teams[k].classList.remove("highlight");
+
+        let match = teams[k].parentNode.parentNode;
+        match.classList.remove("highlight");
+      }
+    }, false);
+  }

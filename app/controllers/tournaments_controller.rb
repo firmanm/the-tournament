@@ -38,9 +38,8 @@ class TournamentsController < ApplicationController
   end
 
 
-  def embed
-    json = JSON.parse(@tournament.to_json)
-    gon.push(json)
+  def html
+    @tournament.upload_html
     render layout: false
   end
 

@@ -133,18 +133,21 @@ class Tournament < ApplicationRecord
         end
 
         # Tooltip用の試合情報をセット
-        match_data = "【"
-        match_data += "#{self.round_name(round: round_num)}" if round_num != self.round_num   #決勝戦・3位決定戦はgame_nameのみ
-        match_data += "#{self.game_name(round:round_num, game:game_num)}】　"
-        match_data += "#{self.winner_team(round_num, game_num, 0)['name']} - #{self.winner_team(round_num, game_num, 1)['name']} "
-        match_data += "#{game['comment']}"
-        score << match_data
+        score << self.match_info(round_num, game_num, game)
 
         round_scores << score
       end
       scores << round_scores
     end
     scores
+  end
+
+  def match_info(round_num, game_num, game)
+    match_data = "【"
+    match_data += "#{self.round_name(round: round_num)}" if round_num != self.round_num   #決勝戦・3位決定戦はgame_nameのみ
+    match_data += "#{self.game_name(round:round_num, game:game_num)}】　"
+    match_data += "#{self.winner_team(round_num, game_num, 0)['name']} - #{self.winner_team(round_num, game_num, 1)['name']} "
+    match_data += "#{game['comment']}"
   end
 
   def update_bye_games
@@ -202,10 +205,25 @@ class Tournament < ApplicationRecord
     uploader.store!(src_file)
   end
 
+  def upload_html
+    # return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
+
+    file_path = File.join(Rails.root, "/tmp/#{self.id}.html")
+    html = ActionController::Base.new.render_to_string(partial: 'tournaments/embed', locals: { tournament: self })
+    File.write(file_path, html)
+
+    # TournamentUploader.new.store!( File.new(file_path) )
+  end
+
   # 1回戦第2試合は、round_num=1, game_num=2, team_index=0or1
   def winner_team(round_num, game_num, team_index)
     # 1回戦まで来たら対応する参加者名を返す
-    return self.teams[2 * game_num - (2-team_index)] || {"name" => '--'} if round_num == 1
+    if round_num == 1
+      team_id = 2 * game_num - (2-team_index)
+      team = self.teams[team_id] || {"name" => '--'}
+      team['id'] = team_id + 1  # teamidは1スタート
+      return team
+    end
 
     # 2回戦以降の場合は下のラウンドの勝者に遡る
     target_round_num = round_num - 1
@@ -213,24 +231,39 @@ class Tournament < ApplicationRecord
 
     # 3位決定戦のときは準決勝の2試合がtarget_game
     consolation_round = (round_num == self.round_num) && (game_num == 2)
-    target_game_num = 1 - team_index if consolation_round
+    target_game_num = 1 + team_index if consolation_round
 
     target_game = self.results[target_round_num - 1][target_game_num - 1]
 
-    # 前の試合結果が確定していない場合は(TBD)
-    if !target_game['finished']
-      {"name" => "(TBD)"}
     # 勝者がいる場合はそのteamを返す（通常winのケースとbyeのケースを両方含む）
-    elsif target_game['winner'].present?
+    if target_game['winner'].present?
       winner_index = target_game['winner']
       winner_index = 1 - winner_index if consolation_round # 3位決定戦の場合はloserを返す
 
       self.winner_team(target_round_num, target_game_num, winner_index)
-    # finishedだけどwinnerがいないケース = double bye
+    # BYE or TBD
     else
       {"name" => '--'}
     end
   end
+
+  # 優勝/準優勝チーム (rank = 1 or 2)
+  def final_team(rank)
+    final = self.results[self.round_num - 1][0]
+    if final['winner'].present?
+      team_index = (rank == 1) ? final['winner'] : 1 - final['winner']
+      self.winner_team(self.round_num, 1, team_index)
+    else
+      {"name" => "(TBD)"}
+    end
+  end
+
+  # 優勝/準優勝ハイライトの対象match(ラウンドごと)  e.g. 優勝者ID=13の場合、round:1 →（ 13 / 2**1 ).ceil = 7
+  def highlight_match(round_num, rank)
+    target_team = self.final_team(rank)
+    target_team['id'].quo(2 ** round_num).ceil  if target_team['id']
+  end
+
 
   def round_name(args)
     round = args[:round]

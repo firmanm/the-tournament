@@ -32,7 +32,7 @@
       %li
         = link_to tournaments_path(tag: tag), class:'no-underline' do
           %span.label.label-warning= tag
-  %p= tournament.detail
+  %p= simple_format(h(tournament.detail))
   - if tournament.url.present?
     %p= link_to "#{tournament.url} <i class='fa fa-external-link'></i>".html_safe, tournament.url, target:'_blank'
 

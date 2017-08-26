@@ -29,6 +29,7 @@ Rails.application.routes.draw do
       match '/:id/games/:round_num/:game_num', to: 'tournaments#update_game', via: :patch, as: :tournament_update_game
 
       match '/:id/raw', to: 'tournaments#raw', via: :get
+      match '/:id/html', to: 'tournaments#html', via: :get
       match '/:id/upload', to: 'tournaments#upload', via: :get, as: :upload_tournament
       match '/:id/upload_img', to: 'tournaments#upload_img', via: :post
       match '/:id/photos', to: 'tournaments#photos', via: :get, as: :tournament_photos
