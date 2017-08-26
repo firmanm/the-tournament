@@ -3,13 +3,10 @@
 = stylesheet_link_tag "https://cdn.rawgit.com/kazzkiq/balloon.css/d7884de6/balloon.min.css"
 
 :css
-  * {
-  font-family: 'Lucida Grande','Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
-  font-size: 13px;
-  color: #333;
-  }
-
   .bracket {
+  font-family: 'Lucida Grande','Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
+  font-size: 14px;
+  color: #333;
   display: flex;
   flex-wrap: nowrap;
   position: relative;
@@ -39,7 +36,7 @@
   margin-top: 1px;
   }
 
-  .label {
+  .name {
   width: 100px;
   padding-left: 5px;
   overflow: scroll;
@@ -49,7 +46,7 @@
   text-align: center;
   background-color: rgba(255,255,255,0.4);
   }
-  .label, .score {
+  .name, .score {
   height: 25px;
   line-height: 25px;
   }
@@ -98,7 +95,7 @@
   /* 勝敗のスコア表示 */
   .team.winner .score, .winner .popupScore { color: #060; }
   .team.loser .score, .loser .popupScore { color: #900; }
-  /* .match:not(.final) .team.loser:not(.highlightSecond):not(.highlight) .label { opacity: 0.7; } */
+  /* .match:not(.final) .team.loser:not(.highlightSecond):not(.highlight) .name { opacity: 0.7; } */
 
 
   /* 優勝/準優勝 */
@@ -294,7 +291,7 @@
                 - team_class = (match['winner']==team_index) ? 'winner' : 'loser'
               - team = tournament.winner_team(round_num, match_num, team_index)
               .team{class: team_class, 'data-teamid': team['id']}
-                .label
+                .name
                   - if team['flag'].present?
                     %span.f16
                       %span.flag{class: team['flag']}

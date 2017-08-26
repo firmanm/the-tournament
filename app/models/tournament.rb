@@ -58,7 +58,7 @@ class Tournament < ApplicationRecord
 
   before_create :initialize_teams_and_results
   before_save :auto_tagging
-  after_save :upload_json, :upload_img
+  after_save :upload_json, :upload_img, :upload_html
 
   def self.search_tournaments(params)
     if params[:q]
@@ -109,6 +109,14 @@ class Tournament < ApplicationRecord
 
   def embed_img_url
     "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/v2/image.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&title=#{CGI.escape(self.title)}"
+  end
+
+  def embed_html_url
+    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/v2/json/#{self.id.to_s}.html"
+  end
+
+  def embed_height
+    self.size / 2 * 67
   end
 
   def jqb_teams
@@ -212,7 +220,7 @@ class Tournament < ApplicationRecord
     html = ActionController::Base.new.render_to_string(partial: 'tournaments/embed', locals: { tournament: self })
     File.write(file_path, html)
 
-    # TournamentUploader.new.store!( File.new(file_path) )
+    TournamentUploader.new.store!( File.new(file_path) )
   end
 
   # 1回戦第2試合は、round_num=1, game_num=2, team_index=0or1

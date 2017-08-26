@@ -1,7 +1,7 @@
 class TournamentsController < ApplicationController
   skip_before_action :authenticate_user!, only: [:index, :show, :raw, :photos, :games, :players, :new, :create]
   load_and_authorize_resource
-  before_action :authenticate_guest_user, only: [:edit, :update, :destroy, :upload, :edit_players, :update_players, :edit_games, :edit_game, :update_game]
+  before_action :authenticate_guest_user, only: [:edit, :update, :destroy, :edit_players, :update_players, :edit_games, :edit_game, :update_game]
 
 
   def index
@@ -25,34 +25,11 @@ class TournamentsController < ApplicationController
 
   def show
     redirect_to pretty_tournament_path(@tournament, @tournament.encoded_title), status: 301 if params[:title] != @tournament.encoded_title
-
-    json = JSON.parse(@tournament.to_json)
-    gon.push(json)
   end
 
 
   def raw
-    json = JSON.parse(@tournament.to_json)
-    gon.push(json)
     render layout: false
-  end
-
-
-  def html
-    @tournament.upload_html
-    render layout: false
-  end
-
-
-  def upload
-    json = @tournament.to_json
-    File.write("tmp/#{@tournament.id}.json", json)
-    uploader = TournamentUploader.new
-    src = File.join(Rails.root, "/tmp/#{@tournament.id}.json")
-    src_file = File.new(src)
-
-    uploader.store!(src_file)
-    render json: json
   end
 
 

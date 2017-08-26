@@ -1,16 +1,9 @@
 !!! 5
 %html(lang="#{I18n.locale}")
   %head
-    = render partial: 'layouts/meta_tags'
-    = csrf_meta_tags
-    / Le HTML5 shim, for IE6-8 support of HTML elements
-    /[if lt IE 9]
-      = javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js"
-    = stylesheet_link_tag "application", :media => "all"
-    = favicon_link_tag 'favicon.ico', rel: 'shortcut icon'
-    = include_gon
-    = javascript_include_tag "application"
+    %meta(charset='utf-8')
     %meta(name="robots" content="noindex")
+    %meta(content='width=device-width, initial-scale=1.0' name='viewport')
 
   %body
-    #tournament
+    = render partial: "tournaments/raw", locals: { tournament: @tournament }
