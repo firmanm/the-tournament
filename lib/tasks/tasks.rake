@@ -1,6 +1,6 @@
 namespace :tasks do
   task :delete_unfinished_tournaments => :environment do
-    Tournament.where(finished: false).where("created_at < ?", 1.month.ago).where.not(user_id: 835).destroy_all
+    Tournament.where(finished: false).where("created_at < ?", 1.month.ago).where.not(user_id: [835, 3314]).destroy_all
   end
 
   task :delete_nonactive_users => :environment do
