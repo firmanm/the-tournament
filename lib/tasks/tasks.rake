@@ -12,6 +12,11 @@ namespace :tasks do
     Plan.find(1).update(user_id: 1, size: 32)
   end
 
+
+  # 未完成で１ヶ月経過してアーカイブされたトーナメントをJSONから復元する
+  # DBに手動で空のトーナメント（id,user_idのみ）を作成して、以下コマンドを実行
+  # Heroku: heroku run rake tasks:restore_tournament_from_json TOURNAMENT_ID=XXX
+  # Local: be foreman run rake tasks:restore_tournament_from_json TOURNAMENT_ID=XXX
   task :restore_tournament_from_json => :environment do
     json_file_path = "https://storage.googleapis.com/the-tournament/embed/v2/json/#{ENV['TOURNAMENT_ID']}.json"
     json_data = open(json_file_path) do |io|
@@ -41,6 +46,15 @@ namespace :tasks do
     end
 
     tnmt = Tournament.find(ENV['TOURNAMENT_ID'])
-    tnmt.update(teams: teams, results: results)
+    tnmt.update(
+      teams: teams,
+      results: results,
+      size: teams.size,
+      title: json_data['title'],
+      secondary_final: !json_data['skip_secondary_final'],
+      consolation_round: !json_data['skip_consolation_round'],
+      scoreless: json_data['scoreless'],
+      created_at: Time.now
+    )
   end
 end
