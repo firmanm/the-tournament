@@ -153,11 +153,8 @@
 
 
   /* ポップアップ表示 */
-  .popupContainer { visibility: hidden; }
-  .match.selected .popupContainer { visibility: visible; }
-  .match.selected { z-index: 300; }
-
-  .popupContainer {
+  #popupContainer {
+  visibility: hidden;
   position: fixed;
   top: 0;
   left: 0;
@@ -166,8 +163,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 300;
   }
-  .popupContent {
+  #popupContent {
   background-color: rgba(0,0,0,0.8);
   width: 96%;
   max-width: 450px;
@@ -176,13 +174,13 @@
   color: #fff;
   }
 
-  .popupContent h3 {
+  #popupContent h3 {
   font-size: 14px;
   font-weight: lighter;
   text-align: center;
   margin-top: 0;
   }
-  .popupContent .popupTeamContainer {
+  #popupContent .popupTeamContainer {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -208,7 +206,7 @@
   padding: 20px 0;
   position: relative;
   }
-  .popupContent hr {
+  #popupContent hr {
   margin: 20px 5%;
   }
   .popupTeam.winner {
@@ -220,7 +218,7 @@
   background-color: rgba(204,204,204,0.3);
   }
   .popupFooter { text-align: center; }
-  .popupDescription { margin: 0 5%; }
+  #popupComment { margin: 0 5%; }
 
   .popupBubble {
   position: absolute;
@@ -230,9 +228,11 @@
   font-weight: bold;
   }
   .winner .popupBubble { color: #DA0; }
+  .winner .popupBubble:after { content: 'WIN'; }
   .loser .popupBubble { color: #AAA; }
+  .loser .popupBubble:after { content: 'LOSE'; }
 
-  .closePopupBtn { cursor: pointer; }
+  #popupCloseBtn { cursor: pointer; }
 
 
   /* ３位決定戦 */
@@ -279,7 +279,7 @@
             - match_class =  'highlightFirst'
           - elsif match_num == tournament.highlight_match(round_num, 2)
             - match_class =  'highlightSecond'
-        .match{class: match_class}
+        .match{class: match_class}(data-round-id="#{round_num}" data-match-id="#{match_num}" data-match-name="#{tournament.match_name({round: round_num, game: match_num})}")
           -# .teamContainer
           .teamContainer(data-balloon-pos='right' data-balloon-length='medium' data-balloon="#{tournament.match_info(round_num, match_num, match)}")
             - for team_index in 0..1 do
@@ -305,6 +305,9 @@
                   - elsif team_class == 'loser'
                     .bubble 4th
 
+          .matchComment(style="display: none;")
+            = match['comment']
+
           - if !is_final_round
             .lineContainer
               %div
@@ -314,30 +317,25 @@
                 %div
                 %div
 
-          .popupContainer
-            .popupContent
-              %h3= "#{tournament.round_name(round: round_num)} #{tournament.game_name(game: match_num)}"
-              .popupTeamContainer
-                - for team_index in 0..1 do
-                  - if !match['winner'].nil?
-                    - team_class = (match['winner']==team_index) ? 'winner' : 'loser'
-                  - team = tournament.winner_team(round_num, match_num, team_index)
-                  .popupTeam{class: team_class}
-                    - if
-                    .popupName
-                      - if team['flag'].present?
-                        %span.f16
-                          %span.flag{class: team['flag']}
-                      = team['name']
-                    .popupScore= match['score'][team_index] || '--'
-                  .popupSpacer
-                    \-
-              .popupDescription
-                = match['comment']
-              %hr
-              .popupFooter
-                %small.closePopupBtn
-                  &#215; 閉じる
+  #popupContainer
+    #popupContent
+      %h3#popupTitle
+      .popupTeamContainer
+        .popupTeam
+          .popupBubble
+          .popupName
+          .popupScore
+        .popupSpacer
+          \-
+        .popupTeam
+          .popupBubble
+          .popupName
+          .popupScore
+      #popupComment
+      %hr
+      .popupFooter
+        %small#popupCloseBtn
+          &#215; 閉じる
 
 
 :javascript
@@ -372,31 +370,54 @@
 
 
   /* ポップアップ */
-  let popupContainers = document.getElementsByClassName('popupContainer');
-  let popupContents = document.getElementsByClassName('popupContent');
-  let closePopupBtns = document.getElementsByClassName('closePopupBtn');
-
+  let popup = document.getElementById('popupContainer');
   let matches = document.getElementsByClassName('match');
   for (var i = 0; i < matches.length; i++) {
     matches[i].addEventListener('click', function(e){
-      this.classList.add('selected');
+      showPopup(this);
     }, false);
   }
 
-  for (var i = 0; i < popupContainers.length; i++) {
-    popupContainers[i].addEventListener('click', function(e){
-      unselectMatches();
-    }, false);
-  }
+  function showPopup(match) {
+    /* コメント */
+    let comment = match.children[1].innerHTML;
+    let popupComment = document.getElementById('popupComment');
+    popupComment.innerHTML = comment;
 
-  function unselectMatches() {
-  console.log("aaa");
-    let matches = document.getElementsByClassName('match');
-    for (var i = 0; i < matches.length; i++) {
-      console.log(i);
-      matches[i].classList.remove('selected');
+    /* 試合名 */
+    let matchName = match.dataset.matchName;
+    let popupTitle = document.getElementById('popupTitle');
+    popupTitle.innerText = matchName;
+
+    /* チーム名・スコア */
+    let popupTeams = document.getElementsByClassName('popupTeam');
+    let targetTeams = match.children[0].children;
+    for (var i = 0; i < 2; i++) {
+      let teamName = targetTeams[i].children[0].innerHTML;
+      let teamScore = targetTeams[i].children[1].innerText;
+
+      popupTeams[i].children[1].innerHTML = teamName;
+      popupTeams[i].children[2].innerText = teamScore;
+
+      /* 勝敗表示 */
+      if (targetTeams[i].classList.contains('winner')) {
+        popupTeams[i].classList.remove('loser');
+        popupTeams[i].classList.add('winner');
+      }else if(targetTeams[i].classList.contains('loser')) {
+        popupTeams[i].classList.remove('winner');
+        popupTeams[i].classList.add('loser');
+      }else {
+        popupTeams[i].classList.remove('winner');
+        popupTeams[i].classList.remove('loser');
+      }
     }
+    /* ポップアップの表示処理 */
+    popup.style.visibility = 'visible';
   }
-  // popup.addEventListener('click', function(e){ popup.style.visibility = 'hidden'; }, false);
-  // closePopupBtn.addEventListener('click', function(e){ popup.style.visibility = 'hidden'; }, false);
-  // popupContent.addEventListener('click', function(e){ e.stopPropagation(); }, false); /*　子要素をクリックしても閉じないように */
+
+  /* ポップアップの非表示処理 */
+  popup.addEventListener('click', function(e){ popup.style.visibility = 'hidden'; }, false);
+  let popupCloseBtn = document.getElementById('popupCloseBtn');
+  let popupContent = document.getElementById('popupContent');
+  popupCloseBtn.addEventListener('click', function(e){ popup.style.visibility = 'hidden'; }, false);
+  popupContent.addEventListener('click', function(e){ e.stopPropagation(); }, false); /*　子要素をクリックしても閉じないように */

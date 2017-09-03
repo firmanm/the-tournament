@@ -296,6 +296,15 @@ class Tournament < ApplicationRecord
     end
   end
 
+  def match_name(args)
+    match_name = ""
+    round_num = args[:round]
+    game_num = args[:game]
+
+    match_name += self.round_name(round: round_num) if round_num != self.round_num
+    match_name += self.game_name(round: round_num, game: game_num)
+  end
+
   # タイトルをもとに自動タグ付け
   def auto_tagging
     tags = %w(将棋 ラグビー ホッケー バドミントン ソフトボール バレーボール  ドッヂボール フットサル フェンシング バスケットボール ビリヤード 柔道 剣道 野球 卓球 サッカー テニス シャドウバース シャドバ スプラトゥーン クラッシュ・ロワイヤル クラロワ オーバーウォッチ Overwatch スマッシュブラザーズ スマブラ 遊戯王 人狼 雪合戦 麻雀 Shardbound)
