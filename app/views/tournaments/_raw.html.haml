@@ -341,19 +341,19 @@
 
 :javascript
   /* ハイライト */
-  let teams = document.getElementsByClassName('team');
+  var teams = document.getElementsByClassName('team');
   for (var i = 0; i < teams.length; i++) {
     teams[i].addEventListener('mouseover', function(e){
       this.classList.add("highlight");  // idがないブロック(TBDなど)も一応ハイライトされるように
 
-      let teamid = this.dataset.teamid;
-      let selectedTeams = document.querySelectorAll('[data-teamid="'+ teamid +'"]');
+      var teamid = this.dataset.teamid;
+      var selectedTeams = document.querySelectorAll('[data-teamid="'+ teamid +'"]');
       for (var j = 0; j < selectedTeams.length; j++) {
         selectedTeams[j].classList.add("highlight");
 
         // winnerの場合はmatchにもhighlightつけてlineContainerをハイライト
         if(selectedTeams[j].classList.contains('winner')) {
-          let match = selectedTeams[j].parentNode.parentNode;
+          var match = selectedTeams[j].parentNode.parentNode;
           match.classList.add("highlight");
         }
       }
@@ -363,7 +363,7 @@
       for (var k = 0; k < teams.length; k++) {
         teams[k].classList.remove("highlight");
 
-        let match = teams[k].parentNode.parentNode;
+        var match = teams[k].parentNode.parentNode;
         match.classList.remove("highlight");
       }
     }, false);
@@ -371,8 +371,8 @@
 
 
   /* ポップアップ */
-  let popup = document.getElementById('popupContainer');
-  let matches = document.getElementsByClassName('match');
+  var popup = document.getElementById('popupContainer');
+  var matches = document.getElementsByClassName('match');
   for (var i = 0; i < matches.length; i++) {
     matches[i].addEventListener('click', function(e){
       showPopup(this);
@@ -381,21 +381,21 @@
 
   function showPopup(match) {
     /* コメント */
-    let comment = match.children[1].innerHTML;
-    let popupComment = document.getElementById('popupComment');
+    var comment = match.children[1].innerHTML;
+    var popupComment = document.getElementById('popupComment');
     popupComment.innerHTML = comment;
 
     /* 試合名 */
-    let matchName = match.dataset.matchName;
-    let popupTitle = document.getElementById('popupTitle');
+    var matchName = match.dataset.matchName;
+    var popupTitle = document.getElementById('popupTitle');
     popupTitle.innerText = matchName;
 
     /* チーム名・スコア */
-    let popupTeams = document.getElementsByClassName('popupTeam');
-    let targetTeams = match.children[0].children;
+    var popupTeams = document.getElementsByClassName('popupTeam');
+    var targetTeams = match.children[0].children;
     for (var i = 0; i < 2; i++) {
-      let teamName = targetTeams[i].children[0].innerHTML;
-      let teamScore = targetTeams[i].children[1].innerText;
+      var teamName = targetTeams[i].children[0].innerHTML;
+      var teamScore = targetTeams[i].children[1].innerText;
 
       popupTeams[i].children[1].innerHTML = teamName;
       popupTeams[i].children[2].innerText = teamScore;
@@ -418,7 +418,7 @@
 
   /* ポップアップの非表示処理 */
   popup.addEventListener('click', function(e){ popup.style.visibility = 'hidden'; }, false);
-  let popupCloseBtn = document.getElementById('popupCloseBtn');
-  let popupContent = document.getElementById('popupContent');
+  var popupCloseBtn = document.getElementById('popupCloseBtn');
+  var popupContent = document.getElementById('popupContent');
   popupCloseBtn.addEventListener('click', function(e){ popup.style.visibility = 'hidden'; }, false);
   popupContent.addEventListener('click', function(e){ e.stopPropagation(); }, false); /*　子要素をクリックしても閉じないように */
