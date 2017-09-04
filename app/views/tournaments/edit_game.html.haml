@@ -63,8 +63,8 @@
       %small コメント(オプション)
       .row
         .col-md-6
-          = text_field_tag 'game[comment]', @game['comment'], {class: 'string optional form-control', maxLength: 50}
-          %p.help-block 50文字まで。トーナメント表マウスオーバー時に表示されます
+          = text_area_tag 'game[comment]', @game['comment'], {class: 'string optional form-control', maxLength: 500}
+          %p.help-block 500文字まで。URLを入れると自動でリンクになります。
 
     %hr
 
