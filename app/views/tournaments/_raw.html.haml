@@ -309,7 +309,7 @@
                     .bubble 4th
 
           .matchComment(style="display: none;")
-            = text_url_to_link(simple_format(h(match['comment']))).html_safe
+            = tournament.text_url_to_link( simple_format(h(match['comment'])) ).html_safe
 
           - if !is_final_round
             .lineContainer
