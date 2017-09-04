@@ -342,85 +342,87 @@
 
 
 :javascript
-  /* ハイライト */
-  var teams = document.getElementsByClassName('team');
-  for (var i = 0; i < teams.length; i++) {
-    teams[i].addEventListener('mouseover', function(e){
-      this.classList.add("highlight");  // idがないブロック(TBDなど)も一応ハイライトされるように
+  (function() {
+    /* ハイライト */
+    var teams = document.getElementsByClassName('team');
+    for (var i = 0; i < teams.length; i++) {
+      teams[i].addEventListener('mouseover', function(e){
+        this.classList.add("highlight");  // idがないブロック(TBDなど)も一応ハイライトされるように
 
-      var teamid = this.dataset.teamid;
-      var selectedTeams = document.querySelectorAll('[data-teamid="'+ teamid +'"]');
-      for (var j = 0; j < selectedTeams.length; j++) {
-        selectedTeams[j].classList.add("highlight");
+        var teamid = this.dataset.teamid;
+        var selectedTeams = document.querySelectorAll('[data-teamid="'+ teamid +'"]');
+        for (var j = 0; j < selectedTeams.length; j++) {
+          selectedTeams[j].classList.add("highlight");
 
-        // winnerの場合はmatchにもhighlightつけてlineContainerをハイライト
-        if(selectedTeams[j].classList.contains('winner')) {
-          var match = selectedTeams[j].parentNode.parentNode;
-          match.classList.add("highlight");
+          // winnerの場合はmatchにもhighlightつけてlineContainerをハイライト
+          if(selectedTeams[j].classList.contains('winner')) {
+            var match = selectedTeams[j].parentNode.parentNode;
+            match.classList.add("highlight");
+          }
+        }
+      }, false);
+
+      teams[i].addEventListener('mouseout', function(){
+        for (var k = 0; k < teams.length; k++) {
+          teams[k].classList.remove("highlight");
+
+          var match = teams[k].parentNode.parentNode;
+          match.classList.remove("highlight");
+        }
+      }, false);
+    }
+
+
+    /* ポップアップ */
+    var popup = document.getElementById('popupContainer');
+    var matches = document.getElementsByClassName('match');
+    for (var i = 0; i < matches.length; i++) {
+      matches[i].addEventListener('click', function(e){
+        showPopup(this);
+      }, false);
+    }
+
+    function showPopup(match) {
+      /* コメント */
+      var comment = match.children[1].innerHTML;
+      var popupComment = document.getElementById('popupComment');
+      popupComment.innerHTML = comment;
+
+      /* 試合名 */
+      var matchName = match.dataset.matchName;
+      var popupTitle = document.getElementById('popupTitle');
+      popupTitle.innerText = matchName;
+
+      /* チーム名・スコア */
+      var popupTeams = document.getElementsByClassName('popupTeam');
+      var targetTeams = match.children[0].children;
+      for (var i = 0; i < 2; i++) {
+        var teamName = targetTeams[i].children[0].innerHTML;
+        var teamScore = targetTeams[i].children[1].innerText;
+
+        popupTeams[i].children[1].innerHTML = teamName;
+        popupTeams[i].children[2].innerText = teamScore;
+
+        /* 勝敗表示 */
+        if (targetTeams[i].classList.contains('winner')) {
+          popupTeams[i].classList.remove('loser');
+          popupTeams[i].classList.add('winner');
+        }else if(targetTeams[i].classList.contains('loser')) {
+          popupTeams[i].classList.remove('winner');
+          popupTeams[i].classList.add('loser');
+        }else {
+          popupTeams[i].classList.remove('winner');
+          popupTeams[i].classList.remove('loser');
         }
       }
-    }, false);
-
-    teams[i].addEventListener('mouseout', function(){
-      for (var k = 0; k < teams.length; k++) {
-        teams[k].classList.remove("highlight");
-
-        var match = teams[k].parentNode.parentNode;
-        match.classList.remove("highlight");
-      }
-    }, false);
-  }
-
-
-  /* ポップアップ */
-  var popup = document.getElementById('popupContainer');
-  var matches = document.getElementsByClassName('match');
-  for (var i = 0; i < matches.length; i++) {
-    matches[i].addEventListener('click', function(e){
-      showPopup(this);
-    }, false);
-  }
-
-  function showPopup(match) {
-    /* コメント */
-    var comment = match.children[1].innerHTML;
-    var popupComment = document.getElementById('popupComment');
-    popupComment.innerHTML = comment;
-
-    /* 試合名 */
-    var matchName = match.dataset.matchName;
-    var popupTitle = document.getElementById('popupTitle');
-    popupTitle.innerText = matchName;
-
-    /* チーム名・スコア */
-    var popupTeams = document.getElementsByClassName('popupTeam');
-    var targetTeams = match.children[0].children;
-    for (var i = 0; i < 2; i++) {
-      var teamName = targetTeams[i].children[0].innerHTML;
-      var teamScore = targetTeams[i].children[1].innerText;
-
-      popupTeams[i].children[1].innerHTML = teamName;
-      popupTeams[i].children[2].innerText = teamScore;
-
-      /* 勝敗表示 */
-      if (targetTeams[i].classList.contains('winner')) {
-        popupTeams[i].classList.remove('loser');
-        popupTeams[i].classList.add('winner');
-      }else if(targetTeams[i].classList.contains('loser')) {
-        popupTeams[i].classList.remove('winner');
-        popupTeams[i].classList.add('loser');
-      }else {
-        popupTeams[i].classList.remove('winner');
-        popupTeams[i].classList.remove('loser');
-      }
+      /* ポップアップの表示処理 */
+      popup.classList.remove('hidden');
     }
-    /* ポップアップの表示処理 */
-    popup.classList.remove('hidden');
-  }
 
-  /* ポップアップの非表示処理 */
-  popup.addEventListener('click', function(e){ popup.classList.add('hidden'); }, false);
-  var popupCloseBtn = document.getElementById('popupCloseBtn');
-  var popupContent = document.getElementById('popupContent');
-  popupCloseBtn.addEventListener('click', function(e){ popup.classList.add('hidden'); }, false);
-  popupContent.addEventListener('click', function(e){ e.stopPropagation(); }, false); /*　子要素をクリックしても閉じないように */
+    /* ポップアップの非表示処理 */
+    popup.addEventListener('click', function(e){ popup.classList.add('hidden'); }, false);
+    var popupCloseBtn = document.getElementById('popupCloseBtn');
+    var popupContent = document.getElementById('popupContent');
+    popupCloseBtn.addEventListener('click', function(e){ popup.classList.add('hidden'); }, false);
+    popupContent.addEventListener('click', function(e){ e.stopPropagation(); }, false); /*　子要素をクリックしても閉じないように */
+  })();
