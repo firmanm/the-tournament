@@ -214,7 +214,7 @@ class Tournament < ApplicationRecord
   end
 
   def upload_html
-    # return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
+    return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
 
     file_path = File.join(Rails.root, "/tmp/#{self.id}.html")
     html = ActionController::Base.new.render_to_string(partial: 'tournaments/embed', locals: { tournament: self })
@@ -328,12 +328,12 @@ class Tournament < ApplicationRecord
   end
 
   def text_url_to_link(text)
-    URI.extract(text, ['http', 'https']).uniq.each do |url|
-      sub_text = ""
-      sub_text << "<a href=" << url << " target=\"_blank\">" << url << "</a>"
-
+    URI.extract(text, ['http', 'https']).uniq.sort{|a, b| b.size <=> a.size}.each do |url|
+      tmp_url = url.gsub('http', 'HTTP')
+      sub_text = "<a href='#{tmp_url}' target='_blank'>#{tmp_url}</a>"
       text.gsub!(url, sub_text)
     end
+    text.gsub!('HTTP', 'http')
     text
   end
 end
