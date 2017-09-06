@@ -28,14 +28,14 @@
   %h1
     %span Examples
   %p.text-center
-    %small.visible-md.visible-lg
-      試合結果にマウスオーバーすると、詳細情報が表示されます。
-    %small.visible-xs.visible-sm
-      試合結果をタップすると、詳細情報が表示されます。
+    %small
+      試合結果をクリックすると、詳細情報が表示されます。
   .row
     .col-lg-1
-    .col-lg-5#tournament
-    .col-lg-5
+    .col-lg-6
+      = render partial: "tournaments/raw", locals: { tournament: @tournament }
+
+    .col-lg-4
       %h2
         = link_to(tournament_path(@tournament)) do
           = @tournament.title
