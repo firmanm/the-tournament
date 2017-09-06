@@ -35,23 +35,14 @@
   - if editable
     .row.hidden-xs.hidden-sm.mb-30
       .col-lg-12
-        - embed_content = "<div style='position:relative!important;width:100%!important;max-width:100%!important;margin-bottom:50px!important;overflow:auto !important;-webkit-overflow-scrolling:touch !important;'><iframe src='#{@tournament.embed_url}' seamless frameborder='0' width='100%' height='#{embed_height(@tournament.size).to_s}'></iframe></div>"
+        - embed_content = "<div style='position:relative!important;width:100%!important;max-width:100%!important;margin-bottom:50px!important;overflow:auto !important;-webkit-overflow-scrolling:touch !important;'><iframe src='#{@tournament.embed_html_url}' seamless frameborder='0' width='100%' height='#{@tournament.embed_height.to_s}'></iframe></div>"
         %h5
           = fa_icon("code")
-          埋め込み用タグ　
+          埋め込み用タグ
+          %span.label.label-warning New!
         %div#emb-link
           %input(type="text" size="100%" value="#{embed_content}" onfocus="this.select();" readonly)
         %br
-      - if current_user && (current_user.id == 835 || current_user.admin?)
-        .col-lg-12
-          - embed_content = "<div style='position:relative!important;width:100%!important;max-width:100%!important;margin-bottom:50px!important;overflow:auto !important;-webkit-overflow-scrolling:touch !important;'><iframe src='#{@tournament.embed_html_url}' seamless frameborder='0' width='100%' height='#{@tournament.embed_height.to_s}'></iframe></div>"
-          %h5
-            = fa_icon("code")
-            %span.label.label-warning Beta
-            新Ver埋め込みタグ
-          %div#emb-link
-            %input(type="text" size="100%" value="#{embed_content}" onfocus="this.select();" readonly)
-          %br
         /
           .col-lg-12
             - embed_img_content = "<iframe src='#{@tournament.embed_img_url}' seamless frameborder='0' width='100%' height='1000px'></iframe>";

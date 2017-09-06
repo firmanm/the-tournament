@@ -112,7 +112,7 @@ class Tournament < ApplicationRecord
   end
 
   def embed_html_url
-    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/v2/json/#{self.id.to_s}.html"
+    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/v3/#{self.id.to_s}.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}"
   end
 
   def embed_height
@@ -220,7 +220,7 @@ class Tournament < ApplicationRecord
     html = ActionController::Base.new.render_to_string(partial: 'tournaments/embed', locals: { tournament: self })
     File.write(file_path, html)
 
-    TournamentUploader.new.store!( File.new(file_path) )
+    HtmlUploader.new.store!( File.new(file_path) )
   end
 
   # 1回戦第2試合は、round_num=1, game_num=2, team_index=0or1
