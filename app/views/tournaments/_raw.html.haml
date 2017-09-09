@@ -156,7 +156,7 @@
 
   /* ポップアップ表示 */
   .popupContainer {
-    visibility: hidden;
+    display: none;
     background-color: rgba(255,255,255,0.5);
     position: fixed;
     top: 0;
@@ -167,7 +167,7 @@
   }
 
   .popupContent {
-    visibility: hidden;
+    display: none;
     position: absolute;
     background-color: rgba(0,0,0,0.9);
     width: 350px;
@@ -176,16 +176,16 @@
     color: #fff;
     cursor: auto;
   }
-  .match.firstHalf .popupContent { top: 50%; }
+  .match:not(.latterHalf) .popupContent { top: 50%; }
   .match.latterHalf .popupContent { bottom: 50%; }
-  .round.firstHalf .popupContent { left: calc(0% + 10px); }
+  .round:not(.latterHalf) .popupContent { left: calc(0% + 10px); }
   .round.latterHalf .popupContent { right: calc(0% + 10px); }
 
   .match.selected {
     z-index: 300;
   }
   .match.selected .popupContent, .match.selected .popupContainer {
-    visibility: visible;
+    display: block;
   }
 
   .popupContent h3 {
