@@ -57,8 +57,8 @@ class Tournament < ApplicationRecord
   scope :finished, -> { where(finished: true) }
 
   before_create :initialize_teams_and_results
-  before_save :auto_tagging
-  after_save :upload_json, :upload_img, :upload_html
+  before_create :auto_tagging
+  after_save :upload_json, :upload_html if !Rails.env.development? && ENV['FOG_DIRECTORY'] != 'the-tournament-stg'  # 本番でのみ実行
 
   def self.search_tournaments(params)
     if params[:q]
@@ -188,15 +188,12 @@ class Tournament < ApplicationRecord
   end
 
   def upload_json
-    return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
-
     file_path = File.join(Rails.root, "/tmp/#{self.id}.json")
     File.write(file_path, self.to_json)
     TournamentUploader.new.store!( File.new(file_path) )
   end
 
   def upload_img
-    return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
     return if self.user.id != 835 || !self.user.admin?  # 管理者と特定のユーザーでのみ実行
 
     File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
@@ -214,12 +211,11 @@ class Tournament < ApplicationRecord
   end
 
   def upload_html
-    return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
-
     file_path = File.join(Rails.root, "/tmp/#{self.id}.html")
     html = ActionController::Base.new.render_to_string(partial: 'tournaments/embed', locals: { tournament: self })
     File.write(file_path, html)
 
+    TournamentUploader.new.store!( File.new(file_path) )
     HtmlUploader.new.store!( File.new(file_path) )
   end
 
@@ -335,5 +331,32 @@ class Tournament < ApplicationRecord
     end
     text.gsub!('HTTP', 'http')
     text
+  end
+
+  def change_tournament_size(new_size)
+    if new_size > self.size
+      for i in self.size+1..new_size do
+        self.teams << {"name"=>"Player#{i}"}
+      end
+
+      new_round_num = Math.log2(new_size).to_i  #=> return 3 rounds for 8 players (2**3=8)
+      for i in 1..new_round_num do
+        match_count = [(self.size / 2**i), 2].max
+        new_match_count = [(new_size / 2**i), 2].max
+        if i > self.round_num
+          arr = []
+          for j in 1..new_match_count do
+            arr << {"score"=>[nil, nil], "winner"=>nil, "comment"=>nil, "bye"=>false, "finished"=>false}
+          end
+          self.results << arr
+        else
+          for j in match_count+1..new_match_count do
+            self.results[i-1] << {"score"=>[nil, nil], "winner"=>nil, "comment"=>nil, "bye"=>false, "finished"=>false}
+          end
+        end
+      end
+
+      self.size = new_size
+    end
   end
 end
