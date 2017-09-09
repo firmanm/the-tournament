@@ -57,8 +57,8 @@ class Tournament < ApplicationRecord
   scope :finished, -> { where(finished: true) }
 
   before_create :initialize_teams_and_results
-  before_save :auto_tagging
-  after_save :upload_json, :upload_img, :upload_html
+  before_create :auto_tagging
+  after_save :upload_json, :upload_html if !Rails.env.development? && ENV['FOG_DIRECTORY'] != 'the-tournament-stg'  # 本番でのみ実行
 
   def self.search_tournaments(params)
     if params[:q]
@@ -188,15 +188,12 @@ class Tournament < ApplicationRecord
   end
 
   def upload_json
-    return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
-
     file_path = File.join(Rails.root, "/tmp/#{self.id}.json")
     File.write(file_path, self.to_json)
     TournamentUploader.new.store!( File.new(file_path) )
   end
 
   def upload_img
-    return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
     return if self.user.id != 835 || !self.user.admin?  # 管理者と特定のユーザーでのみ実行
 
     File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
@@ -214,8 +211,6 @@ class Tournament < ApplicationRecord
   end
 
   def upload_html
-    return if Rails.env.development? || ENV['FOG_DIRECTORY'] == 'the-tournament-stg'  # 本番でのみ実行
-
     file_path = File.join(Rails.root, "/tmp/#{self.id}.html")
     html = ActionController::Base.new.render_to_string(partial: 'tournaments/embed', locals: { tournament: self })
     File.write(file_path, html)
