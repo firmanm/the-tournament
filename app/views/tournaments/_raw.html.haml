@@ -283,10 +283,11 @@
     - round_class = []
     - round_class << 'final' if is_final_round
     // 右半分、左半分にクラス付与してポップアップの位置調整
-    - if round_num <= tournament.results.length / 2
-      - round_class << 'firstHalf'
-    - else
-      - round_class << 'latterHalf'
+    - if tournament.size >= 8
+      - if round_num <= tournament.results.length / 2
+        - round_class << 'firstHalf'
+      - else
+        - round_class << 'latterHalf'
     .round{class: round_class}
       - round.each.with_index(1) do |match, match_num|
         - match_class = []
@@ -304,10 +305,11 @@
           - elsif match_num == tournament.highlight_match(round_num, 2)
             - match_class << 'highlightSecond'
         // 上半分、下半分にクラス付与してポップアップの位置調整
-        - if match_num <= round.length / 2
-          - match_class << 'firstHalf'
-        - else
-          - match_class << 'latterHalf'
+        - if tournament.size >= 8
+          - if match_num <= round.length / 2
+            - match_class << 'firstHalf'
+          - else
+            - match_class << 'latterHalf'
         .match{class: match_class}(onclick="this.classList.toggle('selected')")
           .teamContainer
             - for team_index in 0..1 do
