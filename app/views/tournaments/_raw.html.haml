@@ -157,7 +157,7 @@
   /* ポップアップ表示 */
   .popupContainer {
     display: none;
-    background-color: rgba(255,255,255,0.5);
+    background-color: rgba(255,255,255,0.7);
     position: fixed;
     top: 0;
     left: 0;
@@ -166,20 +166,29 @@
     cursor: auto;
   }
 
+  .match.selected:after {
+    content: '\0D7 \0A0 閉じる';
+    position: absolute;
+    width: 400px;
+    top: calc(50% - 20px);
+    left: 10px;
+    text-align: right;
+    font-size: 12px;
+    color: #333;
+  }
+
   .popupContent {
     display: none;
     position: absolute;
     background-color: rgba(0,0,0,0.9);
-    width: 350px;
+    width: 400px;
     padding: 25px 0;
     border-radius: 5px;
     color: #fff;
     cursor: auto;
+    top: 50%;
+    left: 10px;
   }
-  .match:not(.latterHalf) .popupContent { top: 50%; }
-  .match.latterHalf .popupContent { bottom: 50%; }
-  .round:not(.latterHalf) .popupContent { left: calc(0% + 10px); }
-  .round.latterHalf .popupContent { right: calc(0% + 10px); }
 
   .match.selected {
     z-index: 300;
@@ -277,36 +286,21 @@
 .bracket
   - tournament.results.each.with_index(1) do |round, round_num|
     - is_final_round = round_num == tournament.round_num
-    - round_class = []
-    - round_class << 'final' if is_final_round
-    // 右半分、左半分にクラス付与してポップアップの位置調整
-    - if tournament.size >= 16
-      - if round_num <= tournament.results.length / 2
-        - round_class << 'firstHalf'
-      - else
-        - round_class << 'latterHalf'
+    - round_class = 'final' if is_final_round
     .round{class: round_class}
       - round.each.with_index(1) do |match, match_num|
-        - match_class = []
         // 最終ラウンドは、決勝か３位決定戦のclass付与
         // それ以外は、優勝/準優勝チームのmatchをハイライト
         - if is_final_round
-          - class_name = (match_num == 1) ? 'final' : 'consolation'
-          - match_class << class_name
+          - match_class = (match_num == 1) ? 'final' : 'consolation'
           // ３位決定戦スキップのときは非表示
           - if (match_num == 2) && !tournament.consolation_round
-            - match_class << 'skip'
+            - match_class += ' skip'
         - else
           - if match_num == tournament.highlight_match(round_num, 1)
-            - match_class << 'highlightFirst'
+            - match_class = 'highlightFirst'
           - elsif match_num == tournament.highlight_match(round_num, 2)
-            - match_class << 'highlightSecond'
-        // 上半分、下半分にクラス付与してポップアップの位置調整
-        - if tournament.size >= 16
-          - if match_num <= round.length / 2
-            - match_class << 'firstHalf'
-          - else
-            - match_class << 'latterHalf'
+            - match_class = 'highlightSecond'
         .match{class: match_class}(onclick="this.classList.toggle('selected')")
           .teamContainer
             - for team_index in 0..1 do
