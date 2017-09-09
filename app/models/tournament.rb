@@ -28,9 +28,9 @@ class Tournament < ApplicationRecord
 
   validates :user_id, presence: true
   validates :size, presence: true
-  validate :tnmt_size_must_be_smaller_than_limit, on: :create
+  validate :tnmt_size_must_be_smaller_than_limit
   validate :teams_count_must_be_equal_to_tnmt_size, on: :update
-  validate :not_allow_double_bye, on: :update
+  validate :not_allow_double_bye, on: :update, if: 'self.size.present?'
   validates :title, presence: true, length: {maximum: 100}, exclusion: {in: %w(index new edit players games)}
   validates :place, length: {maximum: 100}, allow_nil: true
   validates :detail, length: {maximum: 500}, allow_nil: true
@@ -59,7 +59,7 @@ class Tournament < ApplicationRecord
   before_create :initialize_teams_and_results
   before_create :auto_tagging
   after_save :upload_json, :upload_html if !Rails.env.development? && ENV['FOG_DIRECTORY'] != 'the-tournament-stg'  # 本番でのみ実行
-  before_validation :change_tournament_size, if: 'self.size_changed?'
+  before_validation :change_tournament_size, if: '!self.new_record? && self.size.present? && self.size_changed?'
 
   def self.search_tournaments(params)
     if params[:q]
