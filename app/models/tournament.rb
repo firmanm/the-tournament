@@ -253,7 +253,6 @@ class Tournament < ApplicationRecord
 
   # 優勝/準優勝チーム (rank = 1 or 2)
   def final_team(rank)
-    return {"name" => "(TBD)"}
     final = self.results[self.round_num - 1][0]
     if final['winner'].present?
       team_index = (rank == 1) ? final['winner'] : 1 - final['winner']
