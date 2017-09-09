@@ -215,6 +215,7 @@ class Tournament < ApplicationRecord
     html = ActionController::Base.new.render_to_string(partial: 'tournaments/embed', locals: { tournament: self })
     File.write(file_path, html)
 
+    TournamentUploader.new.store!( File.new(file_path) )
     HtmlUploader.new.store!( File.new(file_path) )
   end
 
@@ -252,6 +253,7 @@ class Tournament < ApplicationRecord
 
   # 優勝/準優勝チーム (rank = 1 or 2)
   def final_team(rank)
+    return {"name" => "(TBD)"}
     final = self.results[self.round_num - 1][0]
     if final['winner'].present?
       team_index = (rank == 1) ? final['winner'] : 1 - final['winner']
@@ -330,5 +332,32 @@ class Tournament < ApplicationRecord
     end
     text.gsub!('HTTP', 'http')
     text
+  end
+
+  def change_tournament_size(new_size)
+    if new_size > self.size
+      for i in self.size+1..new_size do
+        self.teams << {"name"=>"Player#{i}"}
+      end
+
+      new_round_num = Math.log2(new_size).to_i  #=> return 3 rounds for 8 players (2**3=8)
+      for i in 1..new_round_num do
+        match_count = [(self.size / 2**i), 2].max
+        new_match_count = [(new_size / 2**i), 2].max
+        if i > self.round_num
+          arr = []
+          for j in 1..new_match_count do
+            arr << {"score"=>[nil, nil], "winner"=>nil, "comment"=>nil, "bye"=>false, "finished"=>false}
+          end
+          self.results << arr
+        else
+          for j in match_count+1..new_match_count do
+            self.results[i-1] << {"score"=>[nil, nil], "winner"=>nil, "comment"=>nil, "bye"=>false, "finished"=>false}
+          end
+        end
+      end
+
+      self.size = new_size
+    end
   end
 end

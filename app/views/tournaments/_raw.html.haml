@@ -2,8 +2,6 @@
 = stylesheet_link_tag "https://cdn.rawgit.com/lafeber/world-flags-sprite/9a8b5ea6/stylesheets/flags16.css"
 
 :css
-  .hidden { visibility: hidden; }
-
   .bracket {
     font-family: 'Lucida Grande','Hiragino Kaku Gothic ProN', Meiryo, sans-serif;
     font-size: 14px;
@@ -12,7 +10,6 @@
     flex-wrap: nowrap;
     position: relative;
     overflow-x: scroll;
-    /* overflow-y: hidden; */
     overflow-y: scroll;
     min-height: 220px;
   }
@@ -283,7 +280,7 @@
     - round_class = []
     - round_class << 'final' if is_final_round
     // 右半分、左半分にクラス付与してポップアップの位置調整
-    - if tournament.size >= 8
+    - if tournament.size >= 16
       - if round_num <= tournament.results.length / 2
         - round_class << 'firstHalf'
       - else
@@ -305,7 +302,7 @@
           - elsif match_num == tournament.highlight_match(round_num, 2)
             - match_class << 'highlightSecond'
         // 上半分、下半分にクラス付与してポップアップの位置調整
-        - if tournament.size >= 8
+        - if tournament.size >= 16
           - if match_num <= round.length / 2
             - match_class << 'firstHalf'
           - else
@@ -320,7 +317,7 @@
                 .name
                   - if team['flag'].present?
                     %span.f16
-                      %span.flag{class: team['flag']}
+                      %span.flag{class: team['flag'].downcase}
                   = team['name']
                 .score= match['score'][team_index] || '--'
 
@@ -357,7 +354,7 @@
                   .popupName
                     - if team['flag'].present?
                       %span.f16
-                        %span.flag{class: team['flag']}
+                        %span.flag{class: team['flag'].downcase}
                     = team['name']
                   .popupScore
                     = match['score'][team_index] || '--'
