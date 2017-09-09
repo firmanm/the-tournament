@@ -116,7 +116,7 @@ class Tournament < ApplicationRecord
   end
 
   def embed_height
-    self.size / 2 * 65 + 30
+    self.size / 2 * 65 + 150
   end
 
   def jqb_teams
