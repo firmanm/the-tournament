@@ -24,7 +24,6 @@ class TournamentsController < ApplicationController
 
 
   def show
-    # @tournament.change_tournament_size(8) #FIXME
     redirect_to pretty_tournament_path(@tournament, @tournament.encoded_title), status: 301 if params[:title] != @tournament.encoded_title
   end
 
