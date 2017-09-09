@@ -2,7 +2,7 @@
   - creatable_sizes = current_user ? current_user.creatable_sizes : {"〜4名"=> 4, "5〜8名"=> 8, "9〜16名"=>16, "17〜32名"=>32}
 
   = f.input :title
-  = f.input :size, collection: creatable_sizes, disabled: !@tournament.new_record?
+  = f.input :size, collection: creatable_sizes
   = f.input :detail
   = f.input :place
   = f.input :url
@@ -10,7 +10,7 @@
   = f.input :consolation_round, inline_label: t('simple_form.inline_labels.tournament.consolation_round'), as: :boolean
   = f.input :scoreless, inline_label: t('simple_form.inline_labels.tournament.scoreless'), as: :boolean
   -# = f.input :secondary_final, label: '再決勝', inline_label: '再決勝を実施する(敗者側が1戦目を勝利した場合)', as: :boolean, disabled: true
-  = f.input :facebook_album_id
+  -# = f.input :facebook_album_id
 
   .form-group
     .col-sm-6.col-sm-offset-2

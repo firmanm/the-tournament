@@ -59,6 +59,7 @@ class Tournament < ApplicationRecord
   before_create :initialize_teams_and_results
   before_create :auto_tagging
   after_save :upload_json, :upload_html if !Rails.env.development? && ENV['FOG_DIRECTORY'] != 'the-tournament-stg'  # 本番でのみ実行
+  before_validation :change_tournament_size, if: 'self.size_changed?'
 
   def self.search_tournaments(params)
     if params[:q]
@@ -307,7 +308,7 @@ class Tournament < ApplicationRecord
     match = self.title.match(/#{tags.join('|')}/)
     return if !match
 
-    # FIXME: 表記ゆれ対応
+    # 表記ゆれ対応
     if match[0] == 'シャドバ'
       tag = 'シャドウバース'
     elsif match[0] == 'クラロワ'
@@ -333,17 +334,20 @@ class Tournament < ApplicationRecord
     text
   end
 
-  def change_tournament_size(new_size)
-    if new_size > self.size
-      for i in self.size+1..new_size do
+  def change_tournament_size
+    # トーナメントを大きくするとき
+    if self.size > self.size_was
+      # プレイヤー追加
+      for i in self.size_was+1..self.size do
         self.teams << {"name"=>"Player#{i}"}
       end
 
-      new_round_num = Math.log2(new_size).to_i  #=> return 3 rounds for 8 players (2**3=8)
-      for i in 1..new_round_num do
-        match_count = [(self.size / 2**i), 2].max
-        new_match_count = [(new_size / 2**i), 2].max
-        if i > self.round_num
+      # 試合結果追加
+      old_round_num = Math.log2(self.size_was).to_i  #=> return 3 rounds for 8 players (2**3=8)
+      for i in 1..self.round_num do
+        match_count = [(self.size_was / 2**i), 2].max
+        new_match_count = [(self.size / 2**i), 2].max
+        if i > old_round_num
           arr = []
           for j in 1..new_match_count do
             arr << {"score"=>[nil, nil], "winner"=>nil, "comment"=>nil, "bye"=>false, "finished"=>false}
@@ -355,8 +359,23 @@ class Tournament < ApplicationRecord
           end
         end
       end
+      # ３位決定戦が入力されてるとサイズ変更時に他の試合の結果になってしまうため消しておく
+      self.results[old_round_num-1][1] = {"score"=>[nil, nil], "winner"=>nil, "comment"=>nil, "bye"=>false, "finished"=>false}
 
-      self.size = new_size
+    # 小さくするとき
+    elsif self.size < self.size_was
+      # プレイヤー削除
+      self.teams = self.teams.slice(0, self.size)
+
+      # 試合結果削除
+      for i in 1..self.round_num do
+        match_count = [(self.size / 2**i), 2].max
+        self.results[i-1] = self.results[i-1].slice(0, match_count) #ラウンド内の不要なmatchを削除
+      end
+      self.results = self.results.slice(0, self.round_num)  # 不要になったラウンドを削除
+
+      # ３位決定戦に変更前の他の試合結果が入るのを防ぐ
+      self.results[self.round_num-1][1] = {"score"=>[nil, nil], "winner"=>nil, "comment"=>nil, "bye"=>false, "finished"=>false}
     end
   end
 end
