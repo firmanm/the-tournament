@@ -35,7 +35,7 @@
   - if editable
     .row.hidden-xs.hidden-sm.mb-30
       .col-lg-12
-        - embed_content = "<div style='position:relative!important;width:100%!important;max-width:100%!important;margin-bottom:20px!important;overflow:auto !important;-webkit-overflow-scrolling:touch !important;'><iframe src='#{@tournament.embed_html_url}' seamless frameborder='0' width='100%' height='#{@tournament.embed_height.to_s}' style='width:1px;min-width:100%;'></iframe></div>"
+        - embed_content = "<div style='position:relative!important;width:100%!important;max-width:100%!important;margin-bottom:20px!important;overflow:auto !important;-webkit-overflow-scrolling:touch !important;'><iframe src='#{@tournament.embed_html_url}' seamless frameborder='0' scrolling='no' width='100%' height='#{@tournament.embed_height.to_s}' style='width:1px;min-width:100%;'></iframe></div>"
         %h5
           = fa_icon("code")
           埋め込み用タグ
