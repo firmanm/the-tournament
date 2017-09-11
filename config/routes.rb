@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       match '/:id/games', to: 'tournaments#games', via: :get, as: :tournament_games
       match '/:id/games/edit', to: 'tournaments#edit_games', via: :get, as: :tournament_edit_games
       match '/:id/games/edit/:round_num/:game_num', to: 'tournaments#edit_game', via: :get, as: :tournament_edit_game
+      match '/:id/games/reset/:round_num/:game_num', to: 'tournaments#reset_game', via: :post, as: :tournament_reset_game
       match '/:id/games', to: 'tournaments#update_games', via: :patch, as: :tournament_update_games
       match '/:id/games/:round_num/:game_num', to: 'tournaments#update_game', via: :patch, as: :tournament_update_game
 

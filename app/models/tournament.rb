@@ -294,12 +294,14 @@ class Tournament < ApplicationRecord
   end
 
   def match_name(args)
-    match_name = ""
     round_num = args[:round]
     game_num = args[:game]
 
-    match_name += self.round_name(round: round_num) if round_num != self.round_num
-    match_name += self.game_name(round: round_num, game: game_num)
+    round_name = self.round_name(round: round_num)
+    game_name = self.game_name(round: round_num, game: game_num)
+
+    # 決勝戦・3位決定戦のときはgame_nameのみ
+    (round_num == self.round_num) ? game_name : "#{round_name} #{game_name}"
   end
 
   # タイトルをもとに自動タグ付け
@@ -377,5 +379,10 @@ class Tournament < ApplicationRecord
       # ３位決定戦に変更前の他の試合結果が入るのを防ぐ
       self.results[self.round_num-1][1] = {"score"=>[nil, nil], "winner"=>nil, "comment"=>nil, "bye"=>false, "finished"=>false}
     end
+  end
+
+  # 試合登録結果のリセット
+  def reset_game
+
   end
 end
