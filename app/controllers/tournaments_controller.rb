@@ -144,7 +144,7 @@ class TournamentsController < ApplicationController
     set_game
 
     if params[:game]['winner'].blank?
-      flash.now[:alert] = '勝者が選択されていません。試合結果の登録を取り消したい場合は、「試合結果リセット」をクリックしてください。'
+      flash.now[:alert] = '勝敗が登録されていません。登録済みの内容を取り消したい場合は、画面下部の「試合結果をリセットする」をクリックしてください。'
       render :edit_game and return
     end
 
@@ -165,6 +165,11 @@ class TournamentsController < ApplicationController
       flash.now[:alert] = I18n.t('flash.game.update.failure')
       render :edit_game
     end
+  end
+
+  def reset_game
+    @tournament.reset_game(params[:round_num].to_i, params[:game_num].to_i)
+    redirect_to tournament_edit_games_path(@tournament), notice: '試合結果をリセットしました'
   end
 
 

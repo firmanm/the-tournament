@@ -70,4 +70,4 @@
 
     = f.submit '更新する', id: 'btn-update-game', class: "btn btn-danger"
     = link_to 'キャンセル', tournament_edit_games_path(@tournament), class: 'btn btn-default'
-    = link_to fa_icon('undo')+'試合結果をリセットする', tournament_reset_game_path(@tournament, @round_num, @game_num), class: 'btn btn-link pull-right', data: {confirm: '試合結果をリセットすると、これより後の試合の結果も合わせてリセットされます。本当によろしいですか？'}
+    = link_to fa_icon('undo')+'試合結果をリセットする', tournament_reset_game_path(@tournament, @round_num, @game_num), class: 'btn btn-link pull-right', data: {confirm: '試合結果をリセットすると、この試合の結果が影響する他の試合も合わせてリセットされます。本当によろしいですか？'}

@@ -382,7 +382,16 @@ class Tournament < ApplicationRecord
   end
 
   # 試合登録結果のリセット
-  def reset_game
+  def reset_game(round_num, game_num)
+    g = game_num
+    for r in round_num..self.round_num
+      self.results[r - 1][g - 1] = {score: [nil, nil], winner: nil, comment: nil, bye: false, finished: false}
+      g = g.quo(2).ceil
+    end
 
+    # 3位決定戦は必ずリセット
+    self.results[self.round_num - 1][1] = {score: [nil, nil], winner: nil, comment: nil, bye: false, finished: false}
+
+    self.update({results: self.results})
   end
 end
