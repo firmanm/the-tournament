@@ -14,6 +14,11 @@
                         %small.visible-xs= item.published.strftime("%Y-%m-%d")
                     %td.text-right.hidden-xs
                       %small= item.published.strftime("%Y-%m-%d")
+                %tr
+                  %td
+                    %small
+                      =link_to fa_icon('angle-double-right')+'すべてのお知らせを見る', 'http://blog.the-tournament.jp', target:'_blank'
+                  %td
 
   .black.text-center
     .container
@@ -28,7 +33,7 @@
             %a(href="http://www.freepik.com/free-photos-vectors/abstract" target="_blank") Abstract vector created by Freepik
       %ul.list-inline
         %li= link_to 'このサイトについて', "/about"
-        %li= link_to t('official_blog'), 'https://blog.the-tournament.jp', target: '_blank'
+        %li= link_to t('official_blog'), 'http://blog.the-tournament.jp', target: '_blank'
         %li= link_to t('company'), 'http://notsobad.jp/', target: '_blank'
         %li= link_to t('contact'), 'https://goo.gl/forms/xqvYet0AAsQUalI52', target: '_blank'
         %li= link_to t('terms_of_use'), "/terms", target: '_blank'
