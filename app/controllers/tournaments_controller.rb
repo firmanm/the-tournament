@@ -144,8 +144,7 @@ class TournamentsController < ApplicationController
     set_game
 
     if params[:game]['winner'].blank?
-      flash.now[:alert] = '勝敗が登録されていません。登録済みの内容を取り消したい場合は、画面下部の「試合結果をリセットする」をクリックしてください。'
-      render :edit_game and return
+      redirect_to tournament_edit_game_path(@tournament), alert: '勝敗が登録されていません。登録済みの内容を取り消したい場合は、画面下部の「試合結果をリセットする」をクリックしてください。' and return
     end
 
     game_params = {
