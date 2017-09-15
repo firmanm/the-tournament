@@ -9,16 +9,18 @@
   = f.input :tag_list, input_html: {value: @tournament.tag_list.to_s} if current_user.try(:admin?)
   = f.input :consolation_round, inline_label: t('simple_form.inline_labels.tournament.consolation_round'), as: :boolean
   = f.input :scoreless, inline_label: t('simple_form.inline_labels.tournament.scoreless'), as: :boolean
+  = f.input :double_mountain, inline_label: t('simple_form.inline_labels.tournament.double_mountain'), as: :boolean if current_user.try(:admin?)
   -# = f.input :secondary_final, label: '再決勝', inline_label: '再決勝を実施する(敗者側が1戦目を勝利した場合)', as: :boolean, disabled: true
   -# = f.input :facebook_album_id
 
+  %hr
   .form-group
     .col-sm-6.col-sm-offset-2
       = f.input :token, as: :hidden, input_html: {value: @token} if (!current_user || current_user.guest?) && @tournament.new_record?
       = f.button :submit, class: 'btn-danger'
+      - if @tournament.persisted?
+        =link_to 'キャンセル', tournament_path(@tournament), class: 'btn btn-link'
 
-  - if @tournament.persisted?
-    %hr
-    .form-group
-      .col-sm-6.col-sm-offset-2
-        =link_to fa_icon('trash-o')+t('tournaments.delete_tournament'), tournament_path(@tournament), data: {confirm: '大会データを削除します。本当によろしいですか？'}, method: :delete
+    - if @tournament.persisted?
+      .pull-right
+        =link_to fa_icon('trash-o')+t('tournaments.delete_tournament'), tournament_path(@tournament), data: {confirm: '大会データを削除します。本当によろしいですか？'}, method: :delete, class: 'btn btn-link'

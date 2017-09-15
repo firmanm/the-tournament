@@ -35,9 +35,10 @@ class Tournament < ApplicationRecord
   validates :place, length: {maximum: 100}, allow_nil: true
   validates :detail, length: {maximum: 500}, allow_nil: true
   validates :url, format: URI::regexp(%w(http https)), allow_blank: true
-  validates :consolation_round, presence: true, inclusion: {in: [true,false]}, allow_blank: true
-  validates :secondary_final, presence: true, inclusion: {in: [true,false]}, allow_blank: true
-  validates :scoreless, presence: true, inclusion: {in: [true,false]}, allow_blank: true
+  validates :consolation_round, inclusion: {in: [true,false]}, allow_blank: true
+  validates :secondary_final, inclusion: {in: [true,false]}, allow_blank: true
+  validates :scoreless, inclusion: {in: [true,false]}, allow_blank: true
+  validates :double_mountain, inclusion: {in: [true,false]}, allow_blank: true
 
   def tnmt_size_must_be_smaller_than_limit
     errors.add(:size, "作成できるサイズ上限を越えています") unless self.user.creatable_sizes.has_value? size

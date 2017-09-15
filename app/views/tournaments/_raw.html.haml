@@ -13,10 +13,14 @@
     overflow-y: scroll;
     min-height: 220px;
   }
+  .block {
+    display: flex;
+  }
   .round {
     display: flex;
     flex-direction: column;
   }
+
   .match {
     position: relative;
     display: flex;
@@ -24,6 +28,9 @@
     cursor: pointer;
     overflow: visible;
   }
+  .right.block .match { flex-direction: row-reverse; }
+  .match:nth-child(even) { margin-top: -2px; }
+
   .teamContainer {
     margin: auto 0;
     padding: 7px 0;
@@ -55,7 +62,18 @@
     height: 25px;
     line-height: 25px;
   }
+  .team.winner .score { color: #060; }
+  .team.loser .score { color: #900; }
 
+
+  /* z-index */
+  .match.highlightSecond { z-index: 100; }
+  .match.highlightFirst  { z-index: 101; }
+  .match.highlight   { z-index: 102; }
+  .match:hover { z-index: 103; }
+
+
+  /* 勝ち上がり線 */
   .lineContainer {
     display: flex;
     flex-direction: column;
@@ -67,91 +85,202 @@
   .lineContainer > div > div {
     width: 20px;
   }
+  .left.block .final.round .lineContainer { display: none; }
 
+  /* 左山 */
   /* 奇数試合 */
-  .match:nth-child(odd) .lineContainer > div:last-child > div:first-child {
+  .left.block .match:nth-child(odd) .lineContainer > div:last-child > div:first-child {
     border-top: 2px solid #999;
   }
-  .match:nth-child(odd) .lineContainer > div:last-child > div:first-child {
+  .left.block .match:nth-child(odd) .lineContainer > div:last-child > div:first-child {
     border-right: 2px solid #999;
   }
-  .match:nth-child(odd) .lineContainer > div:last-child > div:last-child {
+  .left.block .match:nth-child(odd) .lineContainer > div:last-child > div:last-child {
     border-bottom: 2px solid #999;
   }
 
   /* 偶数試合 */
-  .match:nth-child(even) .lineContainer > div:first-child > div:first-child {
+  .left.block .match:nth-child(even) .lineContainer > div:first-child > div:first-child {
     border-bottom: 2px solid #999;
   }
-  .match:nth-child(even) .lineContainer > div:first-child > div:first-child {
+  .left.block .match:nth-child(even) .lineContainer > div:first-child > div:first-child {
     border-right: 2px solid #999;
   }
-  .match:nth-child(even) .lineContainer > div:first-child > div:last-child {
+  .left.block .match:nth-child(even) .lineContainer > div:first-child > div:last-child {
     border-top: 2px solid #999;
   }
 
-  .match:nth-child(even) { margin-top: -2px; }
-  .match.highlightSecond { z-index: 100; }
-  .match.highlightFirst  { z-index: 101; }
-  .match.highlight   { z-index: 102; }
-  .match:hover { z-index: 103; }
+  /*  右山 */
+  /* 奇数試合 */
+  .right.block .match:nth-child(odd) .lineContainer > div:last-child > div:last-child {
+    border-top: 2px solid #999;
+  }
+  .right.block .match:nth-child(odd) .lineContainer > div:last-child > div:first-child {
+    border-right: 2px solid #999;
+  }
+  .right.block .match:nth-child(odd) .lineContainer > div:last-child > div:first-child {
+    border-bottom: 2px solid #999;
+  }
 
+  /* 偶数試合 */
+  .right.block .match:nth-child(even) .lineContainer > div:first-child > div:last-child {
+    border-bottom: 2px solid #999;
+  }
+  .right.block .match:nth-child(even) .lineContainer > div:first-child > div:first-child {
+    border-right: 2px solid #999;
+  }
+  .right.block .match:nth-child(even) .lineContainer > div:first-child > div:first-child {
+    border-top: 2px solid #999;
+  }
 
-  /* 勝敗のスコア表示 */
-  .team.winner .score { color: #060; }
-  .team.loser .score { color: #900; }
-  /* .match:not(.final) .team.loser:not(.highlightSecond):not(.highlight) .name { opacity: 0.7; } */
+  /* 中山 */
+  /* 奇数試合 */
+  .left.block .round:last-child .match:nth-child(odd) .lineContainer > div:first-child > div,
+  .right.block .round:first-child .match:nth-child(odd) .lineContainer > div:first-child > div {
+    border-bottom: 2px solid #999;
+  }
+  .left.block .round:last-child .match:nth-child(odd) .lineContainer > div:last-child > div,
+  .right.block .round:first-child .match:nth-child(odd) .lineContainer > div:last-child > div {
+    border: none;
+  }
+  .center.block .lineContainer {height: 50px; }
+  .center.block .lineContainer > div > div { width: 50%; }
+  .center.block .lineContainer { visibility: hidden; }
+
+  .right.block .round:first-child:not(.final) .match .lineContainer,
+  .left.block .round:last-child:not(.final) .match .lineContainer {
+    display: none;
+  }
+  .left.block .round:last-child:not(.final) .match:before,
+  .right.block .round:first-child:not(.final) .match:before {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: calc(50% - 1px);
+    width: calc(70px + 1px);   /* 可変 */
+    height: 50px;
+    border-bottom: 2px solid #999;
+  }
+  .left.block .round:last-child:not(.final) .match:before {
+    right: calc(-70px - 1px);  /* 可変 */
+    border-right: 2px solid #999;
+  }
+  .right.block .round:first-child:not(.final) .match:before {
+    left: calc(-70px - 1px);  /* 可変 */
+    border-left: 2px solid #999;
+  }
 
 
   /* 優勝/準優勝 */
   .match.highlightFirst .team.winner, .final.round .final.match .team.winner { background-color: #DA0; }
   .match.highlightSecond .team.winner, .final.round .final.match .team.loser { background-color: #CCC; }
-  .match:nth-child(n).highlightFirst .lineContainer > div > div:nth-child(n) { border-color: #DA0; }
-  .match:nth-child(n).highlightSecond .lineContainer > div > div:nth-child(n) { border-color: #CCC; }
+
+  .right.block .round:first-child:not(.final) .match.highlightFirst:before,
+  .left.block .round:last-child:not(.final) .match.highlightFirst:before,
+  .right.block .match:nth-child(n).highlightFirst .lineContainer > div > div:nth-child(n),
+  .left.block .match:nth-child(n).highlightFirst .lineContainer > div > div:nth-child(n) {
+    border-color: #DA0;
+   }
+  .right.block .round:first-child:not(.final) .match.highlightSecond:before,
+  .left.block .round:last-child:not(.final) .match.highlightSecond:before,
+  .right.block .match:nth-child(n).highlightSecond .lineContainer > div > div:nth-child(n),
+  .left.block .match:nth-child(n).highlightSecond .lineContainer > div > div:nth-child(n) {
+    border-color: #CCC;
+   }
 
   .final.round { margin: auto 0; }
   .final.match { flex-grow: unset; }
 
-  .bubble {
-    height: 22px;
-    line-height: 22px;
-    width: 30px;
-    right: -35px;
-    position: absolute;
-    text-align: center;
-    font-size: 11px;
+
+  /* 両山対応 */
+  .center.block {
+    z-index: 150;
   }
-  .bubble:after {
+  .center.block .final.round { margin: 0; }
+  .center.block .match .teamContainer {
+    margin: 0;
+    padding: 0;
+  }
+  .center.block .final.match {
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+    margin-bottom: -2px;
+  }
+  .center.block .consolation.match {
+    position: relative;
+    top: inherit;
+    margin-top: inherit;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+  }
+
+
+  /* 順位表示 */
+  .final.match .team.winner:before, .final.match .team.loser:before,
+  .consolation.match .team.winner:before, .consolation.match .team.loser:before {
     content: '';
     position: absolute;
     top: 6px;
-    left: -5px;
+    right: -5px;
     width: 0;
     height: 0;
     border-top: 5px solid transparent;
     border-left: 0;
     border-right: 5px solid transparent;
     border-bottom: 5px solid transparent;
+    border-right-color: #DA0;
   }
-  .final.match .winner .bubble {
+  .final.match .team.winner:after, .final.match .team.loser:after,
+  .consolation.match .team.winner:after, .consolation.match .team.loser:after {
+    display: block;
+    position: absolute;
+    height: 22px;
+    line-height: 22px;
+    width: 30px;
+    right: -35px;
+    text-align: center;
+    font-size: 11px;
+  }
+
+  /* 優勝 */
+  .final.match .team.winner:after {
+    content: '1st';
     background-color: #DA0;
     color: #960;
   }
-  .final.match .winner .bubble:after {
-    border-right-color: #DA0;
-  }
-  .final.match .loser .bubble {
+  .final.match .team.winner:before { border-right-color: #DA0; }
+
+  /* 準優勝 */
+  .final.match .team.loser:after {
+    content: '2nd';
     background-color: #CCC;
     color: #333;
   }
-  .final.match .loser .bubble:after {
-    border-right-color: #CCC;
+  .final.match .team.loser:before { border-right-color: #CCC; }
+
+  /* ３位 */
+  .consolation.match .team.winner:after {
+    content: '3rd';
+    background-color: #963;
+    color: #D95;
   }
+  .consolation.match .team.winner:before { border-right-color: #963; }
+
+  /* 4位 */
+  .consolation.match .team.loser:after {
+    content: '4th';
+    background-color: #678;
+    color: #CCD;
+  }
+  .consolation.match .team.loser:before { border-right-color: #678; }
 
 
   /* チームハイライト */
   .team.highlight { background-color: #3C0 !important; }
-  .highlight .lineContainer > div > div { border-color: #3C0 !important; }
+  .match.highlight .lineContainer > div > div, .match.highlight:before {
+     border-color: #3C0 !important;
+   }
 
 
   /* ポップアップ表示 */
@@ -166,6 +295,7 @@
     cursor: auto;
   }
 
+  .match.selected { z-index: 300; }
   .match.selected:after {
     content: '\0D7 \0A0 閉じる';
     position: absolute;
@@ -192,9 +322,6 @@
     left: 10px;
   }
 
-  .match.selected {
-    z-index: 300;
-  }
   .match.selected .popupContent, .match.selected .popupContainer {
     display: block;
   }
@@ -247,21 +374,26 @@
     align-items: center;
   }
 
-  .popupBubble {
+  .popupTeam:before {
     position: absolute;
     top: -20px;
+    left: 0;
     width: 100%;
     text-align: center;
     font-weight: bold;
   }
-  .winner .popupBubble { color: #DA0; }
-  .winner .popupBubble:after { content: 'WIN'; }
-  .loser .popupBubble { color: #AAA; }
-  .loser .popupBubble:after { content: 'LOSE'; }
+  .popupTeam.winner:before {
+    content: 'WIN';
+    color: #DA0;
+  }
+  .popupTeam.loser:before {
+    content: 'LOSE';
+    color: #AAA;
+  }
 
 
   /* ３位決定戦 */
-  .skip.consolation { display: none; }
+  .skipConsolation .consolation { visibility: hidden; }
 
   .consolation.match {
     position: absolute;
@@ -269,96 +401,39 @@
     margin-top: 50px;
   }
 
-  .consolation.match .winner .bubble {
-    background-color: #963;
-    color: #D95;
-  }
-  .consolation.match .winner .bubble:after {
-    border-right-color: #963;
-  }
-  .consolation.match .loser .bubble {
-    background-color: #678;
-    color: #CCD;
-  }
-  .consolation.match .loser .bubble:after {
-    border-right-color: #678;
-  }
 
+- skip_consolation = (tournament.consolation_round) ? '' : 'skipConsolation'
+.bracket{class: skip_consolation}
+  - if !tournament.double_mountain
+    .block.left
+      - for round_num in 1..tournament.round_num
+        - round  = tournament.results[round_num - 1]
+        - round_class = 'final' if round_num == tournament.round_num
+        .round{class: round_class}
+          - for match_num in 1..(round.count)
+            = render partial: "tournaments/match", locals: { tournament: tournament, round_num: round_num, match_num: match_num }
 
-.bracket
-  - tournament.results.each.with_index(1) do |round, round_num|
-    - is_final_round = round_num == tournament.round_num
-    - round_class = 'final' if is_final_round
-    .round{class: round_class}
-      - round.each.with_index(1) do |match, match_num|
-        // 最終ラウンドは、決勝か３位決定戦のclass付与
-        // それ以外は、優勝/準優勝チームのmatchをハイライト
-        - if is_final_round
-          - match_class = (match_num == 1) ? 'final' : 'consolation'
-          // ３位決定戦スキップのときは非表示
-          - if (match_num == 2) && !tournament.consolation_round
-            - match_class += ' skip'
-        - else
-          - if match_num == tournament.highlight_match(round_num, 1)
-            - match_class = 'highlightFirst'
-          - elsif match_num == tournament.highlight_match(round_num, 2)
-            - match_class = 'highlightSecond'
-        .match{class: match_class}(onclick="this.classList.toggle('selected')")
-          .teamContainer
-            - for team_index in 0..1 do
-              - if !match['winner'].nil?
-                - team_class = (match['winner']==team_index) ? 'winner' : 'loser'
-              - team = tournament.winner_team(round_num, match_num, team_index)
-              .team{class: team_class, 'data-teamid': team['id']}
-                .name
-                  - if team['flag'].present?
-                    %span.f16
-                      %span.flag{class: team['flag'].downcase}
-                  = team['name']
-                .score= (match['score'][team_index]).present? ? match['score'][team_index] : '--'
+  - else
+    .block.left
+      - for round_num in 1..(tournament.round_num-1)
+        - round  = tournament.results[round_num - 1]
+        .round
+          - for match_num in 1..(round.count.quo(2))
+            = render partial: "tournaments/match", locals: { tournament: tournament, round_num: round_num, match_num: match_num }
 
-                - if is_final_round && match_num == 1
-                  - if team_class == 'winner'
-                    .bubble 1st
-                  - elsif team_class == 'loser'
-                    .bubble 2nd
-                - elsif is_final_round && match_num == 2
-                  - if team_class == 'winner'
-                    .bubble 3rd
-                  - elsif team_class == 'loser'
-                    .bubble 4th
+    .block.center
+      - round_num = tournament.round_num
+      - round = tournament.results[round_num - 1]
+      .final.round
+        - for match_num in 1..2
+          = render partial: "tournaments/match", locals: { tournament: tournament, round_num: round_num, match_num: match_num }
 
-          - if !is_final_round
-            .lineContainer
-              %div
-                %div
-                %div
-              %div
-                %div
-                %div
-
-          .popupContainer
-          .popupContent(onclick="event.stopPropagation();")
-            %h3.popupTitle= tournament.match_name({round: round_num, game: match_num})
-            .popupTeamContainer
-              - for team_index in 0..1 do
-                - if !match['winner'].nil?
-                  - team_class = (match['winner']==team_index) ? 'winner' : 'loser'
-                - team = tournament.winner_team(round_num, match_num, team_index)
-                .popupTeam{class: team_class}
-                  .popupBubble
-                  .popupName
-                    - if team['flag'].present?
-                      %span.f16
-                        %span.flag{class: team['flag'].downcase}
-                    = team['name']
-                  .popupScore
-                    = match['score'][team_index] || '--'
-                - if team_index == 0
-                  .popupSpacer
-                    \-
-            .popupComment
-              = tournament.text_url_to_link( simple_format(h(match['comment'])) ).html_safe
+    .block.right
+      - (tournament.round_num - 1).downto(1) do |round_num|
+        - round  = tournament.results[round_num - 1]
+        .round
+          - for match_num in (round.count/2+1)..(round.count)
+            = render partial: "tournaments/match", locals: { tournament: tournament, round_num: round_num, match_num: match_num }
 
 
 :javascript
