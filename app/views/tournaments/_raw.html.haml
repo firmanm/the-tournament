@@ -315,7 +315,7 @@
                     %span.f16
                       %span.flag{class: team['flag'].downcase}
                   = team['name']
-                .score= match['score'][team_index] || '--'
+                .score= (match['score'][team_index]).present? ? match['score'][team_index] : '--'
 
                 - if is_final_round && match_num == 1
                   - if team_class == 'winner'
