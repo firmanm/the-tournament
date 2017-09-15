@@ -404,7 +404,7 @@
 
 - skip_consolation = (tournament.consolation_round) ? '' : 'skipConsolation'
 .bracket{class: skip_consolation}
-  - if tournament
+  - if !tournament.double_mountain
     .block.left
       - for round_num in 1..tournament.round_num
         - round  = tournament.results[round_num - 1]

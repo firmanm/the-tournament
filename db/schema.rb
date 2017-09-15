@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170527130601) do
+ActiveRecord::Schema.define(version: 20170916141603) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -64,13 +64,12 @@ ActiveRecord::Schema.define(version: 20170527130601) do
     t.boolean  "secondary_final",               default: false
     t.boolean  "scoreless",                     default: false
     t.boolean  "finished",                      default: false
-    t.boolean  "pickup",                        default: false
     t.string   "facebook_album_id", limit: 255
     t.json     "teams"
     t.json     "results"
     t.string   "token",             limit: 255
+    t.boolean  "double_mountain",               default: false
     t.index ["finished"], name: "index_tournaments_on_finished", using: :btree
-    t.index ["pickup"], name: "index_tournaments_on_pickup", using: :btree
     t.index ["user_id"], name: "index_tournaments_on_user_id", using: :btree
   end
 

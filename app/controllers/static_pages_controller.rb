@@ -8,8 +8,6 @@ class StaticPagesController < ApplicationController
   def about
     sample_id = 158
     @tournament = Tournament.find(sample_id)
-    json = JSON.parse(@tournament.to_json)
-    gon.push(json)
   end
 
   def top

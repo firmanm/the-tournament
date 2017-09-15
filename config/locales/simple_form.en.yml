@@ -27,6 +27,7 @@ en:
         consolation_round: Third Place Playoff
         type: Consolation Round
         tag_list: Tags
+        double_mountain: Tournament Style
       user:
         profile_img: Profile Image
     placeholders:
@@ -36,7 +37,8 @@ en:
     inline_labels:
       tournament:
         consolation_round: Hold the third place playoff.
-        scoreless: Do not record the score(record only the victory or defeat).
+        scoreless: Do not record the score(record the result only).
+        double_mountain: Show double mountain.
       user:
         email_subscription: Receive e-mail notification from THE TOURNAMENT.
         profile_img: Change profile image.
