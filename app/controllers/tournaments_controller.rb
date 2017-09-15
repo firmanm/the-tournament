@@ -137,29 +137,18 @@ class TournamentsController < ApplicationController
   end
 
   def edit_game
-    @round_num = params[:round_num].to_i
-    @game_num = params[:game_num].to_i
-    @game = @tournament.results[@round_num-1][@game_num-1]
-
-    @players = [
-      @tournament.winner_team(@round_num, @game_num, 0),
-      @tournament.winner_team(@round_num, @game_num, 1)
-    ]
-
-    @round_name = @tournament.round_name(round: @round_num)
-    if @round_num == @tournament.round_num
-      @game_name = (@game_num==1) ? '決勝戦' : '3位決定戦'
-    else
-      @game_name = "第#{@game_num}試合"
-    end
+    set_game
   end
 
   def update_game
-    @round_num = params[:round_num].to_i
-    @game_num = params[:game_num].to_i
+    set_game
+
+    if params[:game]['winner'].blank?
+      redirect_to tournament_edit_game_path(@tournament), alert: '勝敗が登録されていません。登録済みの内容を取り消したい場合は、画面下部の「試合結果をリセットする」をクリックしてください。' and return
+    end
 
     game_params = {
-      score: params[:game]['score'].map(&:to_i),
+      score: params[:game]['score'],
       winner: params[:game]['winner'].to_i,
       comment: params[:game]['comment'],
       finished: true
@@ -173,8 +162,13 @@ class TournamentsController < ApplicationController
       redirect_to tournament_edit_games_path(@tournament), notice: I18n.t('flash.game.update.success')
     else
       flash.now[:alert] = I18n.t('flash.game.update.failure')
-      render "tournaments/edit_game/#{@round_num}/#{@game_num}"
+      render :edit_game
     end
+  end
+
+  def reset_game
+    @tournament.reset_game(params[:round_num].to_i, params[:game_num].to_i)
+    redirect_to tournament_edit_games_path(@tournament), notice: '試合結果をリセットしました'
   end
 
 
@@ -190,6 +184,17 @@ class TournamentsController < ApplicationController
         @teams_text += ",#{m['flag']}" if m && m['flag'].present?
         @teams_text += "\r\n"
       end
+    end
+
+    def set_game
+      @round_num = params[:round_num].to_i
+      @game_num = params[:game_num].to_i
+      @game = @tournament.results[@round_num-1][@game_num-1]
+
+      @players = [
+        @tournament.winner_team(@round_num, @game_num, 0),
+        @tournament.winner_team(@round_num, @game_num, 1)
+      ]
     end
 
     # ゲストユーザーの編集時は、tokenがトーナメントのものと一致するかチェックする

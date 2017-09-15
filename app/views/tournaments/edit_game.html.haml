@@ -1,4 +1,4 @@
-= content_for :page_title, "#{@tournament.title}の#{@round_name} 第#{@game_num}試合"
+= content_for :page_title, "#{@tournament.title}の#{@tournament.match_name(round: @round_num, game: @game_num)}"
 = content_for :keywords, @tournament.title
 
 = link_to fa_icon("reply")+t('back_to_tournament'), pretty_tournament_path(@tournament, @tournament.title), class: 'btn btn-default'
@@ -8,7 +8,7 @@
 %section#game-edit
   %h1.headline
     = fa_icon("list-alt")
-    = "#{@round_name} #{@game_name}"
+    = @tournament.match_name(round: @round_num, game: @game_num)
 
   = simple_form_for @tournament, url: tournament_update_game_path(@tournament, @round_num, @game_num), html: {class: 'form-horizontal'} do |f|
     - scoreless = (@tournament.scoreless?) ? 'hidden' : ''
@@ -69,4 +69,5 @@
     %hr
 
     = f.submit '更新する', id: 'btn-update-game', class: "btn btn-danger"
-    = link_to 'キャンセル', tournament_edit_games_path(@tournament), class: 'btn btn-secondary'
+    = link_to 'キャンセル', tournament_edit_games_path(@tournament), class: 'btn btn-default'
+    = link_to fa_icon('undo')+'試合結果をリセットする', tournament_reset_game_path(@tournament, @round_num, @game_num), class: 'btn btn-link pull-right', data: {confirm: '試合結果をリセットすると、この試合の結果が影響する他の試合も合わせてリセットされます。本当によろしいですか？'}
