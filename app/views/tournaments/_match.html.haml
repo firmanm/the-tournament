@@ -39,7 +39,6 @@
           - team_class = (match['winner']==team_index) ? 'winner' : 'loser'
         - team = tournament.winner_team(round_num, match_num, team_index)
         .popupTeam{class: team_class}
-          .popupBubble
           .popupName
             - if team['flag'].present?
               %span.f16
