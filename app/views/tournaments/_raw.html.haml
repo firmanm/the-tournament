@@ -145,20 +145,44 @@
   }
   .center.block .lineContainer {height: 50px; }
   .center.block .lineContainer > div > div { width: 50%; }
-  .center.block .final.match .lineContainer > div > div:first-child { border-right: 2px solid #999; }
-  .center.block .final.match .lineContainer > div:last-child > div { border-bottom: 2px solid #999; }
-  .center.block .consolation.match .lineContainer {
-    visibility: hidden;
+  .center.block .lineContainer { visibility: hidden; }
+
+  .right.block .round:first-child:not(.final) .match .lineContainer,
+  .left.block .round:last-child:not(.final) .match .lineContainer {
+    display: none;
+  }
+  .left.block .round:last-child:not(.final) .match:before,
+  .right.block .round:first-child:not(.final) .match:before {
+    content: '';
+    display: block;
+    position: absolute;
+    bottom: calc(50% - 1px);
+    width: calc(70px + 1px);   /* 可変 */
+    height: 50px;
+    border-bottom: 2px solid #999;
+  }
+  .left.block .round:last-child:not(.final) .match:before {
+    right: calc(-70px - 1px);  /* 可変 */
+    border-right: 2px solid #999;
+  }
+  .right.block .round:first-child:not(.final) .match:before {
+    left: calc(-70px - 1px);  /* 可変 */
+    border-left: 2px solid #999;
   }
 
 
   /* 優勝/準優勝 */
   .match.highlightFirst .team.winner, .final.round .final.match .team.winner { background-color: #DA0; }
   .match.highlightSecond .team.winner, .final.round .final.match .team.loser { background-color: #CCC; }
+
+  .right.block .round:first-child:not(.final) .match.highlightFirst:before,
+  .left.block .round:last-child:not(.final) .match.highlightFirst:before,
   .right.block .match:nth-child(n).highlightFirst .lineContainer > div > div:nth-child(n),
   .left.block .match:nth-child(n).highlightFirst .lineContainer > div > div:nth-child(n) {
     border-color: #DA0;
    }
+  .right.block .round:first-child:not(.final) .match.highlightSecond:before,
+  .left.block .round:last-child:not(.final) .match.highlightSecond:before,
   .right.block .match:nth-child(n).highlightSecond .lineContainer > div > div:nth-child(n),
   .left.block .match:nth-child(n).highlightSecond .lineContainer > div > div:nth-child(n) {
     border-color: #CCC;
@@ -254,7 +278,9 @@
 
   /* チームハイライト */
   .team.highlight { background-color: #3C0 !important; }
-  .highlight .lineContainer > div > div { border-color: #3C0 !important; }
+  .match.highlight .lineContainer > div > div, .match.highlight:before {
+     border-color: #3C0 !important;
+   }
 
 
   /* ポップアップ表示 */
