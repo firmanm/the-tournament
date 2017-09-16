@@ -28,6 +28,7 @@ ja:
         tag_list: タグ
         facebook_album_id: FacebookアルバムID
         double_mountain: 表示形式
+        private: 公開設定
       user:
         profile_img: プロフィール画像
     placeholders:
@@ -39,6 +40,7 @@ ja:
         consolation_round: ３位決定戦を実施する
         scoreless: スコア無し(勝敗のみ記録する)
         double_mountain: 両山表示にする
+        private: 非公開にする
       user:
         email_subscription: THE TOURNAMENTからのお知らせをE-mailで受信する。
         profile_img: プロフィール画像を変更する
