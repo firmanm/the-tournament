@@ -11,6 +11,10 @@
   %h1.headline
     = fa_icon("trophy")
     = t('.tournament_bracket')
+    .small.pull-right
+      = link_to @tournament.embed_html_url, class: 'btn btn-link', target: '_blank' do
+        = fa_icon('arrows-alt')
+        全画面で表示する
   .row.mb-30
     .col-lg-12
       = render partial: "tournaments/raw", locals: { tournament: @tournament }
