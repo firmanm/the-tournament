@@ -15,10 +15,12 @@
 #  secondary_final   :boolean          default(FALSE)
 #  scoreless         :boolean          default(FALSE)
 #  finished          :boolean          default(FALSE)
-#  pickup            :boolean          default(FALSE)
 #  facebook_album_id :string(255)
 #  teams             :json
 #  results           :json
+#  token             :string(255)
+#  double_mountain   :boolean          default(FALSE)
+#  private           :boolean          default(FALSE)
 #
 
 class Tournament < ApplicationRecord
@@ -39,6 +41,7 @@ class Tournament < ApplicationRecord
   validates :secondary_final, inclusion: {in: [true,false]}, allow_blank: true
   validates :scoreless, inclusion: {in: [true,false]}, allow_blank: true
   validates :double_mountain, inclusion: {in: [true,false]}, allow_blank: true
+  validates :private, inclusion: {in: [true,false]}, allow_blank: true
 
   def tnmt_size_must_be_smaller_than_limit
     errors.add(:size, "作成できるサイズ上限を越えています") unless self.user.creatable_sizes.has_value? size
@@ -55,7 +58,6 @@ class Tournament < ApplicationRecord
   end
 
   default_scope {order(created_at: :desc)}
-  scope :finished, -> { where(finished: true) }
 
   before_create :initialize_teams_and_results
   before_create :auto_tagging
@@ -70,7 +72,7 @@ class Tournament < ApplicationRecord
     else
       tournaments = Tournament.all
     end
-    tournaments
+    tournaments.where(private: false)
   end
 
   def initialize_teams_and_results

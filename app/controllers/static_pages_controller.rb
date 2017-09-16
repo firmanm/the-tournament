@@ -11,8 +11,8 @@ class StaticPagesController < ApplicationController
   end
 
   def top
-    @tournaments = Tournament.finished.limit(10)
-    @unfinished_tnmts = Tournament.where(finished: false).limit(10)
+    @tournaments = Tournament.where(finished: true, private: false).limit(10)
+    @unfinished_tnmts = Tournament.where(finished: false, private: false).limit(10)
   end
 
 

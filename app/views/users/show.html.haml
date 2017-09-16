@@ -8,7 +8,7 @@
     = @user.public_name
     - if current_user && @user == current_user
       = link_to fa_icon('cog')+'編集', edit_user_path(@user), class: 'btn btn-primary pull-right', style: 'color: #fff !important;'
-      
+
   %p
     = sanitize @user.profile, tags: %w(h1 h2 h3 h4 h5 h6 ul ol li p a img table tr td em br strong), attributes:  %w(id class href)
 
@@ -31,6 +31,8 @@
           =link_to pretty_tournament_path(tournament, tournament.encoded_title), class: 'list-group-item clearfix' do
             - if tournament.finished
               %span.label.label-warning= t('static_pages.top.finished')
+            - if tournament.private
+              = fa_icon("lock")
             %span.list-group-item-heading
               = tournament.title
               = fa_icon("angle-right", "pull-right")
