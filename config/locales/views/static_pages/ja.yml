@@ -32,7 +32,9 @@ ja:
         LINE/Twitter/Facebookのシェアボタンも自動設置！
 
       feature_text_html:
-        要望の強い機能からがんばって開発しますので、希望があればお気軽にご連絡ください。
+        積極的に新機能開発中です！今後の開発予定は<a href="https://trello.com/b/G9vXQ1rT/" target="_blank">開発ロードマップ</a>で公開しています。
+        <br>
+        気になる機能があれば、ぜひ投票していただけると開発のモチベーションが上がります。
       feature_1: 参加者の詳細登録
       feature_2: 試合の詳細登録
       feature_3: ３位決定戦
