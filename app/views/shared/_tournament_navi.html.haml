@@ -1,6 +1,8 @@
 %section
   %h1.title.clearfix
-    = link_to tournament.title, pretty_tournament_path(tournament, tournament.title)
+    = link_to pretty_tournament_path(tournament, tournament.title) do
+      = tournament.title
+      %small.text-danger= fa_icon('lock') if tournament.private
 
     -# 編集ボタン
     .btn-group.pull-right

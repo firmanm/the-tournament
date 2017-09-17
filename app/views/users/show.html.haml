@@ -31,10 +31,10 @@
           =link_to pretty_tournament_path(tournament, tournament.encoded_title), class: 'list-group-item clearfix' do
             - if tournament.finished
               %span.label.label-warning= t('static_pages.top.finished')
-            - if tournament.private
-              = fa_icon("lock")
             %span.list-group-item-heading
               = tournament.title
+              - if tournament.private
+                %span.text-danger= fa_icon("lock")
               = fa_icon("angle-right", "pull-right")
             %small (#{tournament.created_at.strftime("%Y.%m.%d")})
             - tournament.tag_list.take(3).each do |tag|
