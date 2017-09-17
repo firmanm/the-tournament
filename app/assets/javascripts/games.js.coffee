@@ -24,14 +24,6 @@ set_winner = (winner) ->
   $('.panel-heading i').eq(1-winner).addClass('fa-times')
   $('#game_winner').val(winner)
 
-# 手動の勝者選択を可能にする
-enable_winner_select = ->
-  $('#winner-select').removeAttr('disabled')
-
-# 手動の勝者選択を不可にして設定値をリセット
-disable_winner_select = ->
-  $('#winner-select').attr('disabled','disabled')
-
 
 $(document).on 'turbolinks:load', ->
   if ($('body').data('controller')=='tournaments' && $('body').data('action')=='edit_game')
@@ -41,9 +33,6 @@ $(document).on 'turbolinks:load', ->
     if winner
       set_winner(winner)
       $('#winner-select').val(winner)
-      enable_winner_select() if scores[0]==scores[1]
-    else
-      enable_winner_select()
 
     # スコアが変更されたとき
     $('.game_game_records_score input').change ->
@@ -56,11 +45,8 @@ $(document).on 'turbolinks:load', ->
       if winner != null
         set_winner(winner)
         $('#winner-select').val(winner)
-        disable_winner_select()
-      # 引き分けのときは手動で勝者選択できるようにする
       else
         $('#winner-select').val('')
-        enable_winner_select()
 
     # 手動の勝者選択が変更されたとき
     $('#winner-select').change ->

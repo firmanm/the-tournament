@@ -10,6 +10,16 @@
     = fa_icon("list-alt")
     = @tournament.match_name(round: @round_num, game: @game_num)
 
+  .alert.alert-info.alert-dismissable(role="alert")
+    %button(type="button" class="close" data-dismiss="alert" aria-label="Close")
+      %span(aria-hidden="true") ×
+    = fa_icon("info-circle")
+    スコアに文字を入力できるようになりました
+    = fa_icon("smile-o")
+    詳細は
+    = link_to 'こちら', 'http://blog.the-tournament.jp/entry/2017/09/17/165126', target: '_blank'
+  %br
+
   = simple_form_for @tournament, url: tournament_update_game_path(@tournament, @round_num, @game_num), html: {class: 'form-horizontal'} do |f|
     - scoreless = (@tournament.scoreless?) ? 'hidden' : ''
     .row{class: "#{scoreless} .game_game_records_score" }
@@ -29,7 +39,7 @@
               %div.clearfix
                 .form-group.game_game_records_score.integer.required
                   .form-group
-                    = number_field_tag 'game[score][]', @game['score'][0], {class: 'string form-control'}
+                    = text_field_tag 'game[score][]', @game['score'][0], {class: 'string form-control'}
       .col-md-5.text-center
         .panel{class: 'panel-default'}
           .panel-heading
@@ -42,18 +52,14 @@
               %div.clearfix
                 .form-group.game_game_records_score.integer.required
                   .form-group
-                    = number_field_tag 'game[score][]', @game['score'][1], {class: 'string form-control'}
+                    = text_field_tag 'game[score][]', @game['score'][1], {class: 'string form-control'}
 
     %div.mb-30
-      - if @tournament.scoreless?
-        %small= t('games.winner_select_scoreless')
-      - else
-        %small= t('games.winner_select_samescore')
+      %small= t('games.winner_select_scoreless')
 
       .row
         .col-md-6
-          - disabled = @tournament.scoreless ? false : 'disabled'
-          %select#winner-select.form-control{disabled: disabled}
+          %select#winner-select.form-control
             %option(value='')
             %option(value=0)= @players[0]['name']
             %option(value=1)= @players[1]['name']
