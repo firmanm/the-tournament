@@ -27,8 +27,8 @@ ja:
         type: 敗者復活戦
         tag_list: タグ
         facebook_album_id: FacebookアルバムID
-        double_mountain: 表示形式
         private: 公開設定
+        double_mountain_html: <span class='label label-warning'>PRO</span> 表示形式
       user:
         profile_img: プロフィール画像
     placeholders:
@@ -49,6 +49,8 @@ ja:
         size: ※128名より大きな大会を希望される場合は、<a href='https://goo.gl/forms/xqvYet0AAsQUalI52' target='_blank'>こちら</a>からお問い合わせください。
         type: ダブルイリミネーション(敗者復活戦あり)形式は有料プランユーザーのみ利用可能です
         facebook_album_id: ※Facebookで作成したアルバムの写真を表示できます。詳細は<a href='http://blog.the-tournament.jp/entry/2017/03/17/photoalbum' target="_blank">こちら</a>
+        double_mountain: ※ご利用を希望する場合は<a href='https://goo.gl/forms/xqvYet0AAsQUalI52' target='_blank'>こちら</a>からお問い合わせください。
+        private: ※ログインユーザーのみ利用可
       user:
         profile_img: Gravatarという外部のサービスへの登録が必要になります
     options:

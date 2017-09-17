@@ -9,8 +9,8 @@
   = f.input :tag_list, input_html: {value: @tournament.tag_list.to_s} if current_user.try(:admin?)
   = f.input :consolation_round, inline_label: t('simple_form.inline_labels.tournament.consolation_round'), as: :boolean
   = f.input :scoreless, inline_label: t('simple_form.inline_labels.tournament.scoreless'), as: :boolean
-  = f.input :double_mountain, inline_label: t('simple_form.inline_labels.tournament.double_mountain'), as: :boolean if current_user.try(:admin?)
-  = f.input :private, inline_label: t('simple_form.inline_labels.tournament.private'), as: :boolean if current_user.try(:admin?)
+  = f.input :private, inline_label: t('simple_form.inline_labels.tournament.private'), as: :boolean, disabled: !current_user
+  = f.input :double_mountain, label: t('simple_form.labels.tournament.double_mountain_html'), inline_label: t('simple_form.inline_labels.tournament.double_mountain'), as: :boolean if current_user.try(:admin?)
   -# = f.input :secondary_final, label: '再決勝', inline_label: '再決勝を実施する(敗者側が1戦目を勝利した場合)', as: :boolean, disabled: true
   -# = f.input :facebook_album_id
 
