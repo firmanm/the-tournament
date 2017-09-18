@@ -3,73 +3,20 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 $(document).on 'turbolinks:load', ->
-  # on pages with tournament
-  if ($('#tournament').length)
-    # Tournament creation
-    createBracket = ->
-      d = new $.Deferred
-      $('#tournament').bracket({
-        skipConsolationRound: gon.skip_consolation_round,
-        skipSecondaryFinal: gon.skip_secondary_final,
-        teamWidth: 100,
-        scoreWidth: 35,
-        init: gon.tournament_data,
-        decorator: {
-          edit: edit_fn,
-          render: render_fn
-        }
-      })
-      d.resolve()
-
-    edit_fn = (container, data, doneCb) ->
-      # Do something here
-
-    render_fn = (container, data, score, state) ->
-      switch state
-        when "empty-bye"
-          container.append("--")
-          return
-        when "empty-tbd"
-          container.append("--")
-          return
-        else
-          content = ''
-          if data.flag && data.flag != ""
-            content += '<span class="f16"><span class="flag '+data.flag+'"></span></span>'
-          content += data.name
-          container.append(content)
-          return
-
-    hideDecimal = ->
-      jQuery.each($('.score'), ->
-        if !isNaN(this.innerText)
-          if gon.scoreless   # when the tournament is scoreless
-            this.innerText = '--'
-          else  # Same score win
-            this.innerText = Math.abs(Math.floor(this.innerText))
-      )
-
-    setTooltip = ->
-      $('.bracket .teamContainer').each (i) ->
-        $(this).attr({
-          'data-balloon-pos': 'right',
-          'data-balloon-length': 'medium',
-          'data-balloon': [].concat.apply([], gon.tournament_data['results'])[i][2]
-        })
-
-    prepareImage = ->
-      setTimeout ->
-        html2canvas($(".bracket"), {
-          useCORS: true,
-          onrendered: (canvas) ->
-            canvasImage = canvas.toDataURL("image/png", 1.0)
-            $("#download_btn").attr('href', canvasImage).attr('download', 'tournament.png')
-            $("#btn-upload_img").attr('data-img_uri', canvasImage)
-            $("#download_btn, #btn-upload_img").button("reset")
-        })
-      , 1500
-
-    createBracket().done(hideDecimal(), setTooltip())
+  # tournaments#show
+  # if $('body').data('controller')=='tournaments' && $('body').data('action')=='show'
+  #   $(".bracket").css('overflow-x', 'inherit').css('overflow-y', 'inherit').css('width', 'fit-content')
+  #   setTimeout ->
+  #     $("#btnImageDownload").button('loading')   #=> loading状態にしとく
+  #     html2canvas($(".bracket"), {
+  #       onrendered: (canvas) ->
+  #         # canvasImage = canvas.toDataURL("image/jpeg", 1.0)
+  #         canvasImage = canvas.toDataURL()
+  #         $("#btnImageDownload").attr('href', canvasImage)
+  #         $("#btnImageDownload").button('reset')    #=> 完了したらクリック可能状態に戻す
+  #         $(".bracket").css('overflow-x', 'scroll').css('overflow-y', 'scroll').css('width', '100%')
+  #     })
+  #   , 3000
 
 
   # tournament#edit page - Tags input
