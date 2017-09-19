@@ -20,10 +20,10 @@
       = render partial: "tournaments/raw", locals: { tournament: @tournament }
 
   %ul.list-inline
-    -# %li
-    -#   %a#btnImageDownload.btn.btn-sm.btn-default(href="#" download="tournament" data-loading-text="画像ダウンロードの準備をしています...")
-    -#     = fa_icon "download"
-    -#     画像でダウンロード
+    %li
+      %a#btnImageDownload.btn.btn-sm.btn-default(href="#" download="tournament" data-loading-text="画像ダウンロードの準備をしています...")
+        = fa_icon "download"
+        画像でダウンロード
     %li
       %span
         %script(type="text/javascript" src="//media.line.me/js/line-button.js?v=20140411")
