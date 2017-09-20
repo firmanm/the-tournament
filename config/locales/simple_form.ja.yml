@@ -29,12 +29,16 @@ ja:
         facebook_album_id: FacebookアルバムID
         private: 公開設定
         double_mountain_html: <span class='label label-warning'>PRO</span> 表示形式
+        name_width: チーム名表示幅(px)
+        score_width: スコア表示幅(px)
       user:
         profile_img: プロフィール画像
     placeholders:
       tournament:
         detail: トーナメントの概要、詳細な説明など
         url: 公式URLなど
+        name_width: 100
+        score_width: 40
     inline_labels:
       tournament:
         consolation_round: ３位決定戦を実施する
@@ -51,6 +55,8 @@ ja:
         facebook_album_id: ※Facebookで作成したアルバムの写真を表示できます。詳細は<a href='http://blog.the-tournament.jp/entry/2017/03/17/photoalbum' target="_blank">こちら</a>
         double_mountain: ※ご利用を希望する場合は<a href='https://goo.gl/forms/xqvYet0AAsQUalI52' target='_blank'>こちら</a>からお問い合わせください。
         private: ※ログインユーザーのみ利用可
+        name_width: ※100px以上
+        score_width: ※40px以上
       user:
         profile_img: Gravatarという外部のサービスへの登録が必要になります
     options:
