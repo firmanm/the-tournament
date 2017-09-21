@@ -42,6 +42,8 @@ class Tournament < ApplicationRecord
   validates :scoreless, inclusion: {in: [true,false]}, allow_blank: true
   validates :double_mountain, inclusion: {in: [true,false]}, allow_blank: true
   validates :private, inclusion: {in: [true,false]}, allow_blank: true
+  validates :name_width, numericality: {only_integer: true, greater_than_or_equal_to: 100}, allow_blank: true
+  validates :score_width, numericality: {only_integer: true, greater_than_or_equal_to: 40}, allow_blank: true
 
   def tnmt_size_must_be_smaller_than_limit
     errors.add(:size, "作成できるサイズ上限を越えています") unless self.user.creatable_sizes.has_value? size
