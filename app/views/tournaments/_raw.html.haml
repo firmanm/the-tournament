@@ -287,55 +287,66 @@
 
 
   /* ポップアップ表示 */
-  .popupContainer {
-    display: none;
+  .match.selected { z-index: 300; }
+  .match.selected:after {
+    display: block;
+    content: '';
     background-color: rgba(255,255,255,0.7);
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    cursor: auto;
+    cursor: default;
   }
 
-  .match.selected { z-index: 300; }
-  .match.selected:after {
-    content: '\0D7 \0A0 閉じる';
-    position: absolute;
-    width: 400px;
-    top: calc(50% - 20px);
-    left: 10px;
-    text-align: right;
-    font-size: 12px;
-    color: #333;
-  }
-
-  .popupContent {
+  .popupContainer {
     display: none;
+    z-index: 1;
+    max-height: 90vh;
+    cursor: default;
+  }
+  .bracket:not(.embed) .match.selected .popupContainer { display: flex; }
+  .bracket.embed       .match.selected .popupContainer { display: block; }
+
+  /* 埋め込みじゃないときは画面中央に表示 */
+  .bracket:not(.embed) .popupContainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+  }
+  /* 埋め込み時は選択したmatchの近くに表示 */
+  .bracket.embed .popupContainer {
     position: absolute;
-    background-color: rgba(0,0,0,0.9);
+    top: 50%;
+    left: 10px;
     width: 400px;
     margin-right: 30px;
     margin-bottom: 30px;
-    padding: 25px 0;
+  }
+
+  .popupContent {
     border-radius: 5px;
+    background-color: rgba(0,0,0,0.9);
+    padding: 25px 0;
     color: #fff;
-    cursor: auto;
-    top: 50%;
-    left: 10px;
+   }
+  .bracket:not(.embed) .popupContent {
+    width: 90vw;
+    max-width: 450px;
   }
 
-  .match.selected .popupContent, .match.selected .popupContainer {
-    display: block;
-  }
-
-  .popupContent h3 {
+  .popupContainer h3 {
     font-size: 14px;
     font-weight: lighter;
     text-align: center;
     margin-top: 0;
   }
-  .popupContent .popupTeamContainer {
+  .popupContainer .popupTeamContainer {
     display: flex;
     justify-content: space-between;
     text-align: center;
@@ -405,8 +416,10 @@
   }
 
 
-- skip_consolation = (tournament.consolation_round) ? '' : 'skipConsolation'
-.bracket{class: skip_consolation}
+- tnmt_classes = []
+- tnmt_classes << 'skipConsolation' if !tournament.consolation_round
+- tnmt_classes << 'embed' if embed
+.bracket{class: tnmt_classes}
   - if !tournament.double_mountain
     .block.left
       - for round_num in 1..tournament.round_num
