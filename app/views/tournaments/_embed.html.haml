@@ -41,7 +41,7 @@
             powered by
             %a(href="https://the-tournament.jp/about" target="_blank") THE TOURNAMENT
       #emb-body
-        = render partial: "tournaments/raw", locals: { tournament: tournament }
+        = render partial: "tournaments/raw", locals: { tournament: tournament, embed: true }
         #emb-ad
           %script(type="text/javascript")
             var nend_params = {"media":41572,"site":225241,"spot":641487,"type":1,"oriented":1};

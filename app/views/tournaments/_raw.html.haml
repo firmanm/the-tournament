@@ -297,30 +297,47 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    cursor: auto;
+    cursor: default;
   }
 
   .popupContainer {
     display: none;
+    z-index: 1;
+    max-height: 90vh;
+    cursor: default;
+  }
+  .bracket:not(.embed) .match.selected .popupContainer { display: flex; }
+  .bracket.embed       .match.selected .popupContainer { display: block; }
+
+  /* 埋め込みじゃないときは画面中央に表示 */
+  .bracket:not(.embed) .popupContainer {
     position: fixed;
     top: 0;
-    bottom: 0;
-    right: 0;
     left: 0;
-    margin: auto;
-    z-index: 1;
-    width: 90vw;
-    max-width: 450px;
-    height: fit-content;
-    max-height: 90vh;
-    padding: 25px 0;
+    width: 100vw;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+  }
+  /* 埋め込み時は選択したmatchの近くに表示 */
+  .bracket.embed .popupContainer {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    width: 400px;
+    margin-right: 30px;
+    margin-bottom: 30px;
+  }
+
+  .popupContent {
     border-radius: 5px;
     background-color: rgba(0,0,0,0.9);
+    padding: 25px 0;
     color: #fff;
-    cursor: auto;
-  }
-  .match.selected .popupContainer {
-    display: block;
+   }
+  .bracket:not(.embed) .popupContent {
+    width: 90vw;
+    max-width: 450px;
   }
 
   .popupContainer h3 {
@@ -399,8 +416,11 @@
   }
 
 
-- skip_consolation = (tournament.consolation_round) ? '' : 'skipConsolation'
-.bracket{class: skip_consolation}
+- tnmt_classes = []
+- tnmt_classes << 'skipConsolation' if !tournament.consolation_round
+- tnmt_classes << 'embed' if embed
+- tnmt_classes << 'embed'
+.bracket{class: tnmt_classes}
   - if !tournament.double_mountain
     .block.left
       - for round_num in 1..tournament.round_num

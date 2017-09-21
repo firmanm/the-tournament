@@ -17,7 +17,7 @@
         全画面で表示する
   .row.mb-30
     .col-lg-12
-      = render partial: "tournaments/raw", locals: { tournament: @tournament }
+      = render partial: "tournaments/raw", locals: { tournament: @tournament, embed: false }
 
   %ul.list-inline
     -# %li

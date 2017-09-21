@@ -30,23 +30,24 @@
       %div
       %div
 
-  .popupContainer(onclick="event.stopPropagation();")
-    %h3.popupTitle= tournament.match_name({round: round_num, game: match_num})
-    .popupTeamContainer
-      - for team_index in 0..1 do
-        - if !match['winner'].nil?
-          - team_class = (match['winner']==team_index) ? 'winner' : 'loser'
-        - team = tournament.winner_team(round_num, match_num, team_index)
-        .popupTeam{class: team_class}
-          .popupName
-            - if team['flag'].present?
-              %span.f16
-                %span.flag{class: team['flag'].downcase}
-            = team['name']
-          .popupScore
-            = (match['score'][team_index]).present? ? match['score'][team_index] : '--'
-        - if team_index == 0
-          .popupSpacer
-            \-
-    .popupComment
-      = tournament.text_url_to_link( simple_format(h(match['comment'])) ).html_safe
+  .popupContainer
+    .popupContent(onclick="event.stopPropagation();")
+      %h3.popupTitle= tournament.match_name({round: round_num, game: match_num})
+      .popupTeamContainer
+        - for team_index in 0..1 do
+          - if !match['winner'].nil?
+            - team_class = (match['winner']==team_index) ? 'winner' : 'loser'
+          - team = tournament.winner_team(round_num, match_num, team_index)
+          .popupTeam{class: team_class}
+            .popupName
+              - if team['flag'].present?
+                %span.f16
+                  %span.flag{class: team['flag'].downcase}
+              = team['name']
+            .popupScore
+              = (match['score'][team_index]).present? ? match['score'][team_index] : '--'
+          - if team_index == 0
+            .popupSpacer
+              \-
+      .popupComment
+        = tournament.text_url_to_link( simple_format(h(match['comment'])) ).html_safe
