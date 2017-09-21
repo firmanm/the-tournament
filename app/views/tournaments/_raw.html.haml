@@ -287,8 +287,10 @@
 
 
   /* ポップアップ表示 */
-  .popupContainer {
-    display: none;
+  .match.selected { z-index: 300; }
+  .match.selected:after {
+    display: block;
+    content: '';
     background-color: rgba(255,255,255,0.7);
     position: fixed;
     top: 0;
@@ -298,44 +300,32 @@
     cursor: auto;
   }
 
-  .match.selected { z-index: 300; }
-  .match.selected:after {
-    content: '\0D7 \0A0 閉じる';
-    position: absolute;
-    width: 400px;
-    top: calc(50% - 20px);
-    left: 10px;
-    text-align: right;
-    font-size: 12px;
-    color: #333;
-  }
-
-  .popupContent {
+  .popupContainer {
     display: none;
     position: absolute;
-    background-color: rgba(0,0,0,0.9);
+    top: 50%;
+    left: 10px;
+    z-index: 1;
     width: 400px;
     margin-right: 30px;
     margin-bottom: 30px;
     padding: 25px 0;
     border-radius: 5px;
+    background-color: rgba(0,0,0,0.9);
     color: #fff;
     cursor: auto;
-    top: 50%;
-    left: 10px;
   }
-
-  .match.selected .popupContent, .match.selected .popupContainer {
+  .match.selected .popupContainer {
     display: block;
   }
 
-  .popupContent h3 {
+  .popupContainer h3 {
     font-size: 14px;
     font-weight: lighter;
     text-align: center;
     margin-top: 0;
   }
-  .popupContent .popupTeamContainer {
+  .popupContainer .popupTeamContainer {
     display: flex;
     justify-content: space-between;
     text-align: center;

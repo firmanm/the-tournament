@@ -30,8 +30,7 @@
       %div
       %div
 
-  .popupContainer
-  .popupContent(onclick="event.stopPropagation();")
+  .popupContainer(onclick="event.stopPropagation();")
     %h3.popupTitle= tournament.match_name({round: round_num, game: match_num})
     .popupTeamContainer
       - for team_index in 0..1 do
