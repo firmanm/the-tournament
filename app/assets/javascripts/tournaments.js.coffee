@@ -5,7 +5,7 @@
 $(document).on 'turbolinks:load', ->
   # tournaments#show
   if $('body').data('controller')=='tournaments' && $('body').data('action')=='show'
-    $(".bracket").css('overflow-x', 'inherit').css('overflow-y', 'inherit').css('width', 'fit-content')
+    $(".bracket").css('overflow-x', 'visible').css('overflow-y', 'visible').css('width', 'max-content').css('padding-right', '40px')
     $("#btnImageDownload").button('loading')   #=> loading状態にしとく
     setTimeout ->
       html2canvas($(".bracket"), {
@@ -16,7 +16,7 @@ $(document).on 'turbolinks:load', ->
           canvasImage = canvas.toDataURL()
           $("#btnImageDownload").attr('href', canvasImage)
           $("#btnImageDownload").button('reset')    #=> 完了したらクリック可能状態に戻す
-          $(".bracket").css('overflow-x', 'scroll').css('overflow-y', 'scroll').css('width', '100%')
+          $(".bracket").css('overflow-x', 'scroll').css('overflow-y', 'scroll').css('width', '100%').css('padding-right', '0')
       })
     , 3000
 

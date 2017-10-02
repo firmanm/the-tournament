@@ -257,8 +257,6 @@ div.tagsinput {
   li { padding: 0; }
 }
 
-.bracket { background: #fff; }
-
 #tournament, #tournament-sample {
   overflow: auto;
   .label {
@@ -272,11 +270,6 @@ div.tagsinput {
   .score {
     overflow: hidden;
   }
-}
-
-div.jQBracket .teamContainer {
-  z-index: auto;
-  word-wrap: break-word;
 }
 
 .headline {
@@ -407,39 +400,4 @@ footer {
 #like-button .fb_iframe_widget {
   width: 90px !important;
   top: -5px;
-}
-
-
-/*****************************************************************
-* Embed
-*****************************************************************/
-body#embed { background: transparent; }
-#emb-container { margin: 10px; }
-#emb-header {
-  background: #333;
-  color: #fff;
-  h1 {
-    font-size: 14px;
-    margin: 0;
-    padding: 5px;
-    small { margin-left: 15px; }
-  }
-  a { color: #fff; }
-}
-
-#emb-body {
-  background: #fff;
-  padding-top: 10px;
-  border: 1px dotted #333;
-  #tournament { margin-bottom: 20px; }
-  #emb-footer { margin-left: 10px; }
-}
-
-#emb-ad { margin-bottom: 5px; }
-
-#emb-link input { max-width: 100%; }
-
-.download-btn {
-  margin-right: 10px;
-  margin-top: -5px;
 }
