@@ -15,6 +15,6 @@
 //= require jquery.bracket.min
 //= require jquery.tagsinput.min
 //= require twitter/bootstrap
-//= require html2canvas
+//= require html2canvas.min
 //= require turbolinks
 //= require_tree .

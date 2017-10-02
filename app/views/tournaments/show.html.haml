@@ -11,8 +11,13 @@
   %h1.headline
     = fa_icon("trophy")
     = t('.tournament_bracket')
-    .small.pull-right
-      = link_to @tournament.embed_html_url, class: 'btn btn-link', target: '_blank' do
+  %ul.list-inline.text-right
+    %li.hidden-xs.hidden-sm
+      %a#btnImageDownload.btn.btn-sm.btn-link(href="#" download="tournament" data-loading-text="画像ダウンロードの準備をしています...")
+        = fa_icon "download"
+        画像でダウンロード
+    %li
+      = link_to @tournament.embed_html_url, class: 'btn btn-sm btn-link', target: '_blank' do
         = fa_icon('arrows-alt')
         全画面で表示する
   .row.mb-30
@@ -20,10 +25,6 @@
       = render partial: "tournaments/raw", locals: { tournament: @tournament, embed: false }
 
   %ul.list-inline
-    -# %li
-    -#   %a#btnImageDownload.btn.btn-sm.btn-default(href="#" download="tournament" data-loading-text="画像ダウンロードの準備をしています...")
-    -#     = fa_icon "download"
-    -#     画像でダウンロード
     %li
       %span
         %script(type="text/javascript" src="//media.line.me/js/line-button.js?v=20140411")
