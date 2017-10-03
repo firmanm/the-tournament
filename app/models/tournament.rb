@@ -159,7 +159,7 @@ class Tournament < ApplicationRecord
   end
 
   def upload_html
-    file_path = File.join(Rails.root, "/tmp/embed/#{self.id}.html")
+    file_path = File.join(Rails.root, "/tmp/#{self.id}.html")
     html = ActionController::Base.new.render_to_string(partial: 'tournaments/embed', locals: { tournament: self })
     File.write(file_path, html)
 
