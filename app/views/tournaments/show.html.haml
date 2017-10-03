@@ -54,11 +54,3 @@
         %br
         %small
           [2017.9.5] 埋め込みタグが新バージョンになりました！以前に作成したトーナメントで埋め込んでも表示されない場合は、トーナメント基本情報を更新して保存し直してみてください。
-        /
-          .col-lg-12
-            - embed_img_content = "<iframe src='#{@tournament.embed_img_url}' seamless frameborder='0' width='100%' height='1000px'></iframe>";
-            %h5
-              = fa_icon("photo")
-              画像埋め込みタグ　
-            %div
-              %input(type="text" style="width:100%;" value="#{embed_img_content}" onfocus="this.select();" readonly)
