@@ -67,7 +67,7 @@ class Tournament < ApplicationRecord
 
   before_create :initialize_teams_and_results
   before_create :auto_tagging
-  after_save :upload_json, :upload_html if !Rails.env.development? && ENV['FOG_DIRECTORY'] != 'the-tournament-stg'  # 本番でのみ実行
+  after_save :upload_html if !Rails.env.development? && ENV['FOG_DIRECTORY'] != 'the-tournament-stg'  # 本番でのみ実行
   before_validation :change_tournament_size, if: '!self.new_record? && self.size.present? && self.size_changed?'
 
   def self.search_tournaments(params)
@@ -113,51 +113,12 @@ class Tournament < ApplicationRecord
     self.title.gsub(/　| |\//, '-')
   end
 
-  def embed_url
-    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/v2/index.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&team_width=120&score_width=30"
-  end
-
-  def embed_img_url
-    "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/v2/image.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}&title=#{CGI.escape(self.title)}"
-  end
-
   def embed_html_url
     "https://#{ENV['FOG_DIRECTORY']}.storage.googleapis.com/embed/v3/#{self.id.to_s}.html?utm_campaign=embed&utm_medium=#{self.user.id.to_s}&utm_source=#{self.id.to_s}"
   end
 
   def embed_height
     self.size / 2 * 65 + 150
-  end
-
-  def jqb_teams
-    teams = []
-    self.teams.each_with_index do |team, i|
-      teams << [] if i%2 == 0
-      teams.last << team
-    end
-    teams
-  end
-
-  def jqb_scores
-    scores = []
-    self.results.each.with_index(1) do |round, round_num|
-      round_scores = []
-      round.each.with_index(1) do |game, game_num|
-        score = [game['score'][0], game['score'][1]]  #キャッシュで[2]にmatch_dataが残るときがあるので、手動で[0]と[1]のみ取得してセット
-        # 同点ゲームの場合
-        if game['winner'] && score[0]==score[1]
-          score.map!(&:to_i)
-          score[game['winner']] += 0.1
-        end
-
-        # Tooltip用の試合情報をセット
-        score << self.match_info(round_num, game_num, game)
-
-        round_scores << score
-      end
-      scores << round_scores
-    end
-    scores
   end
 
   def match_info(round_num, game_num, game)
@@ -197,36 +158,12 @@ class Tournament < ApplicationRecord
     }.to_json
   end
 
-  def upload_json
-    file_path = File.join(Rails.root, "/tmp/#{self.id}.json")
-    File.write(file_path, self.to_json)
-    TournamentUploader.new.store!( File.new(file_path) )
-  end
-
-  def upload_img
-    return if self.user.id != 835 || !self.user.admin?  # 管理者と特定のユーザーでのみ実行
-
-    File.open(File.join(Rails.root, "/tmp/#{self.id}.png"), 'wb') do |tmp|
-      url = "#{root_url}/tournaments/#{self.id}/raw"
-      open("http://phantomjscloud.com/api/browser/v2/ak-b1hw7-66a8k-1wdyw-xhqh1-f2s4p/?request={url:%22#{url}%22,renderType:%22png%22}") do |f|
-        f.each_line {|line| tmp.puts line}
-      end
-    end
-
-    # Upload Image
-    uploader = TournamentUploader.new
-    src = File.join(Rails.root, "/tmp/#{self.id}.png")
-    src_file = File.new(src)
-    uploader.store!(src_file)
-  end
-
   def upload_html
-    file_path = File.join(Rails.root, "/tmp/#{self.id}.html")
+    file_path = File.join(Rails.root, "/tmp/embed/#{self.id}.html")
     html = ActionController::Base.new.render_to_string(partial: 'tournaments/embed', locals: { tournament: self })
     File.write(file_path, html)
 
     TournamentUploader.new.store!( File.new(file_path) )
-    HtmlUploader.new.store!( File.new(file_path) )
   end
 
   # 1回戦第2試合は、round_num=1, game_num=2, team_index=0or1

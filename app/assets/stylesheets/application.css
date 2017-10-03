@@ -9,7 +9,6 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require jquery.bracket.min
  *= require jquery.tagsinput.css
  *= require flags16
  *= require balloon.min

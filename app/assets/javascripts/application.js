@@ -12,7 +12,6 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require jquery.bracket.min
 //= require jquery.tagsinput.min
 //= require twitter/bootstrap
 //= require html2canvas.min
