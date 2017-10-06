@@ -1,5 +1,6 @@
 - round = tournament.results[round_num - 1]
 - match = round[match_num-1]
+- match_class = ''
 - if round_num == tournament.round_num
   - match_class = (match_num==1) ? 'final' : 'consolation'
 - else
@@ -7,6 +8,8 @@
     - match_class = 'highlightFirst'
   - elsif match_num == tournament.highlight_match(round_num, 2)
     - match_class = 'highlightSecond'
+- if (tournament.winner_team(round_num, match_num, 0)['name'] == '--' || tournament.winner_team(round_num, match_num, 1)['name'] == '--') && match['finished']
+  - match_class += 'bye'
 
 .match{class: match_class}(onclick="this.classList.toggle('selected')")
   .teamContainer
@@ -16,6 +19,7 @@
         - team_class = (match['winner']==team_index) ? 'winner' : 'loser'
       - team = tournament.winner_team(round_num, match_num, team_index)
       .team{class: team_class, 'data-teamid': team['id']}
+        .profileImage{class: "ico_#{team['id']}"}
         .name
           - if team['flag'].present?
             %span.f16
