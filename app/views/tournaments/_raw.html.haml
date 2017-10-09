@@ -1,5 +1,6 @@
 = stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"
 = stylesheet_link_tag "https://cdn.rawgit.com/lafeber/world-flags-sprite/9a8b5ea6/stylesheets/flags16.css"
+= stylesheet_link_tag "https://the-tournament.storage.googleapis.com/embed/v3/#{tournament.id.to_s}.css" if tournament.profile_images
 
 :css
   .bracket {
@@ -73,11 +74,16 @@
   }
   .profileImages .profileImage {
     display: inline-block;
+    background-image: url("https://the-tournament.storage.googleapis.com/embed/v3/#{tournament.id.to_s}.png");
     background-repeat: no-repeat;
     width:50px;
     height:50px;
   }
-
+  /* シードと勝ち上がり未定のところは画像なし */
+  .profileImages .match.bye .team.loser .profileImage,
+  .profileImages .profileImage.ico_ {
+    background-image: none;
+  }
 
   /* bye */
   /* .match.bye .team.loser { display: none; }
@@ -89,53 +95,6 @@
     margin-top: 25px;
     margin-bottom: 25px;
   } */
-
-  .ico_36, .ico_1, .ico_8, .ico_4, .ico_9, .ico_12, .ico_6, .ico_16, .ico_14, .ico_22, .ico_17, .ico_21, .ico_20, .ico_24, .ico_13, .ico_28, .ico_25, .ico_29, .ico_30, .ico_5, .ico_40, .ico_32, .ico_41, .ico_37, .ico_38, .ico_43, .ico_44, .ico_45, .ico_52, .ico_48, .ico_33, .ico_56, .ico_53, .ico_57, .ico_61, .ico_64, .ico_49, .ico_59, .ico_60 {
-    background-image: url(/assets/spritebox-sprite.png);
-  }
-  .ico_36 {  background-position: -0px -0px;  }
-  .ico_1 {  background-position: -50px -0px;  }
-  .ico_8 {  background-position: -0px -50px;  }
-  .ico_4 {  background-position: -50px -50px;  }
-  .ico_9 {  background-position: -100px -0px;  }
-  .ico_12 {  background-position: -100px -50px;  }
-  .ico_6 {  background-position: -0px -100px;  }
-  .ico_16 {  background-position: -50px -100px;  }
-  .ico_14 {  background-position: -100px -100px;  }
-  .ico_22 {  background-position: -150px -0px;  }
-  .ico_17 {  background-position: -150px -50px;  }
-  .ico_21 {  background-position: -150px -100px;  }
-  .ico_20 {  background-position: -0px -150px;  }
-  .ico_24 {  background-position: -50px -150px;  }
-  .ico_13 {  background-position: -100px -150px;  }
-  .ico_28 {  background-position: -150px -150px;  }
-  .ico_25 {  background-position: -200px -0px;  }
-  .ico_29 {  background-position: -200px -50px;  }
-  .ico_30 {  background-position: -200px -100px;  }
-  .ico_5 {  background-position: -200px -150px;  }
-  .ico_40 {  background-position: -0px -200px;  }
-  .ico_32 {  background-position: -50px -200px;  }
-  .ico_41 {  background-position: -100px -200px;  }
-  .ico_37 {  background-position: -150px -200px;  }
-  .ico_38 {  background-position: -200px -200px;  }
-  .ico_43 {  background-position: -250px -0px;  }
-  .ico_44 {  background-position: -250px -50px;  }
-  .ico_45 {  background-position: -250px -100px;  }
-  .ico_52 {  background-position: -250px -150px;  }
-  .ico_48 {  background-position: -250px -200px;  }
-  .ico_33 {  background-position: -0px -250px;  }
-  .ico_56 {  background-position: -50px -250px;  }
-  .ico_53 {  background-position: -100px -250px;  }
-  .ico_57 {  background-position: -150px -250px;  }
-  .ico_61 {  background-position: -200px -250px;  }
-  .ico_64 {  background-position: -250px -250px;  }
-  .ico_49 {  background-position: -300px -0px;  }
-  .ico_59 {  background-position: -300px -50px;  }
-  .ico_60 {  background-position: -300px -100px;  }
-
-
-
-
 
   .team.winner .score { color: #060; }
   .team.loser .score { color: #900; }
@@ -491,7 +450,7 @@
 - tnmt_classes = []
 - tnmt_classes << 'skipConsolation' if !tournament.consolation_round
 - tnmt_classes << 'embed' if embed
-- tnmt_classes << 'profileImages'
+- tnmt_classes << 'profileImages' if tournament.profile_images
 .bracket{class: tnmt_classes}
   - if !tournament.double_mountain
     .block.left
