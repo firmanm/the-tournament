@@ -19,7 +19,8 @@
         - team_class = (match['winner']==team_index) ? 'winner' : 'loser'
       - team = tournament.winner_team(round_num, match_num, team_index)
       .team{class: team_class, 'data-teamid': team['id']}
-        .profileImage{class: "ico_#{team['id']}"}
+        - if tournament.profile_images
+          .profileImage{class: "ico_#{team['id']}"}
         .name
           - if team['flag'].present?
             %span.f16

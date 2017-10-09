@@ -1,6 +1,5 @@
 = stylesheet_link_tag "https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css"
 = stylesheet_link_tag "https://cdn.rawgit.com/lafeber/world-flags-sprite/9a8b5ea6/stylesheets/flags16.css"
-= stylesheet_link_tag "https://the-tournament.storage.googleapis.com/embed/v3/#{tournament.id.to_s}.css" if tournament.profile_images
 
 :css
   .bracket {
@@ -72,7 +71,7 @@
     height: 50px;
     line-height: 50px;
   }
-  .profileImages .profileImage {
+  .profileImage {
     display: inline-block;
     background-image: url("https://the-tournament.storage.googleapis.com/embed/v3/#{tournament.id.to_s}.png");
     background-repeat: no-repeat;
@@ -446,6 +445,8 @@
     margin-top: 50px;
   }
 
+
+= stylesheet_link_tag "https://the-tournament.storage.googleapis.com/embed/v3/#{tournament.id.to_s}.css" if tournament.profile_images
 
 - tnmt_classes = []
 - tnmt_classes << 'skipConsolation' if !tournament.consolation_round
