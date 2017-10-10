@@ -5,4 +5,5 @@ CarrierWave.configure do |config|
     google_storage_secret_access_key: ENV['GOOGLE_STORAGE_SECRET_ACCESS_KEY']
   }
   config.fog_directory = ENV['FOG_DIRECTORY']
+  config.fog_attributes = { 'Cache-Control' => "no-cache" }
 end
