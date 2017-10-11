@@ -10,7 +10,7 @@
                   %tr
                     %td
                       =link_to item.link, target:'_blank' do
-                        = item.title.force_encoding("utf-8")
+                        = item.title.force_encoding("utf-8").gsub('【THE TOURNAMENT】', '')
                         %small.visible-xs= item.published.strftime("%Y-%m-%d")
                     %td.text-right.hidden-xs
                       %small= item.published.strftime("%Y-%m-%d")
