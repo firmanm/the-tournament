@@ -55,7 +55,6 @@
   .name {
     width: #{tournament.name_width.present? ? tournament.name_width : 100}px;
     padding-left: 5px;
-    overflow: hidden;
     word-break: break-all;
   }
   .score {
@@ -65,6 +64,7 @@
   }
   .name, .score {
     height: 25px;
+    overflow: hidden;
     line-height: 25px;
   }
 
