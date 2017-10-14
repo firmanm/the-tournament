@@ -7,6 +7,8 @@ namespace :tasks do
     User.where("last_sign_in_at < ?", 1.year.ago).destroy_all
   end
 
+  # 指定したトーナメントのHTMLを生成してGCSにアップロード
+  # TOURNAMENT_ID=XXで、トーナメントIDを指定
   task :upload_html => :environment do
     tournament = Tournament.find(ENV['TOURNAMENT_ID'])
     file_path = File.join(Rails.root, "/tmp/#{tournament.id}.html")
@@ -16,8 +18,11 @@ namespace :tasks do
     TournamentUploader.new.store!( File.new(file_path) )
   end
 
+  # XX分以内に更新されたトーナメントのHTMLを生成してGCSにアップロード
+  # MINUTES=XXで、何分以内に更新されたトーナメントを対象にするか指定（デフォルト10分）
   task :upload_updated_htmls => :environment do
-    tournaments = Tournament.where(updated_at > Time.now - 10.minutes)
+    range = ENV['MINUTES'] ? ENV['MINUTES'].to_i : 10
+    tournaments = Tournament.where("updated_at > '#{Time.now - range.minutes}'")
 
     tournaments.each do |tournament|
       file_path = File.join(Rails.root, "/tmp/#{tournament.id}.html")
