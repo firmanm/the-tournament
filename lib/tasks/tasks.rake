@@ -7,6 +7,15 @@ namespace :tasks do
     User.where("last_sign_in_at < ?", 1.year.ago).destroy_all
   end
 
+  task :upload_html => :environment do
+    tournament = Tournament.find(ENV['TOURNAMENT_ID'])
+    file_path = File.join(Rails.root, "/tmp/#{tournament.id}.html")
+    html = ActionController::Base.new.render_to_string(partial: 'tournaments/embed', locals: { tournament: tournament })
+    File.write(file_path, html)
+
+    TournamentUploader.new.store!( File.new(file_path) )
+  end
+
   task :guest_migrate => :environment do
     User.create(id: 1, email: 'guest@the-tournament.jp', password: SecureRandom.hex(8))
     Plan.find(1).update(user_id: 1, size: 32)

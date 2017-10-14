@@ -69,7 +69,7 @@ class Tournament < ApplicationRecord
 
   before_create :initialize_teams_and_results
   before_create :auto_tagging
-  after_save :upload_html if !Rails.env.development? && ENV['FOG_DIRECTORY'] != 'the-tournament-stg'  # 本番でのみ実行
+  # after_save :upload_html if !Rails.env.development? && ENV['FOG_DIRECTORY'] != 'the-tournament-stg'  # 本番でのみ実行
   before_validation :change_tournament_size, if: '!self.new_record? && self.size.present? && self.size_changed?'
 
   def self.search_tournaments(params)
