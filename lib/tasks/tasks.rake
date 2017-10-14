@@ -16,6 +16,18 @@ namespace :tasks do
     TournamentUploader.new.store!( File.new(file_path) )
   end
 
+  task :upload_updated_htmls => :environment do
+    tournaments = Tournament.where(updated_at > Time.now - 10.minutes)
+
+    tournaments.each do |tournament|
+      file_path = File.join(Rails.root, "/tmp/#{tournament.id}.html")
+      html = ActionController::Base.new.render_to_string(partial: 'tournaments/embed', locals: { tournament: tournament })
+      File.write(file_path, html)
+
+      TournamentUploader.new.store!( File.new(file_path) )
+    end
+  end
+
   task :guest_migrate => :environment do
     User.create(id: 1, email: 'guest@the-tournament.jp', password: SecureRandom.hex(8))
     Plan.find(1).update(user_id: 1, size: 32)
