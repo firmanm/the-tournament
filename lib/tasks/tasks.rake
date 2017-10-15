@@ -22,7 +22,7 @@ namespace :tasks do
   # MINUTES=XXで、何分以内に更新されたトーナメントを対象にするか指定（デフォルト10分）
   task :upload_updated_htmls => :environment do
     range = ENV['MINUTES'] ? ENV['MINUTES'].to_i : 10
-    tournaments = Tournament.where("updated_at > '#{Time.now - range.minutes}'")
+    tournaments = Tournament.where("updated_at > '#{Time.now - range.minutes}'").where.not(user_id: 1)
 
     tournaments.each do |tournament|
       file_path = File.join(Rails.root, "/tmp/#{tournament.id}.html")
