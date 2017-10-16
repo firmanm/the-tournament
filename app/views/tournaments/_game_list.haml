@@ -45,13 +45,13 @@
           %td.width-30.text-right{class: color_1}
             = player1['name']
           %td.width-8.text-right.player1.score
-            = game['score'][0].try(:abs).try(:floor) if !tournament.scoreless
+            = game['score'][0]
 
           %td.width-4.text-center -
 
           -# Second Player
           %td.width-8.player2.score
-            = game['score'][1].try(:abs).try(:floor) if !tournament.scoreless
+            = game['score'][1]
           %td.width-30.player2.name{class: color_2}
             = player2['name']
           %td.width-10.text-right{rowspan: rowspan}
@@ -74,13 +74,13 @@
           %td.width-40.text-right{class: color_1}
             = player1['name']
           %td.width-8.text-right.player1.score
-            = game['score'][0].try(:abs) if !tournament.scoreless
+            = game['score'][0]
 
           %td.width-4.text-center -
 
           -# Second Player
           %td.width-8.player2.score
-            = game['score'][1].try(:abs) if !tournament.scoreless
+            = game['score'][1]
           %td.width-40.player2.name{class: color_2}
             = player2['name']
         - if game['comment'].present?
