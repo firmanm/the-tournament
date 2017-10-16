@@ -52,5 +52,10 @@
         %div#emb-link
           %input(type="text" size="100%" value="#{embed_content}" onfocus="this.select();" readonly)
         %br
-        %small
-          [2017.9.5] 埋め込みタグが新バージョンになりました！以前に作成したトーナメントで埋め込んでも表示されない場合は、トーナメント基本情報を更新して保存し直してみてください。
+        .alert.alert-info.alert-dismissable(role="alert")
+          %button(type="button" class="close" data-dismiss="alert" aria-label="Close")
+            %span(aria-hidden="true") ×
+          = fa_icon("info-circle")
+          埋め込みトーナメントへの結果反映には、最大10分程度時間差が発生します。リアルタイム反映をご希望の場合は
+          = link_to '問い合わせフォーム', 'https://goo.gl/forms/xqvYet0AAsQUalI52', target: '_blank'
+          からお問い合わせください。
