@@ -31,11 +31,9 @@
         %script(type="text/javascript")
           if (typeof media_line_me != "undefined") { new media_line_me.LineButton({"pc":false,"lang":"ja","type":"a"}); }
     %li#like-button
-      .fb-like(data-width="120" data-layout="button_count" data-action="like" data-show-faces="false" data-share="false" data-href="#{tournament_url(@tournament)}")
+      %iframe(src="https://www.facebook.com/plugins/like.php?href=#{tournament_url(@tournament)}&width=89&layout=button&action=like&size=small&show_faces=false&share=false&height=21&appId=139414576217599" width="89" height="21" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true")
     %li
       %a(href="https://twitter.com/share" class="twitter-share-button" data-text="#{@tournament.title}のトーナメント | #{t('site_description')}" data-hashtags="the_tournament" data-url="#{tournament_url(@tournament)}") Tweet
-      %script
-        !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');
   %br
     %script(type="text/javascript")
       var nend_params = {"media":41572,"site":225241,"spot":789625,"type":1,"oriented":1};
