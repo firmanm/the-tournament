@@ -87,26 +87,24 @@
         %h2= t('.feature_11')
     .col-sm-4
       .thumbnail
-        %h2
-          %span.label.label-warning NEW!
-          = t('.feature_12')
+        %h2= t('.feature_12')
 
-    .col-sm-4.tbd
+    .col-sm-4
       .thumbnail
         %h2= t('.feature_13')
-    .col-sm-4.tbd
+    .col-sm-4
       .thumbnail
         %h2= t('.feature_14')
-    .col-sm-4.tbd
+    .col-sm-4
       .thumbnail
         %h2= t('.feature_15')
-    .col-sm-4.tbd
+    .col-sm-4
       .thumbnail
         %h2= t('.feature_16')
-    .col-sm-4.tbd
+    .col-sm-4
       .thumbnail
         %h2= t('.feature_17')
-    .col-sm-4.tbd
+    .col-sm-4
       .thumbnail
         %h2= t('.feature_18')
 
@@ -116,68 +114,144 @@
     %span Plan/Price
   .container
     .row.text-center
-      .col-md-1
-      .col-md-5
+      .col-md-4
+        .panel.panel-default
+          .panel-heading
+            %small アカウント登録なしですぐに使える！お試しモード
+          %table.table
+            %tr
+              %td(colspan=2)
+                = image_tag('about/price_1.png')
+                %h2 ゲストアカウント
+            %tr
+              %th
+                料金
+              %td
+                %span.text-danger 無料
+            %tr
+              %th
+                = t('.plan_storage')
+              %td
+                ∞（無制限）
+            %tr
+              %th
+                = t('.plan_size')
+              %td
+                〜32名
+            %tr
+              %th
+                トーナメント埋め込み機能：
+              %td ✕
+            %tr
+              %th
+                サポート
+              %td
+                チャット・メール（1営業日以内回答）
+            %tr
+              %td(colspan=2)
+                =link_to new_tournament_path, class: 'btn btn-primary' do
+                  ゲストでトーナメント表を作成する
+      .col-md-4
         .panel.panel-danger
           .panel-heading
-            %small= t('.plan_1_text')
-          %ul.list-group
-            %li.list-group-item
-              = image_tag('about/price_1.png')
-              %h2.text-danger FREE
-            %li.list-group-item
-              %small 初期費用：
-              %strong 無料
-              &nbsp;/&nbsp;
-              %small 月額費用：
-              %strong 無料
-            %li.list-group-item
-              %small= t('.plan_storage')
-              %strong ∞（無制限）
-            %li.list-group-item
-              %small= t('.plan_size')
-              %strong 128名
-            %li.list-group-item
-              %small トーナメント埋め込み機能：
-              %strong ◯
-            %li.list-group-item
-              %small 埋め込み時の広告非表示：
-              %strong ✕
-            %li.list-group-item
-              %small 埋め込み時のデザインカスタマイズ：
-              %strong ✕
-            %li.list-group-item
-              =link_to root_path, class: 'btn btn-danger' do
-                = t('.plan_1_action')
-      .col-md-5
+            %small 基本機能がすべてずっと無料で使えるうれしいプラン！
+          %table.table
+            %tr
+              %td(colspan=2)
+                = image_tag('about/price_2.png')
+                %h2.text-danger
+                  基本アカウント
+                  %small (無料)
+            %tr
+              %th
+                料金
+              %td
+                %span.text-danger 無料
+            %tr
+              %th
+                = t('.plan_storage')
+              %td
+                ∞（無制限）
+            %tr
+              %th
+                = t('.plan_size')
+              %td
+                %span.text-danger 〜128名
+            %tr
+              %th
+                トーナメント埋め込み機能：
+              %td
+                %span.text-danger ◯
+                （更新は10分以内）
+            %tr
+              %th
+                サポート
+              %td
+                チャット・メール（1営業日以内回答）
+            %tr
+              %td(colspan=2)
+                =link_to new_user_registration_path, class: 'btn btn-danger' do
+                  無料アカウントを作成する
+
+      .col-md-4
         .panel.panel-default
           .panel-heading
             %small= t('.plan_3_text')
-          %ul.list-group
-            %li.list-group-item
-              = image_tag('about/price_3.png')
-              %h2 PREMIUM
-            %li.list-group-item
-              %small 初期費用/月額費用：
-              %strong 応相談
-            %li.list-group-item
-              %small= t('.plan_storage')
-              %strong ∞（無制限）
-            %li.list-group-item
-              %small= t('.plan_size')
-              %strong 応相談
-            %li.list-group-item
-              %small トーナメント埋め込み機能：
-              %strong ◯
-            %li.list-group-item
-              %small 埋め込み時の広告非表示：
-              %strong ◯
-            %li.list-group-item
-              %small 埋め込み時のデザインカスタマイズ：
-              %strong ◯
-            %li.list-group-item
-              =link_to 'https://goo.gl/forms/xqvYet0AAsQUalI52', target: '_blank', class: 'btn btn-primary' do
-                = t('.plan_3_action')
+          %table.table
+            %tr
+              %td(colspan=2)
+                = image_tag('about/price_3.png')
+                %h2
+                  有料アカウント
+            %tr
+              %th
+                料金
+              %td
+                お問い合わせください
+            %tr
+              %th
+                = t('.plan_storage')
+              %td
+                ∞（無制限）
+            %tr
+              %th
+                = t('.plan_size')
+              %td
+                128名以上も可能
+            %tr
+              %th
+                トーナメント埋め込み機能：
+              %td
+                ◯（
+                %span.text-danger 即時更新も可能
+                ）
+            %tr
+              %th
+                サポート
+              %td
+                %span.text-danger 電話
+                チャット・メール（
+                %span.text-danger リアルタイム対応
+                ）
+            %tr
+              %th
+                その他
+              %td
+                トーナメント表への顔写真表示
+                %br
+                両山トーナメント
+                %br
+                大会会場でのシステムサポート
+                %br
+                既存システムとの連携
+                %br
+                広告非表示
+                %br
+                etc.
+            %tr
+              %td(colspan=2)
+                =link_to 'https://goo.gl/forms/xqvYet0AAsQUalI52', target: '_blank', class: 'btn btn-primary' do
+                  = t('.plan_3_action')
 
 %section#faq.text-center
   %h1

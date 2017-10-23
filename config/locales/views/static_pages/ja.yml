@@ -32,10 +32,11 @@ ja:
         LINE/Twitter/Facebookのシェアボタンも自動設置！
 
       feature_text_html:
-        積極的に新機能開発中です！今後の開発予定は<a href="https://trello.com/b/G9vXQ1rT/" target="_blank">開発ロードマップ</a>で公開しています。
+        積極的に新機能開発中です！今後の開発予定は開発ロードマップとして公開しています。
         <br>
-        気になる機能があれば、ぜひ投票していただけると開発のモチベーションが上がります。
-      feature_1: 参加者の詳細登録
+        <br>
+        <a href="https://trello.com/b/G9vXQ1rT/" target="_blank" class="btn btn-primary">開発ロードマップを見る</a>
+      feature_1: 国旗表示
       feature_2: 試合の詳細登録
       feature_3: ３位決定戦
       feature_4: リアルタイム共有
@@ -44,15 +45,15 @@ ja:
       feature_7: シード設定
       feature_8: 英語版対応
       feature_9: HPへの埋め込み
-      feature_10: コメント表示
+      feature_10: 詳細ポップアップ
       feature_11: 大規模大会対応
       feature_12: 参加者名の表示幅調整
-      feature_13: ブロック分け表示
-      feature_14: 参加者リスト読み込み
+      feature_13: 両山表示
+      feature_14: 非公開設定
       feature_15: 各会場での同時更新
-      feature_16: 総当り形式
-      feature_17: 予選の実施
-      feature_18: エクセル/PDF出力
+      feature_16: 選手の顔写真表示
+      feature_17: 文字でのスコア登録
+      feature_18: 画像ダウンロード
 
       free: 無料
       plan_price: 利用料（税別）：
