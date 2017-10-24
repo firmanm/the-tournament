@@ -26,7 +26,7 @@
 
 %section#examples
   %h1
-    %span Examples
+    %span Sample
   %p.text-center
     %small
       試合結果をクリックすると、詳細情報が表示されます。
@@ -43,6 +43,55 @@
       %p= @tournament.detail
       = link_to sanitize("<i class='fa fa-angle-double-right'></i>")+' この大会の詳細をみる', tournament_path(@tournament), class: 'btn btn-primary'
     .col-lg-1
+
+%section#usecase
+  %h1
+    %span Use Case
+  %p.text-center
+    大規模な大会運営での採用や、メディアでの速報用トーナメントとしてご利用いただく事例が増えています。
+  .container
+    .row
+      .col-md-4
+        .thumbnail
+          = image_tag('about/karate.jpg')
+          .caption
+            %h3 大規模な大会運営者様
+            %p
+              全世界空手道連盟「新極真会」様で公式トーナメントとして採用いただき、
+              全日本選手権など国内最大級の大会で利用いただいています。
+              = link_to '(詳細)', 'http://blog.the-tournament.jp/entry/2017/08/06/221353', target: '_blank'
+              %br
+              他にも柔道連盟さまなどでもご活用いただいています。
+      .col-md-4
+        .thumbnail
+          = image_tag('about/tennis.jpg')
+          .caption
+            %h3 国内最大級のスポーツニュースサイト様
+            %p
+              国内・海外のテニス情報を配信する最大手のテニスニュースサイト様で、
+              大会試合結果の公開にTHE TOURNAMENTをご利用いただいています。
+      .col-md-4
+        .thumbnail
+          = image_tag('about/baseball.jpg')
+          %small.text-right(style="display:block;") photo by DX Broadrec
+          .caption
+            %h3 新聞・テレビ局などのメディア様
+            %p
+              新聞・テレビ局などのメディア様で、甲子園の地方予選速報などの用途に
+              THE TOURNAMENTをご利用いただいています。
+    %br
+    %hr
+    %div.text-center
+      %p
+        さらに詳しい事例や自社での導入にご興味をお持ちの方は、以下からお気軽にお問い合わせください！
+        %br
+        1営業日以内に必ず返信いたします。
+      %p
+        また、すでにTHE TOURNAMENTを大会運営で使っているよ！という方もぜひご連絡ください。
+        %br
+        事例掲載にご協力いただける場合、新機能の優先利用などをご提供させていただきます。
+      %br
+      =link_to 'お問い合わせ', 'https://goo.gl/forms/xqvYet0AAsQUalI52', target: '_blank', class: 'btn btn-primary'
 
 
 %section#feature
