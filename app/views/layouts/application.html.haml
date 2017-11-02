@@ -20,6 +20,16 @@
       = javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js", async: 'async'
     = javascript_include_tag "application"
 
+    <!-- SmartLook -->
+    - if Rails.env.production?
+      %script(type="text/javascript")
+        window.smartlook||(function(d) {
+        var o=smartlook=function(){ o.api.push(arguments)},h=d.getElementsByTagName('head')[0];
+        var c=d.createElement('script');o.api=new Array();c.async=true;c.type='text/javascript';
+        c.charset='utf-8';c.src='https://rec.smartlook.com/recorder.js';h.appendChild(c);
+        })(document);
+        smartlook('init', '0b162e480adde0c272d177ef4255470ef6b035eb');
+
   - is_about_page = controller.action_name=='about'
   - is_top_page = controller.action_name=='top'
 
