@@ -35,9 +35,22 @@
     %li
       %a(href="https://twitter.com/share" class="twitter-share-button" data-text="#{@tournament.title}のトーナメント | #{t('site_description')}" data-hashtags="the_tournament" data-url="#{tournament_url(@tournament)}") Tweet
   %br
-    %script(type="text/javascript")
-      var nend_params = {"media":41572,"site":225241,"spot":789625,"type":1,"oriented":1};
-    %script(type="text/javascript" src="https://js1.nend.net/js/nendAdLoader.js")
+    .row.visible-xs.visible-sm
+      %script(type="text/javascript" src="https://cdn-fluct.sh.adingo.jp/f.js?G=1000084085")
+      %script(type="text/javascript")
+        //<![CDATA[
+        if(typeof(adingoFluct)!="undefined") adingoFluct.showAd('1000125738');
+        //]]>
+      %script(type="text/javascript")
+        //<![CDATA[
+        if(typeof(adingoFluct)!="undefined") adingoFluct.showAd('1000125739');
+        //]]>
+    .row.visible-md.visible-lg
+      %script(type="text/javascript" src="https://cdn-fluct.sh.adingo.jp/f.js?G=1000084096")
+      %script(type="text/javascript")
+        //<![CDATA[
+        if(typeof(adingoFluct)!="undefined") adingoFluct.showAd('1000125758');
+        //]]>
   %br
   - if editable && current_user.id != 1
     .row.hidden-xs.hidden-sm.mb-30
