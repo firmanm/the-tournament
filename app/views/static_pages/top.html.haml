@@ -1,5 +1,13 @@
 = content_for :page_title, "HOME"
 
+.alert.alert-info.alert-dismissable(role="alert")
+  %button(type="button" class="close" data-dismiss="alert" aria-label="Close")
+    %span(aria-hidden="true") ×
+  = fa_icon("info-circle")
+  絶賛開発中の新バージョンを先行公開していますので、こちらもぜひお試しください！
+  詳しくは
+  = link_to 'こちら', 'http://blog.the-tournament.jp/entry/2017/12/01/180136', {target: '_blank'}
+
 %section#top-banner.hidden-xs.hidden-sm
   = image_tag("top.png", class: "img-responsive img-rounded")
 
