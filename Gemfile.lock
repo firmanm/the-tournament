@@ -138,10 +138,6 @@ GEM
     faraday_middleware (0.11.0.1)
       faraday (>= 0.7.4, < 1.0)
     ffi (1.9.18)
-    firebase (0.2.8)
-      googleauth
-      httpclient (>= 2.5.3)
-      json
     fission (0.5.0)
       CFPropertyList (~> 2.2)
     fog (1.40.0)
@@ -365,7 +361,6 @@ GEM
       haml (>= 4.0, < 6)
       nokogiri (>= 1.6.0)
       ruby_parser (~> 3.5)
-    httpclient (2.8.3)
     i18n (0.8.1)
     i18n_data (0.7.0)
     inflecto (0.0.2)
@@ -670,7 +665,6 @@ DEPENDENCIES
   devise
   erb2haml
   faker
-  firebase
   fog
   foreman (= 0.71.0)
   gon

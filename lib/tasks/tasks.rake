@@ -116,11 +116,33 @@ namespace :tasks do
         t['noAds'] = tournament.no_ads
         t['profileImages'] = tournament.profile_images
 
-        t['teams'] = datastore.entity do |teams|
+        t['teams'] = datastore.entity do |teams_ent|
           tournament.teams.each_with_index do |team, index|
-            teams[index] = datastore.entity do |obj|
-              obj['name'] = (team) ? team['name'] : ''
-              obj['country'] = team['flag'] if team && team['flag'].present?
+            teams_ent[index] = datastore.entity do |team_ent|
+              team_ent['name'] = (team) ? team['name'] : ''
+              team_ent['country'] = team['flag'] if team && team['flag'].present?
+            end
+          end
+        end
+
+        t['results'] = datastore.entity do |results_ent|
+          tournament.results.each_with_index do |round, round_index|
+            results_ent[round_index] = datastore.entity do |round_ent|
+              round.each_with_index do |match, match_index|
+                round_ent[match_index] = datastore.entity do |match_ent|
+                  match_ent['comment'] = match['comment']
+                  match_ent['winner'] = match['winner']
+                  match_ent['score'] = datastore.entity do |score_ent|
+                    score_ent[0] = match['score'][0]
+                    score_ent[1] = match['score'][1]
+                  end
+
+                  match_ent['bye'] = false
+                  if round_index == 0 && (!tournament.teams[match_index*2] || !tournament.teams[match_index*2 + 1])
+                    match_ent['bye'] = true
+                  end
+                end
+              end
             end
           end
         end
