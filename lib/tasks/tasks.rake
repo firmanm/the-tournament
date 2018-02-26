@@ -127,20 +127,19 @@ namespace :tasks do
 
         t['results'] = datastore.entity do |results_ent|
           tournament.results.each_with_index do |round, round_index|
-            results_ent[round_index] = datastore.entity do |round_ent|
-              round.each_with_index do |match, match_index|
-                round_ent[match_index] = datastore.entity do |match_ent|
-                  match_ent['comment'] = match['comment']
-                  match_ent['winner'] = match['winner']
-                  match_ent['score'] = datastore.entity do |score_ent|
-                    score_ent[0] = match['score'][0]
-                    score_ent[1] = match['score'][1]
-                  end
+            results_ent[round_index] = []
+            round.each_with_index do |match, match_index|
+              results_ent[round_index][match_index] = datastore.entity do |match_ent|
+                match_ent['comment'] = match['comment']
+                match_ent['winner'] = match['winner']
+                match_ent['score'] = datastore.entity do |score_ent|
+                  score_ent[0] = match['score'][0]
+                  score_ent[1] = match['score'][1]
+                end
 
-                  match_ent['bye'] = false
-                  if round_index == 0 && (!tournament.teams[match_index*2] || !tournament.teams[match_index*2 + 1])
-                    match_ent['bye'] = true
-                  end
+                match_ent['bye'] = false
+                if round_index == 0 && (!tournament.teams[match_index*2] || !tournament.teams[match_index*2 + 1])
+                  match_ent['bye'] = true
                 end
               end
             end
