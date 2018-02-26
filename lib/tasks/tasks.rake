@@ -83,4 +83,51 @@ namespace :tasks do
       created_at: Time.now
     )
   end
+
+
+  # Firebaseへの移行タスク
+  task :transfer_to_firebase  => :environment do
+    require "google/cloud/datastore"
+    project_id = "tournament-staging"
+    datastore = Google::Cloud::Datastore.new project: project_id
+
+    collection = "tournaments"
+
+    tournaments = Tournament.where(finished: true).order("id DESC").limit(1)
+    tournaments.each do |tournament|
+      # The name/ID for the new entity
+      document_id = tournament.id.to_s
+
+      # The Cloud Datastore key for the new entity
+      document_key = datastore.key collection, document_id
+
+      # Prepares the new entity
+      document = datastore.entity document_key do |t|
+        t['title'] = tournament.title
+        t['userId'] = tournament.user_id
+        t['detail'] = tournament.detail
+        t['createdAt'] = tournament.created_at
+        t['updatedAt'] = tournament.updated_at
+        t['consolationRound'] = tournament.consolation_round
+        t['scoreLess'] = tournament.scoreless
+        t['private'] = tournament.private
+        t['nameWidth'] = tournament.name_width
+        t['scoreWidth'] = tournament.score_width
+        t['noAds'] = tournament.no_ads
+        t['profileImages'] = tournament.profile_images
+
+        t['teams'] = datastore.entity do |teams|
+          tournament.teams.each_with_index do |team, index|
+            teams[index] = datastore.entity do |obj|
+              obj['name'] = (team) ? team['name'] : ''
+              obj['country'] = team['flag'] if team && team['flag'].present?
+            end
+          end
+        end
+      end
+
+      # Saves the entity
+      datastore.save document
+    end
+  end
 end

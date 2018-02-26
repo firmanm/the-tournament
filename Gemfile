@@ -26,6 +26,8 @@ gem 'carrierwave'
 gem 'fog'
 gem 'addressable'
 gem 'data_uri'
+gem 'google-cloud-datastore'
+
 
 
 #Bootstrap
