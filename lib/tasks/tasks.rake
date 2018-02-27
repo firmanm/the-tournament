@@ -85,8 +85,8 @@ namespace :tasks do
   end
 
 
-  # Firebaseへの移行タスク
-  task :transfer_to_firebase  => :environment do
+  # Firebaseへの移行タスク: tournaments
+  task :transfer_tnmts_to_firebase  => :environment do
     require "google/cloud/datastore"
     project_id = "tournament-staging"
     datastore = Google::Cloud::Datastore.new project: project_id
@@ -105,7 +105,7 @@ namespace :tasks do
         # Prepares the new entity
         document = datastore.entity document_key do |t|
           t['title'] = tournament.title
-          t['userId'] = tournament.user_id
+          t['userId'] = tournament.user_id.to_s
           t['detail'] = tournament.detail
           t['createdAt'] = tournament.created_at
           t['updatedAt'] = tournament.updated_at
@@ -152,8 +152,30 @@ namespace :tasks do
       # Saves the entity
       datastore.save documents
 
-      #FIXME: tmp limit for debugging
+      #FIXME: tmp limitation for debugging
       break
+    end
+  end
+
+
+  # Firebaseへの移行タスク: users
+  # CSV出力して、取り込みはFirebase adminSDKでauth:importする
+  task :transfer_users_to_firebase  => :environment do
+    require 'csv'
+
+    @users = User.all
+    CSV.open('users.csv', 'w') do |csv|
+      @users.each do |user|
+        csv_column_values = [
+          user.id,
+          user.email,
+          nil,
+          [*1..9, *'A'..'Z', *'a'..'z'].sample(8).join,
+          [*1..9, *'A'..'Z', *'a'..'z'].sample(8).join,
+          user.name
+        ]
+        csv << csv_column_values
+      end
     end
   end
 end
