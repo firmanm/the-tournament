@@ -93,62 +93,67 @@ namespace :tasks do
 
     collection = "tournaments"
 
-    tournaments = Tournament.where(finished: true).order("id DESC").limit(1)
-    tournaments.each do |tournament|
-      # The name/ID for the new entity
-      document_id = tournament.id.to_s
+    Tournament.find_in_batches batch_size: 100 do |tournaments|
+      documents = []
+      tournaments.each do |tournament|
+        # The name/ID for the new entity
+        document_id = tournament.id.to_s
 
-      # The Cloud Datastore key for the new entity
-      document_key = datastore.key collection, document_id
+        # The Cloud Datastore key for the new entity
+        document_key = datastore.key collection, document_id
 
-      # Prepares the new entity
-      document = datastore.entity document_key do |t|
-        t['title'] = tournament.title
-        t['userId'] = tournament.user_id
-        t['detail'] = tournament.detail
-        t['createdAt'] = tournament.created_at
-        t['updatedAt'] = tournament.updated_at
-        t['consolationRound'] = tournament.consolation_round
-        t['scoreLess'] = tournament.scoreless
-        t['private'] = tournament.private
-        t['nameWidth'] = tournament.name_width
-        t['scoreWidth'] = tournament.score_width
-        t['noAds'] = tournament.no_ads
-        t['profileImages'] = tournament.profile_images
+        # Prepares the new entity
+        document = datastore.entity document_key do |t|
+          t['title'] = tournament.title
+          t['userId'] = tournament.user_id
+          t['detail'] = tournament.detail
+          t['createdAt'] = tournament.created_at
+          t['updatedAt'] = tournament.updated_at
+          t['consolationRound'] = tournament.consolation_round
+          t['scoreLess'] = tournament.scoreless
+          t['private'] = tournament.private
+          t['nameWidth'] = tournament.name_width
+          t['scoreWidth'] = tournament.score_width
+          t['noAds'] = tournament.no_ads
+          t['profileImages'] = tournament.profile_images
 
-        t['teams'] = datastore.entity do |teams_ent|
-          tournament.teams.each_with_index do |team, index|
-            teams_ent[index] = datastore.entity do |team_ent|
-              team_ent['name'] = (team) ? team['name'] : ''
-              team_ent['country'] = team['flag'] if team && team['flag'].present?
+          t['teams'] = datastore.entity do |teams_ent|
+            tournament.teams.each_with_index do |team, index|
+              teams_ent[index] = datastore.entity do |team_ent|
+                team_ent['name'] = (team) ? team['name'] : ''
+                team_ent['country'] = team['flag'] if team && team['flag'].present?
+              end
             end
           end
-        end
 
-        t['results'] = datastore.entity do |results_ent|
-          tournament.results.each_with_index do |round, round_index|
-            results_ent[round_index] = []
-            round.each_with_index do |match, match_index|
-              results_ent[round_index][match_index] = datastore.entity do |match_ent|
-                match_ent['comment'] = match['comment']
-                match_ent['winner'] = match['winner']
-                match_ent['score'] = datastore.entity do |score_ent|
-                  score_ent[0] = match['score'][0]
-                  score_ent[1] = match['score'][1]
-                end
+          t['results'] = datastore.entity do |results_ent|
+            tournament.results.each_with_index do |round, round_index|
+              results_ent[round_index] = []
+              round.each_with_index do |match, match_index|
+                results_ent[round_index][match_index] = datastore.entity do |match_ent|
+                  match_ent['comment'] = match['comment']
+                  match_ent['winner'] = match['winner']
+                  match_ent['score'] = datastore.entity do |score_ent|
+                    score_ent[0] = match['score'][0]
+                    score_ent[1] = match['score'][1]
+                  end
 
-                match_ent['bye'] = false
-                if round_index == 0 && (!tournament.teams[match_index*2] || !tournament.teams[match_index*2 + 1])
-                  match_ent['bye'] = true
+                  match_ent['bye'] = false
+                  if round_index == 0 && (!tournament.teams[match_index*2] || !tournament.teams[match_index*2 + 1])
+                    match_ent['bye'] = true
+                  end
                 end
               end
             end
           end
         end
+        documents << document
       end
-
       # Saves the entity
-      datastore.save document
+      datastore.save documents
+
+      #FIXME: tmp limit for debugging
+      break
     end
   end
 end
